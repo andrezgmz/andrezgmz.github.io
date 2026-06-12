@@ -3,174 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>William Andrés Gómez | Consultor en Transformación Digital Cooperativa</title>
+    <title>William Andrés Gómez Lizarazo | Consultor en Transformación Digital Cooperativa</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans">
+<body class="bg-slate-50 text-slate-800 font-sans leading-relaxed">
 
-    <nav class="bg-slate-900 text-white sticky top-0 z-50 shadow-md">
+    <!-- Navbar -->
+    <nav class="bg-slate-950 text-white sticky top-0 z-50 shadow-md border-b border-slate-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-            <span class="font-bold text-lg tracking-wider text-cyan-400">ANDRÉS GÓMEZ</span>
-            <div class="hidden md:flex space-x-8">
-                <a href="#inicio" class="hover:text-cyan-400 transition">Inicio</a>
-                <a href="#pilares" class="hover:text-cyan-400 transition">Metodología</a>
-                <a href="#servicios" class="hover:text-cyan-400 transition">Servicios</a>
-                <a href="#experiencia" class="hover:text-cyan-400 transition">Trayectoria</a>
-                <a href="#contacto" class="bg-cyan-500 text-slate-900 px-4 py-2 rounded font-semibold hover:bg-cyan-400 transition">Contacto</a>
+            <span class="font-bold text-lg tracking-wider text-cyan-400">WILLIAM ANDRÉS GÓMEZ</span>
+            <div class="hidden md:flex space-x-8 items-center">
+                <a href="#inicio" class="hover:text-cyan-400 transition text-sm font-medium">Inicio</a>
+                <a href="#framework" class="hover:text-cyan-400 transition text-sm font-medium">Framework</a>
+                <a href="#servicios" class="hover:text-cyan-400 transition text-sm font-medium">Servicios</a>
+                <a href="#recursos" class="hover:text-cyan-400 transition text-sm font-medium">Documentos Públicos</a>
+                <a href="#testimonios" class="hover:text-cyan-400 transition text-sm font-medium">Prueba Social</a>
+                <a href="#contacto" class="bg-cyan-500 text-slate-950 px-4 py-2 rounded font-bold hover:bg-cyan-400 transition text-sm">Agendar Consulta</a>
             </div>
         </div>
     </nav>
 
-    <section id="inicio" class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white py-24 px-4 text-center md:text-left">
+    <!-- Hero Section -->
+    <section id="inicio" class="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white py-24 px-4">
         <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
             <div>
-                <span class="text-cyan-400 font-semibold uppercase tracking-widest text-sm">Consultoría Estratégica</span>
-                <h1 class="text-4xl md:text-5xl font-extrabold mt-2 leading-tight">
+                <span class="text-cyan-400 font-semibold uppercase tracking-widest text-xs px-3 py-1 bg-cyan-500/10 rounded-full">Estrategia, Transformación Digital y Operaciones B2B</span>
+                <h1 class="text-4xl md:text-5xl font-extrabold mt-4 leading-tight">
                     Transformación Digital Estructural para el <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">Sector Cooperativo</span>
                 </h1>
-                <p class="mt-6 text-slate-300 text-lg leading-relaxed">
-                    Acompañamiento de alto nivel para Consejos de Administración y Alta Gerencia. Diseñamos hojas de ruta digitales, aceleramos la eficiencia operativa (+70%) y mitigamos el riesgo financiero con metodologías ágiles.
+                <p class="mt-6 text-slate-300 text-lg">
+                    Acompañamiento especializado para Consejos de Administración y Alta Gerencia. Diseñamos e implementamos rutas digitales que blindan el gobierno corporativo y aceleran la eficiencia operativa.
                 </p>
-                <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                    <a href="#contacto" class="bg-cyan-500 text-slate-900 px-8 py-3 rounded-lg font-bold text-center hover:bg-cyan-400 transition shadow-lg shadow-cyan-500/20">
+                <div class="mt-8 flex flex-col sm:flex-row gap-4">
+                    <a href="#contacto" class="bg-cyan-500 text-slate-950 px-8 py-3 rounded-lg font-bold text-center hover:bg-cyan-400 transition shadow-lg shadow-cyan-500/20">
                         Agendar Diagnóstico Inicial
                     </a>
-                    <a href="#servicios" class="border border-slate-500 px-8 py-3 rounded-lg font-semibold text-center hover:bg-slate-800 transition">
-                        Ver Servicios
+                    <a href="#recursos" class="border border-slate-700 px-8 py-3 rounded-lg font-semibold text-center hover:bg-slate-800 transition text-slate-300">
+                        Biblioteca de Recursos
                     </a>
                 </div>
             </div>
-            <div class="hidden md:flex justify-center">
-                <i class="fa-solid fa-cubes text-slate-700 text-[16rem] opacity-40 animate-pulse"></i>
+            <!-- Contenedor de la foto corporativa real -->
+            <div class="flex justify-center md:justify-end">
+                <div class="relative w-72 h-86 md:w-80 md:h-96 rounded-2xl overflow-hidden border-4 border-slate-800 shadow-2xl bg-slate-900">
+                    <!-- Instrucción: Sube tu foto formal con el nombre "foto-perfil.jpg" a tu repositorio -->
+                    <img src="foto-perfil.jpg" alt="William Andrés Gómez Lizarazo" class="w-full h-full object-cover object-top onerror-fallback" onerror="this.style.display='none'; document.getElementById('fallback-icon').style.display='flex';">
+                    <div id="fallback-icon" class="hidden absolute inset-0 flex-col items-center justify-center text-slate-600 p-6 text-center">
+                        <i class="fa-solid fa-user-tie text-6xl mb-4 text-cyan-500/40"></i>
+                        <span class="text-xs text-slate-400">[Para ver tu foto aquí, sube tu imagen corporativa con el nombre 'foto-perfil.jpg' a la raíz de tu repositorio de GitHub]</span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="bg-white py-12 border-b border-slate-100">
+    <!-- Métricas de Alto Impacto -->
+    <section class="bg-white py-14 border-b border-slate-100 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-                <p class="text-4xl font-bold text-indigo-950">+10 Años</p>
-                <p class="text-sm text-slate-500 mt-1 uppercase tracking-wider">Alta Dirección Financiera</p>
+            <div class="p-4">
+                <p class="text-4xl font-black text-slate-900">&gt;80%</p>
+                <p class="text-xs font-bold text-slate-500 mt-2 uppercase tracking-wider">Eficiencia Operativa Lograda</p>
             </div>
-            <div>
-                <p class="text-4xl font-bold text-indigo-950">+70%</p>
-                <p class="text-sm text-slate-500 mt-1 uppercase tracking-wider">Eficiencia Operativa Histórica</p>
+            <div class="p-4">
+                <p class="text-4xl font-black text-slate-900">$1.000M+</p>
+                <p class="text-xs font-bold text-slate-500 mt-2 uppercase tracking-wider">COP Gestionados en Unidades de Innovación</p>
             </div>
-            <div>
-                <p class="text-4xl font-bold text-indigo-950">+90</p>
-                <p class="text-sm text-slate-500 mt-1 uppercase tracking-wider">Directivos Entrenados</p>
+            <div class="p-4">
+                <p class="text-4xl font-black text-slate-900">+10 Años</p>
+                <p class="text-xs font-bold text-slate-500 mt-2 uppercase tracking-wider">Alta Dirección en Sector Financiero</p>
             </div>
-            <div>
-                <p class="text-4xl font-bold text-indigo-950">IFC</p>
-                <p class="text-sm text-slate-500 mt-1 uppercase tracking-wider">Metodología Banco Mundial</p>
+            <div class="p-4">
+                <p class="text-4xl font-black text-cyan-600">IFC</p>
+                <p class="text-xs font-bold text-slate-500 mt-2 uppercase tracking-wider">Pionero DigiLab 3.0/5.0 Banco Mundial</p>
             </div>
         </div>
     </section>
 
-    <section id="pilares" class="py-20 px-4 max-w-7xl mx-auto">
+    <!-- El Framework de Transformación -->
+    <section id="framework" class="py-20 px-4 max-w-7xl mx-auto">
         <div class="text-center max-w-3xl mx-auto mb-16">
-            <h2 class="text-3xl font-bold text-indigo-950">El Framework de Transformación: De la Teoría a la Ejecución</h2>
-            <p class="text-slate-600 mt-4">Un modelo estructurado para que la innovación no sea un centro de costos, sino un acelerador de excedentes y rentabilidad.</p>
+            <h2 class="text-3xl font-bold text-slate-900 tracking-tight">El Framework de Transformación: De la Teoría a la Ejecución</h2>
+            <p class="text-slate-600 mt-4">La innovación aislada es un centro de costos; la innovación conectada es un centro de ingresos.</p>
         </div>
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition">
-                <div class="text-cyan-500 text-3xl mb-4"><i class="fa-solid fa-chart-line"></i></div>
-                <h3 class="font-bold text-lg text-indigo-950">1. Diagnóstico y Arquitectura</h3>
-                <p class="text-slate-600 text-sm mt-2">Medición exacta de la madurez digital interna antes de invertir un solo peso.</p>
+            <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200/60">
+                <div class="text-indigo-950 text-2xl font-bold mb-2">Pilar 1</div>
+                <h3 class="font-bold text-lg text-slate-900">Diagnóstico y Arquitectura</h3>
+                <p class="text-slate-600 text-sm mt-2">Evaluación integral sobre 8 ejes críticos. Cimientos fuertes a través del concepto "La Casa Digital".</p>
             </div>
-            <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition">
-                <div class="text-cyan-500 text-3xl mb-4"><i class="fa-solid fa-network-wired"></i></div>
-                <h3 class="font-bold text-lg text-indigo-950">2. Ecosistemas e Innovación</h3>
-                <p class="text-slate-600 text-sm mt-2">Integración ágil con Fintechs, APIs financieras escalables y Tech Scouting internacional.</p>
+            <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200/60">
+                <div class="text-indigo-950 text-2xl font-bold mb-2">Pilar 2</div>
+                <h3 class="font-bold text-lg text-slate-900">Ecosistemas B2B e Innovación</h3>
+                <p class="text-slate-600 text-sm mt-2">Integración con Fintechs, Economía API, tecnologías emergentes y transferencia de modelos globales.</p>
             </div>
-            <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition">
-                <div class="text-cyan-500 text-3xl mb-4"><i class="fa-solid fa-users-gear"></i></div>
-                <h3 class="font-bold text-lg text-indigo-950">3. Agilismo y Operaciones</h3>
-                <p class="text-slate-600 text-sm mt-2">Células de alto rendimiento (Scrum/Kanban) orientadas al valor y eliminación de silos.</p>
+            <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200/60">
+                <div class="text-indigo-950 text-2xl font-bold mb-2">Pilar 3</div>
+                <h3 class="font-bold text-lg text-slate-900">Agilismo y Operaciones</h3>
+                <p class="text-slate-600 text-sm mt-2">Modelos operativos ágiles (Scrum/Kanban) diseñados para eliminar la lentitud y los sobrecostos.</p>
             </div>
-            <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition">
-                <div class="text-cyan-500 text-3xl mb-4"><i class="fa-solid fa-handshake"></i></div>
-                <h3 class="font-bold text-lg text-indigo-950">4. Acompañamiento</h3>
-                <p class="text-slate-600 text-sm mt-2">Gobernanza corporativa e imparcialidad en la evaluación y licitación de proveedores de TI.</p>
+            <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200/60">
+                <div class="text-indigo-950 text-2xl font-bold mb-2">Pilar 4</div>
+                <h3 class="font-bold text-lg text-slate-900">Acompañamiento Estratégico</h3>
+                <p class="text-slate-600 text-sm mt-2">Su socio en la ejecución. Portafolio exclusivo enfocado en el Retorno de Inversión (ROI) y Gobierno Corporativo.</p>
             </div>
         </div>
     </section>
 
+    <!-- Portafolio de Servicios -->
     <section id="servicios" class="bg-slate-900 text-white py-20 px-4">
         <div class="max-w-7xl mx-auto">
             <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="text-3xl font-bold text-white">Modelos de Intervención Adaptados a su Entidad</h2>
-                <p class="text-slate-400 mt-4">Soluciones de consultoría con alcance blindado, entregables claros y ROI medible.</p>
+                <h2 class="text-3xl font-bold">Modelos de Intervención Estructural</h2>
+                <p class="text-slate-400 mt-4">Soluciones diseñadas exclusivamente para Juntas Directivas y Alta Gerencia con foco en mitigación de riesgos y retorno.</p>
             </div>
             <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-slate-800 p-8 rounded-xl border border-slate-700 flex flex-col justify-between">
+                <div class="bg-slate-800 p-8 rounded-xl border border-slate-700/70 flex flex-col justify-between">
                     <div>
-                        <h3 class="text-xl font-bold text-cyan-400">Consultoría Táctica</h3>
+                        <h3 class="text-xl font-bold text-cyan-400">Servicio I: Hojas de Ruta y Consultoría</h3>
                         <p class="text-slate-300 text-sm mt-4 leading-relaxed">
-                            Construcción de la Hoja de Ruta Digital y Blueprint Tecnológico. Ideal para entidades que necesitan estructurar un plan maestro estructurado y priorizado para licitaciones.
+                            Proyectos con alcance definido y entregables claros: Auditoría de madurez digital, co-diseño del Blueprint tecnológico y optimización profunda de procesos.
                         </p>
                     </div>
-                    <a href="#contacto" class="mt-8 text-cyan-400 font-semibold hover:underline">Saber más &rarr;</a>
+                    <span class="text-slate-400 text-xs font-mono mt-6">Entregable: Plan maestro listo para ejecución o licitación</span>
                 </div>
-                <div class="bg-indigo-950 p-8 rounded-xl border border-cyan-500/30 flex flex-col justify-between relative shadow-xl">
-                    <span class="absolute -top-3 right-4 bg-cyan-500 text-slate-900 font-bold text-xs px-3 py-1 rounded-full uppercase">Más Solicitado</span>
+                <div class="bg-indigo-950 p-8 rounded-xl border-2 border-cyan-500/40 flex flex-col justify-between shadow-xl">
                     <div>
-                        <h3 class="text-xl font-bold text-white">Advisory Board / Retainer</h3>
+                        <h3 class="text-xl font-bold text-white">Servicio II: Advisory Board y Gobierno</h3>
                         <p class="text-slate-300 text-sm mt-4 leading-relaxed">
-                            Asiento consultivo externo en su Consejo de Administración, Comité de Riesgos o Tecnología. Mentoría continua para la toma de decisiones complejas de software e infraestructura sin sesgos comerciales.
+                            Modelo Retainer (Fee mensual) para Consejos de Administración. Asiento consultivo en Comités de Tecnología y Riesgo, aseguramiento normativo ante la Supersolidaria y evaluación experta de proveedores TI.
                         </p>
                     </div>
-                    <a href="#contacto" class="mt-8 text-cyan-400 font-semibold hover:underline">Saber más &rarr;</a>
+                    <span class="text-cyan-400 text-xs font-mono mt-6">Estructura: Acompañamiento directivo continuo e imparcial</span>
                 </div>
-                <div class="bg-slate-800 p-8 rounded-xl border border-slate-700 flex flex-col justify-between">
+                <div class="bg-slate-800 p-8 rounded-xl border border-slate-700/70 flex flex-col justify-between">
                     <div>
-                        <h3 class="text-xl font-bold text-cyan-400">Misiones de Inmersión</h3>
+                        <h3 class="text-xl font-bold text-cyan-400">Servicio III: Misiones de Inmersión</h3>
                         <p class="text-slate-300 text-sm mt-4 leading-relaxed">
-                            Programas de transferencia de conocimiento y Tech Scouting internacional (Silicon Valley / LATAM) diseñados exclusivamente para cambiar el mindset de los líderes y directivos de su cooperativa.
+                            Programas ejecutivos exclusivos a Silicon Valley y ecosistemas de innovación en LATAM. Tech Scouting directo enfocado en la transferencia de modelos reales a la regulación del sector solidario.
                         </p>
                     </div>
-                    <a href="#contacto" class="mt-8 text-cyan-400 font-semibold hover:underline">Saber más &rarr;</a>
+                    <span class="text-slate-400 text-xs font-mono mt-6">Impacto: +90 directivos entrenados internacionalmente</span>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- NUEVA SECCIÓN: Recursos y Documentos Públicos (Lead Magnet Técnico) -->
+    <section id="recursos" class="py-20 px-4 bg-slate-100">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <h2 class="text-3xl font-bold text-slate-900">Biblioteca de Consulta y Recursos Públicos</h2>
+                <p class="text-slate-600 mt-3">Documentos estratégicos, guías de gobernanza y estructuras de análisis para la alta dirección del sector solidario.</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Tarjeta Documento 1 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <div class="text-xs font-bold text-indigo-950 uppercase tracking-wider mb-2">Estructura Base</div>
+                        <h3 class="font-bold text-lg text-slate-900">Matriz de Evaluación de Madurez Digital</h3>
+                        <p class="text-slate-600 text-sm mt-2">Los 8 ejes críticos para diagnosticar el punto de partida tecnológico e institucional en entidades del sector solidario.</p>
+                    </div>
+                    <div class="mt-6">
+                        <!-- Reemplaza el '#' por el enlace real a tu PDF subido a GitHub si lo deseas, o déjalo para abrir el formulario -->
+                        <a href="#contacto" class="inline-flex items-center text-sm font-bold text-cyan-600 hover:text-indigo-950 transition">
+                            <i class="fa-solid fa-file-pdf mr-2"></i> Solicitar Acceso Gratuito
+                        </a>
+                    </div>
+                </div>
+                <!-- Tarjeta Documento 2 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <div class="text-xs font-bold text-indigo-950 uppercase tracking-wider mb-2">Whitepaper Ejecutivo</div>
+                        <h3 class="font-bold text-lg text-slate-900">Framework Scrum vs. Gestión Tradicional</h3>
+                        <p class="text-slate-600 text-sm mt-2">Análisis comparativo de riesgos, costos y adaptabilidad en la implementación de núcleos tecnológicos dentro de cooperativas.</p>
+                    </div>
+                    <div class="mt-6">
+                        <a href="#contacto" class="inline-flex items-center text-sm font-bold text-cyan-600 hover:text-indigo-950 transition">
+                            <i class="fa-solid fa-file-invoice mr-2"></i> Solicitar Acceso Gratuito
+                        </a>
+                    </div>
+                </div>
+                <!-- Tarjeta Documento 3 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <div class="text-xs font-bold text-indigo-950 uppercase tracking-wider mb-2">Guía de Gobierno</div>
+                        <h3 class="font-bold text-lg text-slate-900">Mitigación de Riesgos en Licitaciones de TI</h3>
+                        <p class="text-slate-600 text-sm mt-2">Manual práctico para Juntas Directivas sobre cómo auditar y evaluar proveedores de software y blindar los contratos institucionales.</p>
+                    </div>
+                    <div class="mt-6">
+                        <a href="#contacto" class="inline-flex items-center text-sm font-bold text-cyan-600 hover:text-indigo-950 transition">
+                            <i class="fa-solid fa-shield-halved mr-2"></i> Solicitar Acceso Gratuito
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Prueba Social / Recomendaciones de LinkedIn -->
+    <section id="testimonios" class="py-20 px-4 max-w-7xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <h2 class="text-3xl font-bold text-slate-900">Prueba Social: El Impacto en la Voz del Sector</h2>
+            <p class="text-slate-600 mt-3">Recomendaciones consolidadas de directivos, aliados y la academia.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200/70 flex flex-col justify-between">
+                <p class="text-slate-600 text-sm italic">"Manifésto que conozco la idoneidad del doctor William Andrés Gómez Lizarazo... Ha demostrado un destacado liderazgo como Presidente del Consejo de Administración de la cooperativa Comerciacoop, una de las más importantes del país."</p>
+                <div class="mt-6 border-t pt-4">
+                    <p class="font-bold text-sm text-slate-900">Antonio Sarmiento</p>
+                    <p class="text-xs text-slate-500">Ex-Profesor U. Javeriana, La Salle y Universidad Cooperativa</p>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200/70 flex flex-col justify-between">
+                <p class="text-slate-600 text-sm italic">"Andrés es una persona orientada al resultado, con alta capacidad de liderazgo, gestión de procesos, diseño estratégico... Es un ser humano con habilidades blandas que le permiten movilizar cambios."</p>
+                <div class="mt-6 border-t pt-4">
+                    <p class="font-bold text-sm text-slate-900">Jennifer Paola Restrepo C.</p>
+                    <p class="text-xs text-slate-500">Magíster en Comportamiento del Consumidor & Especialista en Mercadeo</p>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200/70 flex flex-col justify-between">
+                <p class="text-slate-600 text-sm italic">"En mi experiencia con Andrés puedo decir que es un profesional muy comprometido y con un gran sentido de pertenencia, proactivo y cercano."</p>
+                <div class="mt-6 border-t pt-4">
+                    <p class="font-bold text-sm text-slate-900">Carlos Valbuena</p>
+                    <p class="text-xs text-slate-500">Agile Coach</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Formulario de Captura -->
     <section id="contacto" class="py-20 px-4 max-w-3xl mx-auto text-center">
-        <h2 class="text-3xl font-bold text-indigo-950">Construyamos el futuro de su entidad</h2>
-        <p class="text-slate-600 mt-4 mb-8">Agende una sesión estratégica de 20 minutos para evaluar de manera preliminar el estado de madurez digital de su organización.</p>
+        <h2 class="text-3xl font-bold text-slate-900">Construyamos el futuro de su entidad</h2>
+        <p class="text-slate-600 mt-3 mb-8">La transformación digital no es un destino tecnológico; es una decisión estratégica de supervivencia y crecimiento.</p>
         
-        <form action="https://formspree.io/f/tu_id_aqui" method="POST" class="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 text-left space-y-6">
+        <form action="https://formspree.io/f/tu_id_aqui" method="POST" class="bg-white p-8 rounded-2xl shadow-xl border border-slate-200/60 text-left space-y-6">
             <div>
-                <label class="block text-sm font-semibold text-slate-700">Nombre Completo</label>
+                <label class="block text-sm font-semibold text-slate-700">Nombre del Directivo</label>
                 <input type="text" name="name" required class="w-full mt-2 p-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500">
             </div>
             <div class="grid md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700">Correo Corporativo</label>
+                    <label class="block text-sm font-semibold text-slate-700">Correo Institucional</label>
                     <input type="email" name="email" required class="w-full mt-2 p-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700">Cooperativa / Organización</label>
+                    <label class="block text-sm font-semibold text-slate-700">Cooperativa / Entidad Solidaria</label>
                     <input type="text" name="company" required class="w-full mt-2 p-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500">
                 </div>
             </div>
             <div>
-                <label class="block text-sm font-semibold text-slate-700">¿Cuál es el principal desafío tecnológico actual de su entidad?</label>
-                <textarea name="message" rows="4" required class="w-full mt-2 p-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500" placeholder="Ej: Resistencia al cambio, obsolescencia del Core, retos regulatorios..."></textarea>
+                <label class="block text-sm font-semibold text-slate-700">¿Qué recurso desea consultar o cuál es el reto principal de su Junta?</label>
+                <textarea name="message" rows="4" required class="w-full mt-2 p-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500" placeholder="Escriba el nombre del documento técnico que desea solicitar o describa el estado de su proyecto..."></textarea>
             </div>
-            <button type="submit" class="w-full bg-slate-900 text-white font-bold py-4 rounded-lg hover:bg-slate-800 transition shadow-lg">
-                Solicitar Sesión Estratégica
+            <button type="submit" class="w-full bg-slate-950 text-white font-bold py-4 rounded-lg hover:bg-slate-800 transition shadow-lg">
+                Solicitar Acceso y Agendar Sesión de Control
             </button>
         </form>
     </section>
 
+    <!-- Footer -->
     <footer class="bg-slate-950 text-slate-400 py-8 text-center text-sm border-t border-slate-900">
         <p>&copy; 2026 William Andrés Gómez Lizarazo. Todos los derechos reservados.</p>
-        <p class="mt-2">Bogotá D.C., Colombia | <a href="mailto:andrezgmz@outlook.com" class="hover:text-white">andrezgmz@outlook.com</a></p>
+        <p class="mt-2">Bogotá D.C., Colombia | <a href="mailto:andrezgmz@outlook.com" class="hover:text-white transition">andrezgmz@outlook.com</a> | +57 3167836311</p>
     </footer>
 
 </body>
 </html>
-
-
