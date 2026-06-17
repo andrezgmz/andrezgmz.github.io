@@ -521,7 +521,8 @@
             // Codificación URLSearchParams explícita para compatibilidad del enrutador de Google Sheet
             fetch(form.action, {
                 method: form.method,
-                body: new URLSearchParams(new FormData(form))
+                body: new URLSearchParams(new FormData(form)),
+                mode: 'no-cors' // Evita bloqueos CORS, aunque no garantiza recepción en Google Sheets
             }).then(() => {
                 nextStep(10);
             }).catch(() => {
@@ -540,7 +541,8 @@
             // Codificación URLSearchParams explícita para compatibilidad del enrutador de Google Sheet
             fetch(form.action, {
                 method: form.method,
-                body: new URLSearchParams(new FormData(form))
+                body: new URLSearchParams(new FormData(form)),
+                mode: 'no-cors' // Evita bloqueos CORS, aunque no garantiza recepción en Google Sheets
             }).then(() => {
                 btn.innerText = "¡Sesión Solicitada con Éxito!";
                 btn.className = "w-full bg-emerald-600 text-white font-bold py-4 rounded-lg transition shadow-lg";
