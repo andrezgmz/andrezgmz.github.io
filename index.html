@@ -36,7 +36,7 @@
                     Acompañamiento especializado para Consejos de Administración y Alta Gerencia. Diseñamos e implementamos rutas digitales que blindan el gobierno corporativo y aceleran la eficiencia operativa.
                 </p>
                 <div class="mt-8 flex flex-col sm:flex-row gap-4">
-                    <a href="#radar-diagnostico" class="bg-cyan-500 text-slate-950 px-8 py-3 rounded-lg font-bold text-center hover:bg-cyan-400 transition shadow-lg shadow-cyan-500/20">
+                    <a href="#radar-diagnostico" class="bg-cyan-500 text-slate-950 px-8 py-3 rounded-lg font-bold text-center hover:bg-cyan-400 transition transform hover:scale-105 shadow-lg shadow-cyan-500/20">
                         Realizar Diagnóstico de Madurez
                     </a>
                     <a href="#recursos" class="border border-slate-700 px-8 py-3 rounded-lg font-semibold text-center hover:bg-slate-800 transition text-slate-300">
@@ -44,8 +44,6 @@
                     </a>
                 </div>
             </div>
-            
-            <!-- Contenedor de la foto corporativa real vinculada en su carpeta limpia -->
             <div class="flex justify-center md:justify-end">
                 <div class="relative w-72 h-86 md:w-80 md:h-96 rounded-2xl overflow-hidden border-4 border-slate-800 shadow-2xl bg-slate-900">
                     <img src="img/foto-perfil.png" alt="William Andrés Gómez Lizarazo" class="w-full h-full object-cover object-top">
@@ -110,7 +108,6 @@
     <section id="radar-diagnostico" class="py-20 px-4 bg-slate-950 text-white border-t border-slate-900">
         <div class="max-w-4xl mx-auto bg-slate-900 p-8 rounded-2xl border border-slate-800 shadow-2xl relative overflow-hidden">
             
-            <!-- Barra de Progreso Superior -->
             <div id="progress-container" class="hidden w-full bg-slate-800 h-2 rounded-full mb-8 overflow-hidden">
                 <div id="progress-bar" class="bg-cyan-400 h-full w-0 transition-all duration-300"></div>
             </div>
@@ -141,9 +138,10 @@
                 <h3 class="text-2xl font-bold text-white tracking-tight">¡Su diagnóstico estructural está listo!</h3>
                 <p class="text-slate-400 text-sm mt-2 mb-6">Ingrese sus datos institucionales para desbloquear el Gráfico de Radar y procesar su nivel de madurez.</p>
                 
-                <!-- Formulario conectado a tu Google Apps Script privado -->
                 <form id="radar-form" action="https://script.google.com/macros/s/AKfycbxoEeXu9LjLpTe1UYXqJiDYFv6kiaGcp5FoiE88hykhWagFB4NCN7K0j--HN3esmTLAZQ/exec" method="POST" onsubmit="submitDiagnosis(event)" class="text-left space-y-4">
                     
+                    <!-- Enrutador para pestaña 1 (Leads_Diagnostico_Madurez) -->
+                    <input type="hidden" name="FormType" value="radar">
                     <input type="hidden" id="hidden-score-total" name="Puntaje Promedio" value="">
                     <input type="hidden" id="hidden-level" name="Nivel Alcanzado" value="">
                     <input type="hidden" id="hidden-answers" name="Detalle Respuestas por Dimensión" value="">
@@ -164,8 +162,8 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider">Correo Electrónico Corporativo</label>
-                        <input type="email" name="Email" required class="w-full mt-1 p-3 bg-slate-950 border border-slate-800 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                </div>
+                        <input type="email" name="Email" required class="w-full mt-1 p-3 bg-slate-955 border border-slate-800 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                    </div>
                     
                     <button type="submit" class="w-full bg-cyan-500 text-slate-950 font-black py-4 rounded-xl hover:bg-cyan-400 transition mt-6 text-center shadow-lg">
                         Procesar y Ver Gráfico de Resultados &rarr;
@@ -185,7 +183,7 @@
                         <p id="result-text" class="text-slate-300 text-base leading-relaxed">Analizando respuestas...</p>
                         <div class="pt-6">
                             <a href="#contacto" class="inline-block w-full sm:w-auto bg-gradient-to-r from-cyan-500 to-teal-400 text-slate-950 px-8 py-4 rounded-xl font-black text-center text-base hover:from-cyan-400 hover:to-teal-300 transition shadow-xl shadow-cyan-500/10">
-                                Agendar Asesoría Gratuita
+                                Agendar Asesoría Estructural Gratuita
                             </a>
                         </div>
                     </div>
@@ -242,7 +240,6 @@
                 <p class="text-slate-600 mt-3">Documentos de valor estratégico listos para descarga y análisis de la alta dirección.</p>
             </div>
             <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                <!-- Tarjeta 1: Propuesta de Servicios -->
                 <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
                     <div>
                         <div class="text-xs font-bold text-cyan-600 uppercase tracking-wider mb-2">Portafolio Ejecutivo</div>
@@ -256,7 +253,6 @@
                     </div>
                 </div>
                 
-                <!-- Tarjeta 2: Blueprint de Aceleración -->
                 <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
                     <div>
                         <div class="text-xs font-bold text-indigo-950 uppercase tracking-wider mb-2">Estrategia Ágil</div>
@@ -309,8 +305,11 @@
         <h2 class="text-3xl font-bold text-slate-900">Construyamos el futuro de su entidad</h2>
         <p class="text-slate-600 mt-3 mb-8">La transformación digital no es un destino tecnológico; es una decisión estratégica de supervivencia y crecimiento.</p>
         
-        <!-- También conectado al mismo Apps Script. Mapea los campos Nombre, Cooperativa, Email y Mensaje -->
         <form action="https://script.google.com/macros/s/AKfycbxoEeXu9LjLpTe1UYXqJiDYFv6kiaGcp5FoiE88hykhWagFB4NCN7K0j--HN3esmTLAZQ/exec" method="POST" onsubmit="submitGeneralContact(event)" class="bg-white p-8 rounded-2xl shadow-xl border border-slate-200/60 text-left space-y-6">
+            
+            <!-- Enrutador para pestaña 2 (Solicitudes_Agenda) -->
+            <input type="hidden" name="FormType" value="agenda">
+
             <div>
                 <label class="block text-sm font-semibold text-slate-700">Nombre del Directivo</label>
                 <input type="text" name="Nombre" required class="w-full mt-2 p-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500">
@@ -327,7 +326,6 @@
             </div>
             <div>
                 <label class="block text-sm font-semibold text-slate-700">¿Cuál es el reto principal de su Consejo o Alta Gerencia?</label>
-                <!-- Viaja en la columna final de respuestas técnicas en tu Sheets de forma limpia -->
                 <textarea name="Detalle Respuestas por Dimensión" rows="4" required class="w-full mt-2 p-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500" placeholder="Describa brevemente la situación de su proyecto tecnológico o el área de interés..."></textarea>
             </div>
             <button type="submit" class="w-full bg-slate-950 text-white font-bold py-4 rounded-lg hover:bg-slate-800 transition shadow-lg">
@@ -407,7 +405,7 @@
                 text: "¿Cómo gestiona su organización la infraestructura de mitigación de riesgo cibernético?",
                 options: [
                     { text: "Seguridad informática básica (antivirus) y cumplimiento mínimo legal.", value: 1 },
-                    { text: "Políticas structuredas y auditorías de cumplimiento estándar anuales.", value: 3 },
+                    { text: "Políticas estructuradas y auditorías de cumplimiento estándar anuales.", value: 3 },
                     { text: "Cultura DevSecOps proactiva con monitoreo de amenazas automatizado.", value: 5 }
                 ]
             },
@@ -520,17 +518,17 @@
             document.getElementById("result-level").innerText = `${level} (Índice: ${average} / 5.0)`;
             document.getElementById("result-text").innerText = text;
 
+            // Codificación URLSearchParams explícita para compatibilidad del enrutador de Google Sheet
             fetch(form.action, {
                 method: form.method,
-                body: new FormData(form)
+                body: new URLSearchParams(new FormData(form))
             }).then(() => {
                 nextStep(10);
             }).catch(() => {
-                nextStep(10); // Fail-safe: muestra resultados pase lo que pase
+                nextStep(10); 
             });
         }
 
-        // Controlador asíncrono premium para el formulario de contacto general (Fluidez total)
         function submitGeneralContact(event) {
             event.preventDefault();
             const form = event.target;
@@ -539,9 +537,10 @@
             btn.innerText = "Registrando Solicitud...";
             btn.disabled = true;
 
+            // Codificación URLSearchParams explícita para compatibilidad del enrutador de Google Sheet
             fetch(form.action, {
                 method: form.method,
-                body: new FormData(form)
+                body: new URLSearchParams(new FormData(form))
             }).then(() => {
                 btn.innerText = "¡Sesión Solicitada con Éxito!";
                 btn.className = "w-full bg-emerald-600 text-white font-bold py-4 rounded-lg transition shadow-lg";
