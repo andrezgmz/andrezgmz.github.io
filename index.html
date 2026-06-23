@@ -543,38 +543,57 @@
         </div>
     </section>
 
-    <!-- Formulario de Captura General -->
-    <section id="contacto" class="py-20 px-4 max-w-3xl mx-auto text-center">
-        <h2 class="text-3xl font-bold text-slate-900">Construyamos el futuro de su entidad</h2>
-        <p class="text-slate-600 mt-3 mb-8">La transformación digital no es un destino tecnológico; es una decisión estratégica de supervivencia y crecimiento.</p>
+   <!-- ========================================== -->
+<!-- FORMULARIO DE CAPTURA + CALENDLY INTEGRADO -->
+<!-- ========================================== -->
+<section id="contacto" class="py-20 px-4 max-w-3xl mx-auto text-center">
+    <h2 class="text-3xl font-extrabold text-slate-950 tracking-tight">Construyamos el futuro de su entidad</h2>
+    <p class="text-slate-600 mt-3 mb-8 text-sm max-w-xl mx-auto">
+        La transformación digital no es un destino tecnológico; es una decisión estratégica de supervivencia y crecimiento. Inicie su diagnóstico hoy.
+    </p>
+    
+    <form action="https://script.google.com/macros/s/AKfycbxoEeXu9LjLpTe1UYXqJiDYFv6kiaGcp5FoiE88hykhWagFB4NCN7K0j--HN3esmTLAZQ/exec" 
+          method="POST" 
+          onsubmit="submitGeneralContact(event)" 
+          class="bg-white p-8 rounded-3xl shadow-xl border border-slate-200/60 text-left space-y-6">
         
-        <form action="https://script.google.com/macros/s/AKfycbxoEeXu9LjLpTe1UYXqJiDYFv6kiaGcp5FoiE88hykhWagFB4NCN7K0j--HN3esmTLAZQ/exec" method="POST" onsubmit="submitGeneralContact(event)" class="bg-white p-8 rounded-2xl shadow-xl border border-slate-200/60 text-left space-y-6">
-            
-            <input type="hidden" name="FormType" value="agenda">
+        <!-- Identificador para tu Google Sheet Script -->
+        <input type="hidden" name="FormType" value="agenda">
 
+        <!-- Campo: Nombre -->
+        <div>
+            <label class="block text-sm font-semibold text-slate-700">Nombre Completo</label>
+            <input type="text" name="Nombre" required class="w-full mt-2 p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-950 transition text-sm">
+        </div>
+
+        <!-- Campos en paralelo: Correo y Empresa -->
+        <div class="grid md:grid-cols-2 gap-6">
             <div>
-                <label class="block text-sm font-semibold text-slate-700">Nombre</label>
-                <input type="text" name="Nombre" required class="w-full mt-2 p-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500">
-            </div>
-            <div class="grid md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700">Correo Institucional</label>
-                    <input type="email" name="Email" required class="w-full mt-2 p-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700">Empresa / Entidad</label>
-                    <input type="text" name="Cooperativa" required class="w-full mt-2 p-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                </div>
+                <label class="block text-sm font-semibold text-slate-700">Correo Institucional</label>
+                <input type="email" name="Email" required class="w-full mt-2 p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-950 transition text-sm">
             </div>
             <div>
-                <label class="block text-sm font-semibold text-slate-700">¿Cuál es el reto principal de su Empresa o Consejo o Alta Gerencia?</label>
-                <textarea name="Detalle Respuestas por Dimensión" rows="4" required class="w-full mt-2 p-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500" placeholder="Describa brevemente la situación de su proyecto tecnológico o el área de interés..."></textarea>
+                <label class="block text-sm font-semibold text-slate-700">Empresa / Entidad Cooperativa</label>
+                <input type="text" name="Cooperativa" required class="w-full mt-2 p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-950 transition text-sm">
             </div>
-            <button type="submit" class="w-full bg-slate-950 text-white font-bold py-4 rounded-lg hover:bg-slate-800 transition shadow-lg">
-                Agendar Sesión de Control y Diagnóstico
-            </button>
-        </form>
-    </section>
+        </div>
+
+        <!-- Campo: Texto Abierto -->
+        <div>
+            <label class="block text-sm font-semibold text-slate-700">¿Cuál es el reto principal de su Empresa, Consejo o Alta Gerencia?</label>
+            <textarea name="Detalle Respuestas por Dimensión" rows="4" required class="w-full mt-2 p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-950 transition text-sm" placeholder="Describa brevemente la situación de su proyecto tecnológico o el área de interés crítico..."></textarea>
+        </div>
+
+        <!-- BOTÓN MAESTRO: REGISTRA EN GOOGLE SHEETS Y CONFIGURA EL POP-UP -->
+        <button type="submit" class="w-full bg-slate-950 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl text-center text-base cursor-pointer">
+            Registrar Datos y Elegir Hora en Agenda
+        </button>
+
+        <p class="text-center text-xs text-slate-400 italic">
+            *Al hacer clic, sus datos se guardarán de forma segura y se desplegará inmediatamente la disponibilidad de la agenda ejecutiva.
+        </p>
+    </form>
+</section>
 
     <!-- Footer -->
     <footer class="bg-slate-950 text-slate-400 py-8 text-center text-sm border-t border-slate-900">
