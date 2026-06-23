@@ -466,7 +466,7 @@
                             <li class="flex items-center"><i class="fa-solid fa-circle-check text-cyan-500 mr-2 text-xs"></i> Honorarios atados a KPIs (Ej. -50% en tiempos)</li>
                         </ul>
                     </div>
-                    <button onclick="Calendly.initPopupWidget({url: 'https://calendly.com/TU_USUARIO_DE_CALENDLY/cafe-virtual'}); return false;" class="w-full bg-slate-950 text-white font-bold py-3 px-4 rounded-xl hover:bg-slate-800 transition text-center shadow-md">
+                    <button onclick="Calendly.initPopupWidget({url: 'https://calendly.com/andreszer20/sesion-estrategica-de-desbloqueo'}); return false;" class="w-full bg-slate-950 text-white font-bold py-3 px-4 rounded-xl hover:bg-slate-800 transition text-center shadow-md">
                         Agendar Café Virtual Gratuito
                     </button>
                 </div>
@@ -543,10 +543,7 @@
         </div>
     </section>
 
-   <!-- ========================================== -->
-<!-- FORMULARIO DE CAPTURA + CALENDLY INTEGRADO -->
-<!-- ========================================== -->
-<section id="contacto" class="py-20 px-4 max-w-3xl mx-auto text-center">
+   <section id="contacto" class="py-20 px-4 max-w-3xl mx-auto text-center">
     <h2 class="text-3xl font-extrabold text-slate-950 tracking-tight">Construyamos el futuro de su entidad</h2>
     <p class="text-slate-600 mt-3 mb-8 text-sm max-w-xl mx-auto">
         La transformación digital no es un destino tecnológico; es una decisión estratégica de supervivencia y crecimiento. Inicie su diagnóstico hoy.
@@ -557,16 +554,13 @@
           onsubmit="submitGeneralContact(event)" 
           class="bg-white p-8 rounded-3xl shadow-xl border border-slate-200/60 text-left space-y-6">
         
-        <!-- Identificador para tu Google Sheet Script -->
         <input type="hidden" name="FormType" value="agenda">
 
-        <!-- Campo: Nombre -->
         <div>
             <label class="block text-sm font-semibold text-slate-700">Nombre Completo</label>
             <input type="text" name="Nombre" required class="w-full mt-2 p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-950 transition text-sm">
         </div>
 
-        <!-- Campos en paralelo: Correo y Empresa -->
         <div class="grid md:grid-cols-2 gap-6">
             <div>
                 <label class="block text-sm font-semibold text-slate-700">Correo Institucional</label>
@@ -578,13 +572,11 @@
             </div>
         </div>
 
-        <!-- Campo: Texto Abierto -->
         <div>
             <label class="block text-sm font-semibold text-slate-700">¿Cuál es el reto principal de su Empresa, Consejo o Alta Gerencia?</label>
             <textarea name="Detalle Respuestas por Dimensión" rows="4" required class="w-full mt-2 p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-950 transition text-sm" placeholder="Describa brevemente la situación de su proyecto tecnológico o el área de interés crítico..."></textarea>
         </div>
 
-        <!-- BOTÓN MAESTRO: REGISTRA EN GOOGLE SHEETS Y CONFIGURA EL POP-UP -->
         <button type="submit" class="w-full bg-slate-950 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl text-center text-base cursor-pointer">
             Registrar Datos y Elegir Hora en Agenda
         </button>
@@ -595,16 +587,13 @@
     </form>
 </section>
 
-    <!-- Footer -->
     <footer class="bg-slate-950 text-slate-400 py-8 text-center text-sm border-t border-slate-900">
         <p>&copy; 2026 William Andrés Gómez Lizarazo. Todos los derechos reservados.</p>
         <p class="mt-2">Bogotá D.C., Colombia | <a href="mailto:andrezgmz@outlook.com" class="hover:text-white transition">andrezgmz@outlook.com</a> | +57 3167836311</p>
     </footer>
 
-    <!-- Carga de la librería externa Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- MOTOR SCRIPT JAVASCRIPT INTEGRAL -->
     <script>
         const questions = [
             {
@@ -635,8 +624,8 @@
                 ]
             },
             {
-                dimension: "4. Tecnología & Plataformas",
-                text: "¿Cuál es el estado de madurez de su infraestructura de software y Core Bancario?",
+                dimension: "4. Technology & Plataformas",
+                text: "¿Cuál es el estado de madurez de su infraestructura de software and Core Bancario?",
                 options: [
                     { text: "Dependemos de sistemas antiguos 'Legacy' altamente rígidos y locales.", value: 1 },
                     { text: "Modernización técnica parcial o integraciones mediante parches.", value: 3 },
@@ -792,7 +781,7 @@
             document.getElementById("hidden-score-total").value = average;
             document.getElementById("hidden-level").value = level;
             document.getElementById("hidden-answers").value = JSON.stringify({
-                Estrategia: scores[0], Organizacion: scores[1], Cliente: scores[2], Tecnologia: scores[3],
+                Estrategia: scores[0], Organizacion: scores[1], Cliente: scores[2], Technology: scores[3],
                 Informacion: scores[4], Innovacion: scores[5], Seguridad: scores[6], Ecosistemas: scores[7]
             });
 
@@ -822,6 +811,10 @@
                 btn.innerText = "¡Sesión Solicitada con Éxito!";
                 btn.className = "w-full bg-emerald-600 text-white font-bold py-4 rounded-lg transition shadow-lg";
                 form.reset();
+                
+                // DISPARO DE SEGURIDAD INTERACTIVO: Levanta el pop-up nativo de tu agenda en tiempo real
+                Calendly.initPopupWidget({url: 'https://calendly.com/andreszer20/sesion-estrategica-de-desbloqueo'});
+
                 setTimeout(() => {
                     btn.innerText = originalText;
                     btn.className = "w-full bg-slate-950 text-white font-bold py-4 rounded-lg hover:bg-slate-800 transition shadow-lg";
