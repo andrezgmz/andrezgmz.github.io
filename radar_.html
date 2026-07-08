@@ -105,6 +105,8 @@
                     <input type="hidden" id="h-score" name="Puntaje Promedio" value="">
                     <input type="hidden" id="h-level" name="Nivel Alcanzado" value="">
                     <input type="hidden" id="h-answers" name="Detalle Respuestas por Dimensión" value="">
+                    <input type="hidden" id="h-diagnostico" name="Diagnostico Completo" value="">
+                    <input type="hidden" id="h-diagnostico" name="Diagnostico Completo" value="">
                     <div>
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Nombre completo</label>
                         <input type="text" name="Nombre" required placeholder="Ej: María González" class="w-full p-3.5 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition text-sm">
@@ -485,6 +487,22 @@ function submitDiagnosis(event) {
     document.getElementById('h-answers').value = JSON.stringify(
         dimensions.reduce((acc, d, i) => { acc[d.key] = scores[i]; return acc; }, {})
     );
+
+    // Generar texto completo del diagnóstico para el correo
+    let diagTexto = '';
+    diagTexto += `RESUMEN EJECUTIVO\n`;
+    diagTexto += `────────────────────────────────────────\n`;
+    diagTexto += `${summary}\n\n`;
+    diagTexto += `DIAGNÓSTICO DETALLADO POR DIMENSIÓN\n`;
+    diagTexto += `────────────────────────────────────────\n\n`;
+    dimensions.forEach((d, i) => {
+        const score = scores[i];
+        const fb = d.feedback[score];
+        diagTexto += `${i + 1}. ${d.key}  →  ${score}/5  [${fb.nivel}]\n`;
+        diagTexto += `   📌 Diagnóstico: ${fb.texto}\n`;
+        diagTexto += `   ⚡ Acción prioritaria: ${fb.accion}\n\n`;
+    });
+    document.getElementById('h-diagnostico').value = diagTexto;
 
     window._diagResult = { avg, level, summary };
 
