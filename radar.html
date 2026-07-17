@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diagnóstico de Madurez Digital | William Andrés Gómez</title>
+    <title>Diagnóstico de Madurez Digital | William Andrés Gómez</title><link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet"><script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -157,9 +157,7 @@
                     <div id="res-score-badge" class="bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-black text-lg px-4 py-1.5 rounded-full font-mono"></div>
                 </div>
                 <p id="res-summary" class="text-slate-300 text-sm leading-relaxed max-w-2xl mx-auto mt-4"></p>
-            </div>
-            <div class="grid md:grid-cols-2 gap-6 mb-10">
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+               <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
                     <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Radar de Madurez Digital</p>
                     <canvas id="radarChart"></canvas>
                 </div>
@@ -182,9 +180,9 @@
             </div>
             <div class="bg-gradient-to-br from-slate-900 to-indigo-950 border border-slate-800 rounded-2xl p-8 text-center">
                 <h3 class="text-xl font-black text-white mb-2">¿Quiere convertir este diagnóstico en un plan de acción?</h3>
-                <p class="text-slate-400 text-sm mb-6 max-w-lg mx-auto">Agende una sesión de 90 minutos para co-diseñar su hoja de ruta digital a 12 y 36 meses con base en estas brechas.</p>
+                <p class="text-slate-400 text-sm mb-6 max-w-lg mx-auto">Agende una sesión estratégica gratuita de 30 minutos para revisar estas brechas y definir los primeros pasos de su hoja de ruta digital.>
                 <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                    <a href="https://andrezgmz.github.io/#contacto" class="bg-cyan-500 text-slate-950 font-black px-6 py-3.5 rounded-xl hover:bg-cyan-400 transition text-sm shadow-lg shadow-cyan-500/10">
+                    <a href="javascript:void(0)" onclick="agendarDesdeRadar(); return false;" id="btn-agendar-radar" class="bg-cyan-500 text-slate-950 font-black px-6 py-3.5 rounded-xl hover:bg-cyan-400 transition text-sm shadow-lg shadow-cyan-500/10 cursor-pointer">
                         <i class="fa-solid fa-calendar-check mr-2"></i>Agendar Sesión Estratégica
                     </a>
                     <button onclick="restartDiagnosis()" class="border border-slate-700 text-slate-400 font-semibold px-6 py-3.5 rounded-xl hover:bg-slate-800 hover:text-white transition text-sm">
@@ -516,7 +514,37 @@ function submitDiagnosis(event) {
     });
 }
 
-function getScoreColor(score) {
+function agendarDesdeRadar() {
+        const form = document.getElementById('radar-form');
+        const nombre = form.Nombre.value;
+        const email = form.Email.value;
+        const empresa = form.Cooperativa.value;
+        const dr = window._diagResult || {};
+        const avg = dr.avg;
+        const level = dr.level;
+        const btn = document.getElementById('btn-agendar-radar');
+        if (btn) { btn.style.opacity = '0.7'; btn.style.pointerEvents = 'none'; }
+        const body = new URLSearchParams({
+                    FormType: 'agenda',
+                    Nombre: nombre,
+                    Email: email,
+                    Cooperativa: empresa,
+                    Reto_Principal: 'Solicita agendar Sesion Estrategica tras completar el Radar de Madurez Digital. Nivel: ' + level + ' (Indice ' + avg + '/5.0).'
+        });
+        fetch('https://script.google.com/macros/s/AKfycbxoEeXu9LjLpTe1UYXqJiDYFv6kiaGcp5FoiE88hykhWagFB4NCN7K0j--HN3esmTLAZQ/exec', {
+                    method: 'POST',
+                    body: body,
+                    mode: 'no-cors'
+        }).finally(() => {
+                    Calendly.initPopupWidget({
+                                    url: 'https://calendly.com/andreszer20/sesion-estrategica-de-desbloqueo',
+                                    prefill: { name: nombre, email: email }
+                    });
+                    if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
+        });
+}
+    
+    function getScoreColor(score) {
     if (score <= 1) return '#f43f5e';
     if (score <= 2) return '#fb923c';
     if (score <= 3) return '#f59e0b';
