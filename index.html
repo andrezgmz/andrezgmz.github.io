@@ -285,18 +285,18 @@
                         <h3 class="font-bold text-xl text-slate-950 mt-4">Sesión Estratégica de Desbloqueo</h3>
                         <p class="text-slate-500 text-xs mt-2 leading-relaxed">Ideal para Juntas o Gerentes que requieren destrabar un cuello de botella de forma inmediata o analizar su vector de madurez.</p>
                         <div class="my-6 pt-4 border-t border-slate-100">
-                            <p class="text-3xl font-black text-slate-950">$95 <span class="text-xs font-bold text-slate-500 font-mono tracking-tight">USD</span></p>
-                            <p class="text-sm font-semibold text-cyan-600 mt-1 font-mono">$350.000 COP</p>
-                            <p class="text-slate-400 text-[11px] mt-1">Pago único por sesión ejecutiva</p>
+                            <p class="text-3xl font-black text-slate-950">Gratis</p>
+                            <p class="text-sm font-semibold text-cyan-600 mt-1 font-mono">Diagnóstico sin costo</p>
+                            <p class="text-slate-400 text-[11px] mt-1">30 minutos · Cupos limitados</p>
                         </div>
                         <ul class="space-y-3 text-sm text-slate-600 mb-8">
-                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-cyan-500 mr-2 text-xs"></i> 1.5 horas de consultoría privada 1-a-1</li>
+                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-cyan-500 mr-2 text-xs"></i> 30 minutos de consultoría privada 1-a-1</li>
                             <li class="flex items-center"><i class="fa-solid fa-circle-check text-cyan-500 mr-2 text-xs"></i> Análisis profundo de su Radar de Madurez</li>
                             <li class="flex items-center"><i class="fa-solid fa-circle-check text-cyan-500 mr-2 text-xs"></i> Plan táctico de mitigación de brechas</li>
                         </ul>
                     </div>
-                    <button onclick="Calendly.initPopupWidget({url: 'https://calendly.com/andreszer20/sesion-estrategica-de-desbloqueo'}); return false;" class="w-full bg-slate-950 text-white font-bold py-3 px-4 rounded-xl hover:bg-slate-800 transition text-center shadow-md cursor-pointer">
-                        Agendar y Pagar
+                    <button onclick="window.location.href='#contacto'; return false;" class="w-full bg-slate-950 text-white font-bold py-3 px-4 rounded-xl hover:bg-slate-800 transition text-center shadow-md cursor-pointer">
+                        Agendar Diagnóstico Gratuito
                     </button>
                 </div>
                 <div class="bg-slate-950 p-8 rounded-2xl border-2 border-cyan-400 flex flex-col justify-between shadow-xl relative transition-all duration-300 hover:scale-[1.02] text-white">
@@ -344,7 +344,7 @@
                             <li class="flex items-center"><i class="fa-solid fa-circle-check text-cyan-500 mr-2 text-xs"></i> Honorarios atados a KPIs (Ej. -50% en tiempos)</li>
                         </ul>
                     </div>
-                    <button onclick="Calendly.initPopupWidget({url: 'https://calendly.com/andreszer20/sesion-estrategica-de-desbloqueo'}); return false;" class="w-full bg-slate-950 text-white font-bold py-3 px-4 rounded-xl hover:bg-slate-800 transition text-center shadow-md">
+                    <button onclick="window.location.href='#contacto'; return false;" class="w-full bg-slate-950 text-white font-bold py-3 px-4 rounded-xl hover:bg-slate-800 transition text-center shadow-md">
                         Agendar Café Virtual Gratuito
                     </button>
                 </div>
@@ -493,8 +493,8 @@
             const handleSuccess = () => {
                 btn.innerText = "¡Sesión Solicitada con Éxito!";
                 btn.className = "w-full bg-emerald-600 text-white font-bold py-4 rounded-xl transition shadow-lg";
-                form.reset();
-                Calendly.initPopupWidget({url: 'https://calendly.com/andreszer20/sesion-estrategica-de-desbloqueo'});
+                const _nombre = form.Nombre.value; const _email = form.Email.value; form.reset();
+                Calendly.initPopupWidget({url: 'https://calendly.com/andreszer20/sesion-estrategica-de-desbloqueo', prefill: { name: _nombre, email: _email }});
                 setTimeout(() => {
                     btn.innerText = originalText;
                     btn.className = "w-full bg-slate-950 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition shadow-lg";
