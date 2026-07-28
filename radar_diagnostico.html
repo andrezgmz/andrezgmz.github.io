@@ -7,7 +7,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 * { font-family: 'Inter', sans-serif; }
@@ -951,131 +951,289 @@ function saveNote(i) {
   if (chip) chip.classList.toggle('hidden', !axisNotes[i].trim());
 }
 
-// ─── Descarga PDF ───
+// ─── Descarga PDF con jsPDF directo ───
 function downloadPDF() {
   const btn = document.querySelector('button[onclick="downloadPDF()"]');
   const orig = btn.innerHTML;
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generando PDF...';
   btn.disabled = true;
 
-  // Construir el contenido del PDF como HTML temporal
   const { globalAvg, level, summary, axAvgs } = window._result || {};
-  if (!globalAvg) { btn.innerHTML = orig; btn.disabled = false; return; }
+  if (!globalAvg) {
+    alert('Complete el diagnóstico primero.');
+    btn.innerHTML = orig; btn.disabled = false; return;
+  }
 
-  const LABELS = {1:'Inexistente',2:'Incipiente',3:'En Desarrollo',4:'Avanzado',5:'Referente'};
-  const levelLabel = lvl => LABELS[Math.round(lvl)] || getLvlLabel(lvl);
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+    const PW = 210; // page width mm
+    const M  = 14;  // margin
+    const CW = PW - M * 2; // content width
+    let y = M;
 
-  let dimSections = '';
-  AXES.forEach((ax, i) => {
-    const avg = axAvgs[i];
-    const tier = avg < 2.5 ? 'bajo' : avg < 4.0 ? 'medio' : 'alto';
-    const fb = ax.fb[tier];
-    const nota = axisNotes[i] ? axisNotes[i].trim() : '';
-    const notaHtml = nota ? `<div style="background:#1c1f2e;border:1px solid #f59e0b33;border-radius:8px;padding:10px 12px;margin-top:10px"><p style="font-size:9px;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">📝 Nota del evaluador</p><p style="font-size:10px;color:#cbd5e1;line-height:1.6">${nota.replace(/\n/g,'<br>')}</p></div>` : '';
-    const scoreRow = ax.qs.map((q,qi) => `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #1e293b;font-size:9px"><span style="color:#94a3b8;flex:1;padding-right:8px">${i+1}.${qi+1} ${q.substring(0,75)}...</span><span style="font-weight:700;color:${getColor(scores[i][qi])};flex-shrink:0">${scores[i][qi]}/5</span></div>`).join('');
-    const acHtml = fb.ac.map(a => `<div style="margin-bottom:8px"><p style="font-size:9px;font-weight:700;color:#22d3ee;margin-bottom:2px">→ ${a.t}</p><p style="font-size:9px;color:#94a3b8;line-height:1.5">${a.d.substring(0,150)}...</p></div>`).join('');
+    // ── Helpers ──────────────────────────────────────
+    const NP = () => { doc.addPage(); y = M; };
+    const chk = (need) => { if (y + need > 282) NP(); };
+    const hex2rgb = h => { const r = parseInt(h.slice(1,3),16), g=parseInt(h.slice(3,5),16), b=parseInt(h.slice(5,7),16); return [r,g,b]; };
+    const setCol = (hex) => { const [r,g,b]=hex2rgb(hex); doc.setTextColor(r,g,b); };
+    const setFill = (hex) => { const [r,g,b]=hex2rgb(hex); doc.setFillColor(r,g,b); };
+    const setDraw = (hex) => { const [r,g,b]=hex2rgb(hex); doc.setDrawColor(r,g,b); };
 
-    dimSections += `
-      <div style="background:#0f172a;border:1px solid ${ax.color}33;border-radius:12px;padding:16px;margin-bottom:14px;page-break-inside:avoid">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-          <span style="font-size:12px;font-weight:800;color:${ax.color}">${ax.key}</span>
-          <span style="font-size:10px;font-weight:700;color:${getColor(avg)};background:${getColor(avg)}18;padding:3px 8px;border-radius:20px;border:1px solid ${getColor(avg)}40">${avg}/5 · ${fb.nv}</span>
-        </div>
-        <p style="font-size:10px;color:#cbd5e1;line-height:1.6;margin-bottom:10px">${fb.tx}</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          <div>
-            <p style="font-size:8px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Acciones prioritarias</p>
-            ${acHtml}
-          </div>
-          <div>
-            <p style="font-size:8px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Respuestas por pregunta</p>
-            ${scoreRow}
-          </div>
-        </div>
-        ${notaHtml}
-      </div>`;
-  });
+    const scoreColor = s => s<2?'#f43f5e':s<3?'#fb923c':s<4?'#f59e0b':s<4.5?'#2dd4bf':'#34d399';
+    const LVL_LABEL  = {1:'Inexistente',2:'Incipiente',3:'En Desarrollo',4:'Avanzado',5:'Referente'};
+    const getLvl = s => s<2?'Inexistente':s<3?'Incipiente':s<4?'En Desarrollo':s<4.5?'Avanzado':'Referente';
 
-  const sorted = axAvgs.map((avg,i)=>({avg,i})).sort((a,b)=>a.avg-b.avg);
-  const hRows = (arr) => arr.map(({avg,i}) => `<div style="display:flex;justify-content:space-between;font-size:10px;padding:3px 0;border-bottom:1px solid #1e293b"><span style="color:#cbd5e1">${AXES[i].key}</span><span style="font-weight:700;color:${getColor(avg)}">${avg}/5</span></div>`).join('');
+    // Wrap text helper
+    const addText = (txt, x, maxW, size, bold, color) => {
+      doc.setFontSize(size);
+      doc.setFont('helvetica', bold ? 'bold' : 'normal');
+      setCol(color || '#1e293b');
+      const lines = doc.splitTextToSize(String(txt), maxW);
+      lines.forEach(ln => { chk(size * 0.4); doc.text(ln, x, y); y += size * 0.38; });
+      return lines.length;
+    };
 
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
-  <style>
-    body{font-family:'Inter',sans-serif;background:#0f172a;color:#f1f5f9;margin:0;padding:0}
-    *{box-sizing:border-box}
-    @page{margin:16mm}
-  </style></head><body>
-  <div style="background:linear-gradient(135deg,#0f172a,#1e1b4b);padding:32px;border-radius:16px;margin-bottom:20px">
-    <p style="font-size:9px;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Diagnóstico de Madurez Digital · Informe Profesional</p>
-    <h1 style="font-size:26px;font-weight:900;color:#f1f5f9;margin:0 0 4px">${level}</h1>
-    <p style="font-size:13px;color:#22d3ee;font-weight:700;margin:0 0 16px">Índice Global: ${globalAvg} / 5.0</p>
-    <p style="font-size:11px;color:#94a3b8;line-height:1.7;margin:0 0 16px">${summary}</p>
-    <div style="display:flex;gap:16px;flex-wrap:wrap">
-      <div><span style="font-size:9px;color:#475569;text-transform:uppercase;font-weight:700">Evaluador</span><p style="font-size:11px;color:#e2e8f0;font-weight:600;margin:2px 0 0">${userData.user}</p></div>
-      <div><span style="font-size:9px;color:#475569;text-transform:uppercase;font-weight:700">Fecha</span><p style="font-size:11px;color:#e2e8f0;font-weight:600;margin:2px 0 0">${new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'})}</p></div>
-    </div>
-  </div>
+    // ── PORTADA ───────────────────────────────────────
+    // Fondo portada
+    setFill('#0f172a'); doc.rect(0, 0, 210, 297, 'F');
+    setFill('#1e1b4b'); doc.rect(0, 0, 210, 80, 'F');
 
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
-    ${AXES.map((ax,i)=>`<div style="background:#0f172a;border:1px solid ${ax.color}33;border-radius:10px;padding:10px;text-align:center"><p style="font-size:8px;color:${ax.color};font-weight:700;margin:0 0 4px">${ax.key.split(' & ')[0]}</p><p style="font-size:18px;font-weight:900;color:${getColor(axAvgs[i])};margin:0">${axAvgs[i]}</p></div>`).join('')}
-  </div>
+    // Título
+    doc.setFontSize(8); doc.setFont('helvetica','bold'); setCol('#22d3ee');
+    doc.text('DIAGNÓSTICO DE MADUREZ DIGITAL · INFORME PROFESIONAL', M, 22);
 
-  <h2 style="font-size:13px;font-weight:800;color:#f1f5f9;margin:20px 0 12px;border-bottom:1px solid #1e293b;padding-bottom:8px">Análisis por Dimensión</h2>
-  ${dimSections}
+    doc.setFontSize(22); doc.setFont('helvetica','bold'); setCol('#f1f5f9');
+    doc.text(level, M, 36);
 
-  <h2 style="font-size:13px;font-weight:800;color:#f1f5f9;margin:20px 0 12px;border-bottom:1px solid #1e293b;padding-bottom:8px">Hoja de Ruta · Horizontes de Acción</h2>
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
-    <div style="background:#f43f5e0a;border:1px solid #f43f5e30;border-radius:10px;padding:14px">
-      <p style="font-size:9px;font-weight:800;color:#f43f5e;text-transform:uppercase;margin:0 0 2px">Horizonte 1 · Meses 1–6</p>
-      <p style="font-size:8px;color:#f43f5e80;margin:0 0 10px">Estabilizar</p>
-      ${hRows(sorted.slice(0,3))}
-    </div>
-    <div style="background:#f59e0b0a;border:1px solid #f59e0b30;border-radius:10px;padding:14px">
-      <p style="font-size:9px;font-weight:800;color:#f59e0b;text-transform:uppercase;margin:0 0 2px">Horizonte 2 · Meses 6–18</p>
-      <p style="font-size:8px;color:#f59e0b80;margin:0 0 10px">Automatizar y escalar</p>
-      ${hRows(sorted.slice(3,6))}
-    </div>
-    <div style="background:#34d3990a;border:1px solid #34d39930;border-radius:10px;padding:14px">
-      <p style="font-size:9px;font-weight:800;color:#34d399;text-transform:uppercase;margin:0 0 2px">Horizonte 3 · Mes 18+</p>
-      <p style="font-size:8px;color:#34d39980;margin:0 0 10px">Predecir y liderar</p>
-      ${hRows(sorted.slice(6,8))}
-    </div>
-  </div>
+    doc.setFontSize(11); setCol('#22d3ee');
+    doc.text(`Índice Global: ${globalAvg} / 5.0`, M, 46);
 
-  <div style="text-align:center;padding:16px;border-top:1px solid #1e293b;margin-top:20px">
-    <p style="font-size:9px;color:#475569;margin:0">© 2026 William Andrés Gómez Lizarazo · andrezgmz.github.io · Diagnóstico de Madurez Digital Profesional</p>
-  </div>
-  </body></html>`;
+    // Resumen
+    doc.setFontSize(8.5); doc.setFont('helvetica','normal'); setCol('#94a3b8');
+    const sumLines = doc.splitTextToSize(summary, CW);
+    sumLines.forEach((ln,i) => doc.text(ln, M, 56 + i*4.5));
 
-  // Generar y descargar PDF con html2pdf
-  const opt = {
-    margin: [8, 8, 8, 8],
-    filename: `Diagnostico_Madurez_Digital_${userData.user}_${new Date().toISOString().slice(0,10)}.pdf`,
-    image: { type:'jpeg', quality:0.95 },
-    html2canvas: { scale:2, backgroundColor:'#0f172a', useCORS:true, logging:false },
-    jsPDF: { unit:'mm', format:'a4', orientation:'portrait' },
-    pagebreak: { mode:['avoid-all','css'] }
-  };
+    // Meta datos
+    const metaY = 56 + sumLines.length * 4.5 + 5;
+    doc.setFontSize(7); doc.setFont('helvetica','bold'); setCol('#475569');
+    doc.text('EVALUADOR', M, metaY);
+    doc.setFont('helvetica','normal'); setCol('#e2e8f0');
+    doc.text(userData.user, M, metaY + 4);
 
-  const container = document.createElement('div');
-  container.innerHTML = html;
-  container.style.cssText = 'position:absolute;left:-9999px;top:0;width:210mm;background:#0f172a';
-  document.body.appendChild(container);
+    doc.setFont('helvetica','bold'); setCol('#475569');
+    doc.text('FECHA', M + 60, metaY);
+    doc.setFont('helvetica','normal'); setCol('#e2e8f0');
+    doc.text(new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'}), M + 60, metaY + 4);
 
-  html2pdf().set(opt).from(container.querySelector('body')).save().then(() => {
-    document.body.removeChild(container);
+    // Grid de scores en portada
+    y = 90;
+    doc.setFontSize(7); doc.setFont('helvetica','bold'); setCol('#475569');
+    doc.text('PUNTUACIÓN POR DIMENSIÓN', M, y); y += 6;
+
+    const colW = CW / 4;
+    AXES.forEach((ax, i) => {
+      const col = i % 4;
+      const row = Math.floor(i / 4);
+      const bx = M + col * colW;
+      const by = y + row * 14;
+      const avg = axAvgs[i];
+      const [r,g,b] = hex2rgb(scoreColor(avg));
+
+      // Fondo tarjeta
+      doc.setFillColor(r,g,b,0.08);
+      setFill('#1e293b'); doc.roundedRect(bx, by, colW - 2, 12, 2, 2, 'F');
+      setDraw(scoreColor(avg)); doc.setLineWidth(0.3);
+      doc.roundedRect(bx, by, colW - 2, 12, 2, 2, 'S');
+
+      doc.setFontSize(6.5); doc.setFont('helvetica','bold'); setCol(scoreColor(avg));
+      doc.text(ax.key.split(' & ')[0], bx + 2, by + 5);
+      doc.setFontSize(11); doc.setFont('helvetica','bold');
+      doc.text(String(avg), bx + 2, by + 11);
+      doc.setFontSize(6); doc.setFont('helvetica','normal'); setCol('#64748b');
+      doc.text(getLvl(avg), bx + 2 + 10, by + 11);
+    });
+
+    // ── ANÁLISIS POR DIMENSIÓN ─────────────────────────
+    y = 90 + 2 * 14 + 14;
+    NP(); // siempre nueva página para el análisis
+
+    // Sección header
+    setFill('#0f172a'); doc.rect(0, 0, 210, 297, 'F');
+    doc.setFontSize(10); doc.setFont('helvetica','bold'); setCol('#22d3ee');
+    doc.text('ANÁLISIS POR DIMENSIÓN', M, y); y += 2;
+    setDraw('#1e293b'); doc.setLineWidth(0.3); doc.line(M, y, M+CW, y); y += 7;
+
+    AXES.forEach((ax, i) => {
+      const avg = axAvgs[i];
+      const tier = avg < 2.5 ? 'bajo' : avg < 4.0 ? 'medio' : 'alto';
+      const fb = ax.fb[tier];
+      const nota = (axisNotes[i] || '').trim();
+
+      // Calcular altura necesaria
+      const diagLines  = doc.splitTextToSize(fb.tx, CW - 4);
+      const needH = 10 + diagLines.length * 3.8 + 6 + fb.ac.length * 18 + (nota ? 12 : 0) + 6 * ax.qs.length + 14;
+      chk(needH);
+
+      // Header del eje
+      setFill('#1e293b'); doc.roundedRect(M, y, CW, 9, 2, 2, 'F');
+      doc.setFontSize(9); doc.setFont('helvetica','bold'); setCol(ax.color);
+      doc.text(ax.key, M + 3, y + 6);
+      // Badge
+      const badgeTxt = `${avg}/5 · ${fb.nv}`;
+      doc.setFontSize(7); setCol(scoreColor(avg));
+      doc.text(badgeTxt, M + CW - doc.getTextWidth(badgeTxt) - 3, y + 6);
+      y += 12;
+
+      // Diagnóstico
+      doc.setFontSize(7.5); doc.setFont('helvetica','italic'); setCol('#cbd5e1');
+      diagLines.forEach(ln => { doc.text(ln, M, y); y += 3.8; });
+      y += 4;
+
+      // Barras de respuestas (compacto, 2 columnas)
+      doc.setFontSize(6.5); doc.setFont('helvetica','bold'); setCol('#475569');
+      doc.text('RESPUESTAS POR PREGUNTA', M, y); y += 4;
+      ax.qs.forEach((q, qi) => {
+        const sc = scores[i][qi];
+        const qShort = q.length > 80 ? q.substring(0, 78) + '…' : q;
+        doc.setFontSize(6); doc.setFont('helvetica','normal'); setCol('#94a3b8');
+        doc.text(`${i+1}.${qi+1}  ${qShort}`, M, y);
+        doc.setFont('helvetica','bold'); setCol(scoreColor(sc));
+        doc.text(`${sc}/5`, M + CW - 8, y);
+        // mini barra
+        setFill('#1e293b'); doc.rect(M + CW - 22, y - 2.5, 12, 2, 'F');
+        const [r,g,b] = hex2rgb(scoreColor(sc));
+        doc.setFillColor(r,g,b); doc.rect(M + CW - 22, y - 2.5, 12*(sc/5), 2, 'F');
+        y += 4.5;
+      });
+      y += 3;
+
+      // Acciones
+      doc.setFontSize(6.5); doc.setFont('helvetica','bold'); setCol('#22d3ee');
+      doc.text('ACCIONES PRIORITARIAS', M, y); y += 4;
+      fb.ac.forEach((a, ai) => {
+        chk(14);
+        doc.setFontSize(7); doc.setFont('helvetica','bold'); setCol('#22d3ee');
+        doc.text(`→ ${a.t}`, M, y); y += 3.8;
+        doc.setFont('helvetica','normal'); setCol('#94a3b8'); doc.setFontSize(6.5);
+        const dLines = doc.splitTextToSize(a.d, CW - 4);
+        dLines.slice(0,3).forEach(ln => { doc.text(ln, M + 3, y); y += 3.5; });
+        y += 2;
+      });
+
+      // Nota del evaluador
+      if (nota) {
+        chk(16);
+        setFill('#1c1a2e'); doc.roundedRect(M, y, CW, nota.length > 100 ? 20 : 14, 2, 2, 'F');
+        setDraw('#f59e0b'); doc.setLineWidth(0.4); doc.roundedRect(M, y, CW, nota.length > 100 ? 20 : 14, 2, 2, 'S');
+        y += 4;
+        doc.setFontSize(6.5); doc.setFont('helvetica','bold'); setCol('#f59e0b');
+        doc.text('📝  NOTA DEL EVALUADOR', M + 3, y); y += 4;
+        doc.setFont('helvetica','normal'); setCol('#e2e8f0'); doc.setFontSize(7);
+        const nLines = doc.splitTextToSize(nota, CW - 6);
+        nLines.forEach(ln => { doc.text(ln, M + 3, y); y += 3.8; });
+        y += 4;
+      }
+
+      // Separador
+      setDraw('#1e293b'); doc.setLineWidth(0.2); doc.line(M, y, M+CW, y); y += 8;
+    });
+
+    // ── HORIZONTES ──────────────────────────────────────
+    chk(50); NP();
+    setFill('#0f172a'); doc.rect(0, 0, 210, 297, 'F');
+
+    doc.setFontSize(10); doc.setFont('helvetica','bold'); setCol('#22d3ee');
+    doc.text('HOJA DE RUTA · HORIZONTES DE ACCIÓN', M, y); y += 2;
+    setDraw('#1e293b'); doc.setLineWidth(0.3); doc.line(M, y, M+CW, y); y += 8;
+
+    const sorted = axAvgs.map((avg,i) => ({avg,i})).sort((a,b) => a.avg - b.avg);
+    const HORIZONS = [
+      { label:'HORIZONTE 1', period:'Meses 1–6', title:'Estabilizar — Cimientos críticos',
+        color:'#f43f5e', axes: sorted.slice(0,3),
+        intro:'Ejes más débiles. Prioridad máxima. Sin estabilizarlos, las iniciativas de los siguientes horizontes construirán sobre bases inestables.' },
+      { label:'HORIZONTE 2', period:'Meses 6–18', title:'Automatizar y escalar',
+        color:'#f59e0b', axes: sorted.slice(3,6),
+        intro:'Con los cimientos del Horizonte 1 estabilizados, estos ejes consolidan las capacidades que generan ventaja competitiva real.' },
+      { label:'HORIZONTE 3', period:'Mes 18 en adelante', title:'Predecir y liderar el ecosistema',
+        color:'#34d399', axes: sorted.slice(6,8),
+        intro:'Sus dimensiones más maduras. El reto es mantener la velocidad de innovación y convertir capacidades en ventajas estructurales.' }
+    ];
+
+    const hColW = CW / 3;
+    HORIZONS.forEach((h, hi) => {
+      const bx = M + hi * hColW;
+      const startY = y;
+      const [r,g,b] = hex2rgb(h.color);
+
+      // Calcular altura del bloque
+      const introLines = doc.splitTextToSize(h.intro, hColW - 6);
+      const boxH = 12 + introLines.length * 3.5 + h.axes.length * 8 + 10;
+      chk(boxH);
+
+      // Fondo
+      doc.setFillColor(r,g,b,0.05);
+      setFill('#0f172a'); doc.roundedRect(bx, y, hColW - 3, boxH, 3, 3, 'F');
+      setDraw(h.color); doc.setLineWidth(0.4); doc.roundedRect(bx, y, hColW - 3, boxH, 3, 3, 'S');
+
+      let hy = y + 5;
+      doc.setFontSize(7); doc.setFont('helvetica','bold'); setCol(h.color);
+      doc.text(h.label, bx + 3, hy); hy += 4;
+      doc.setFontSize(6); setCol('#94a3b8'); doc.setFont('helvetica','normal');
+      doc.text(h.period, bx + 3, hy); hy += 3.5;
+      doc.setFontSize(7.5); doc.setFont('helvetica','bold'); setCol('#f1f5f9');
+      doc.text(h.title, bx + 3, hy); hy += 5;
+
+      doc.setFontSize(6); doc.setFont('helvetica','normal'); setCol('#94a3b8');
+      introLines.forEach(ln => { doc.text(ln, bx + 3, hy); hy += 3.5; });
+      hy += 3;
+
+      h.axes.forEach(({avg, i}) => {
+        doc.setFontSize(6.5); doc.setFont('helvetica','bold'); setCol('#e2e8f0');
+        doc.text(AXES[i].key.split(' & ')[0], bx + 3, hy);
+        doc.setFont('helvetica','bold'); setCol(scoreColor(avg));
+        doc.text(`${avg}/5`, bx + hColW - 12, hy);
+        // mini barra
+        setFill('#1e293b'); doc.rect(bx + 3, hy + 1.5, hColW - 18, 2, 'F');
+        const [cr,cg,cb] = hex2rgb(scoreColor(avg));
+        doc.setFillColor(cr,cg,cb); doc.rect(bx + 3, hy + 1.5, (hColW-18)*(avg/5), 2, 'F');
+        hy += 8;
+      });
+    });
+
+    y += Math.max(...HORIZONS.map((h,hi) => {
+      const introLines = doc.splitTextToSize(h.intro, hColW - 6);
+      return 12 + introLines.length * 3.5 + h.axes.length * 8 + 10;
+    })) + 12;
+
+    // ── PIE DE PÁGINA en todas las páginas ──────────────
+    const totalPages = doc.getNumberOfPages();
+    for (let p = 1; p <= totalPages; p++) {
+      doc.setPage(p);
+      setFill('#0f172a'); doc.rect(0, 288, 210, 10, 'F');
+      doc.setFontSize(6); doc.setFont('helvetica','normal'); setCol('#334155');
+      doc.text('© 2026 William Andrés Gómez Lizarazo · andrezgmz.github.io · Diagnóstico de Madurez Digital Profesional', M, 294);
+      doc.text(`${p} / ${totalPages}`, PW - M, 294, {align:'right'});
+    }
+
+    // ── GUARDAR ──────────────────────────────────────────
+    const fecha = new Date().toISOString().slice(0,10);
+    doc.save(`Diagnostico_Madurez_Digital_${userData.user}_${fecha}.pdf`);
+
     btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i>PDF descargado';
-    btn.className = btn.className.replace('bg-cyan-500','bg-emerald-500').replace('hover:bg-cyan-400','hover:bg-emerald-400');
+    btn.classList.add('bg-emerald-500'); btn.classList.remove('bg-cyan-500');
     setTimeout(() => {
       btn.innerHTML = orig;
-      btn.className = btn.className.replace('bg-emerald-500','bg-cyan-500').replace('hover:bg-emerald-400','hover:bg-cyan-400');
+      btn.classList.remove('bg-emerald-500'); btn.classList.add('bg-cyan-500');
       btn.disabled = false;
     }, 3000);
-  }).catch(() => {
-    document.body.removeChild(container);
+
+  } catch(err) {
+    console.error('Error PDF:', err);
+    alert('Error generando el PDF. Verifique que completó el diagnóstico.');
     btn.innerHTML = orig;
     btn.disabled = false;
-  });
+  }
 }
 
 // ─── Envío al Google Script ───
