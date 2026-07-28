@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico de Madurez Digital | Herramienta Profesional</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+* { font-family: 'Inter', sans-serif; }
+.fade { animation: fadeUp 0.4s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.pulse-dot { animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+.bar-fill { transition: width 1.4s cubic-bezier(.4,0,.2,1); }
+.accordion-body { max-height:0; overflow:hidden; transition: max-height .45s ease, padding .3s ease; }
+.accordion-body.open { max-height: 1200px; }
+.rating-chip { transition: all .15s ease; }
+.rating-chip:hover { transform: scale(1.07); }
+.rating-chip.sel { transform: scale(1.1); }
+.card-dim { transition: all .25s ease; }
+.card-dim:hover { transform: translateY(-2px); }
+</style>
+</head>
+<body class="bg-slate-950 text-white min-h-screen">
+
+<!-- HEADER -->
+<header class="border-b border-slate-800/50 bg-slate-950/95 backdrop-blur sticky top-0 z-50">
+  <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-2 h-2 rounded-full bg-cyan-400 pulse-dot"></div>
+      <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Diagnóstico de Madurez Digital · Profesional</span>
+    </div>
+    <a href="https://andrezgmz.github.io" class="text-xs text-slate-500 hover:text-cyan-400 transition flex items-center gap-1">
+      <i class="fa-solid fa-arrow-left text-[10px]"></i> Inicio
+    </a>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto px-4 py-10">
+
+<!-- ═══════════════════════════════
+     PASO 0 · LOGIN
+═══════════════════════════════ -->
+<div id="s-login" class="fade">
+  <div class="max-w-md mx-auto pt-12 pb-20">
+    <div class="text-center mb-8">
+      <div class="w-14 h-14 bg-cyan-500/10 border border-cyan-500/20 rounded-2xl flex items-center justify-center mx-auto mb-5">
+        <i class="fa-solid fa-shield-halved text-cyan-400 text-xl"></i>
+      </div>
+      <h1 class="text-2xl font-black tracking-tight">Acceso Restringido</h1>
+      <p class="text-slate-500 text-sm mt-1">Herramienta de diagnóstico profesional</p>
+    </div>
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-7">
+      <div id="login-err" class="hidden mb-4 bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold px-4 py-3 rounded-xl">
+        <i class="fa-solid fa-circle-exclamation mr-2"></i><span id="login-err-txt">Credenciales incorrectas.</span>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Usuario</label>
+          <input id="lu" type="text" placeholder="Ingrese su usuario" class="w-full p-3.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-sm placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Contraseña</label>
+          <input id="lp" type="password" placeholder="Ingrese su contraseña" class="w-full p-3.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-sm placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-cyan-500" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <button onclick="doLogin()" class="w-full bg-gradient-to-r from-cyan-500 to-teal-500 text-slate-950 font-black py-4 rounded-xl hover:from-cyan-400 hover:to-teal-400 transition text-sm mt-2">
+          Acceder al Diagnóstico <i class="fa-solid fa-arrow-right ml-1"></i>
+        </button>
+      </div>
+    </div>
+    <p class="text-center text-xs text-slate-700 mt-5">William Andrés Gómez Lizarazo · andrezgmz.github.io</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     PASO 1 · INICIO
+═══════════════════════════════ -->
+<div id="s-start" class="hidden fade">
+  <div class="max-w-3xl mx-auto text-center py-10">
+    <div class="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full mb-6">
+      <i class="fa-solid fa-radar text-[10px]"></i> Diagnóstico Profesional de Madurez Digital
+    </div>
+    <h1 class="text-4xl md:text-5xl font-black tracking-tight leading-tight">
+      Bienvenido, <span id="start-name" class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400"></span>
+    </h1>
+    <p class="mt-4 text-slate-400 text-sm leading-relaxed max-w-xl mx-auto">Evaluará <strong class="text-white">8 dimensiones críticas</strong> de madurez digital con <strong class="text-white">48 preguntas de control</strong>. Recibirá un diagnóstico interactivo completo por eje, con análisis de brechas y horizontes de acción priorizados.</p>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-8 mb-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-slate-400 flex items-center gap-2"><i class="fa-solid fa-chess-king text-cyan-400 text-[10px]"></i>Estrategia & Gobierno</div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-slate-400 flex items-center gap-2"><i class="fa-solid fa-users-gear text-purple-400 text-[10px]"></i>Organización</div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-slate-400 flex items-center gap-2"><i class="fa-solid fa-star text-amber-400 text-[10px]"></i>Experiencia</div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-slate-400 flex items-center gap-2"><i class="fa-solid fa-microchip text-emerald-400 text-[10px]"></i>Tecnología</div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-slate-400 flex items-center gap-2"><i class="fa-solid fa-database text-violet-400 text-[10px]"></i>Datos & Insights</div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-slate-400 flex items-center gap-2"><i class="fa-solid fa-lightbulb text-orange-400 text-[10px]"></i>Innovación</div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-slate-400 flex items-center gap-2"><i class="fa-solid fa-shield-halved text-rose-400 text-[10px]"></i>Seguridad</div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-slate-400 flex items-center gap-2"><i class="fa-solid fa-network-wired text-teal-400 text-[10px]"></i>Ecosistemas</div>
+    </div>
+
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 mb-8 max-w-md mx-auto">
+      <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Escala de calificación</p>
+      <div class="flex justify-between gap-1">
+        <div class="flex-1 text-center"><div class="w-8 h-8 rounded-lg bg-rose-500/20 border border-rose-500/40 text-rose-400 font-black text-sm flex items-center justify-center mx-auto mb-1">1</div><p class="text-[9px] text-slate-600">Inexistente</p></div>
+        <div class="flex-1 text-center"><div class="w-8 h-8 rounded-lg bg-orange-500/20 border border-orange-500/40 text-orange-400 font-black text-sm flex items-center justify-center mx-auto mb-1">2</div><p class="text-[9px] text-slate-600">Incipiente</p></div>
+        <div class="flex-1 text-center"><div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-400 font-black text-sm flex items-center justify-center mx-auto mb-1">3</div><p class="text-[9px] text-slate-600">En Desarrollo</p></div>
+        <div class="flex-1 text-center"><div class="w-8 h-8 rounded-lg bg-teal-500/20 border border-teal-500/40 text-teal-400 font-black text-sm flex items-center justify-center mx-auto mb-1">4</div><p class="text-[9px] text-slate-600">Avanzado</p></div>
+        <div class="flex-1 text-center"><div class="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-black text-sm flex items-center justify-center mx-auto mb-1">5</div><p class="text-[9px] text-slate-600">Referente</p></div>
+      </div>
+    </div>
+    <button onclick="goStart()" class="bg-gradient-to-r from-cyan-500 to-teal-500 text-slate-950 px-10 py-4 rounded-xl font-black text-base hover:from-cyan-400 hover:to-teal-400 transition transform hover:scale-105 shadow-2xl shadow-cyan-500/20">
+      Comenzar Evaluación <i class="fa-solid fa-arrow-right ml-2"></i>
+    </button>
+    <p class="text-xs text-slate-700 mt-4">48 preguntas · 8 dimensiones · ~12 minutos</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     PASO 2 · PREGUNTAS POR EJE
+═══════════════════════════════ -->
+<div id="s-axis" class="hidden fade">
+  <div class="mb-6">
+    <div class="flex justify-between items-center mb-2">
+      <span id="ax-label" class="text-cyan-400 font-mono text-xs uppercase tracking-widest"></span>
+      <span id="ax-pct" class="text-slate-500 text-xs font-mono"></span>
+    </div>
+    <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+      <div id="ax-bar" class="bg-gradient-to-r from-cyan-400 to-teal-400 h-full rounded-full transition-all duration-500 w-0"></div>
+    </div>
+  </div>
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8">
+    <div class="flex items-center gap-3 mb-1">
+      <i id="ax-icon" class="fa-solid text-lg"></i>
+      <h2 id="ax-title" class="text-xl font-black"></h2>
+    </div>
+    <p id="ax-desc" class="text-slate-500 text-xs mb-6 border-l-2 border-cyan-500/30 pl-3 leading-relaxed"></p>
+    <div id="ax-qs" class="space-y-5"></div>
+    <div class="mt-8 flex justify-between items-center">
+      <button id="btn-prev" onclick="prevAx()" class="text-slate-500 hover:text-white text-sm transition flex items-center gap-2 invisible">
+        <i class="fa-solid fa-arrow-left text-xs"></i> Anterior
+      </button>
+      <button id="btn-next" onclick="nextAx()" disabled
+        class="bg-cyan-500 text-slate-950 px-6 py-3 rounded-xl font-black text-sm hover:bg-cyan-400 transition disabled:opacity-30 disabled:cursor-not-allowed">
+        Siguiente eje <i class="fa-solid fa-arrow-right ml-1"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     PASO 3 · CONFIRMACIÓN
+═══════════════════════════════ -->
+<div id="s-confirm" class="hidden fade">
+  <div class="max-w-2xl mx-auto py-8 text-center">
+    <div class="w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-center mx-auto mb-5">
+      <i class="fa-solid fa-circle-check text-emerald-400 text-2xl"></i>
+    </div>
+    <h2 class="text-2xl font-black mb-2">Evaluación completada</h2>
+    <p class="text-slate-400 text-sm mb-8">Revisión rápida antes de generar su diagnóstico</p>
+
+    <div id="confirm-grid" class="grid grid-cols-4 gap-2 mb-8"></div>
+
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6 text-left">
+      <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Resumen preliminar</p>
+      <div id="confirm-summary" class="space-y-2"></div>
+    </div>
+
+    <div class="flex gap-3 justify-center">
+      <button onclick="goBack()" class="border border-slate-700 text-slate-400 px-6 py-3 rounded-xl text-sm font-semibold hover:bg-slate-800 hover:text-white transition">
+        <i class="fa-solid fa-pen mr-1"></i> Revisar respuestas
+      </button>
+      <button onclick="genResults()" class="bg-gradient-to-r from-cyan-500 to-teal-500 text-slate-950 px-8 py-3 rounded-xl font-black text-sm hover:from-cyan-400 hover:to-teal-400 transition shadow-lg shadow-cyan-500/10">
+        Generar Diagnóstico Completo <i class="fa-solid fa-arrow-right ml-1"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     PASO 4 · RESULTADOS
+═══════════════════════════════ -->
+<div id="s-results" class="hidden fade">
+
+  <!-- Cabecera -->
+  <div class="text-center mb-10">
+    <div id="r-user-chip" class="inline-flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-full px-4 py-1.5 mb-5">
+      <i class="fa-solid fa-user text-slate-500 text-xs"></i>
+      <span id="r-user" class="text-slate-300 text-xs font-semibold"></span>
+      <span class="text-slate-700">·</span>
+      <span id="r-empresa" class="text-slate-500 text-xs"></span>
+    </div>
+    <h2 id="r-level" class="text-3xl md:text-4xl font-black tracking-tight"></h2>
+    <div class="flex items-center justify-center gap-3 mt-3">
+      <div id="r-badge" class="text-lg font-black font-mono px-5 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400"></div>
+    </div>
+    <p id="r-summary" class="text-slate-300 text-sm leading-relaxed max-w-2xl mx-auto mt-4"></p>
+  </div>
+
+  <!-- Radar + Barras -->
+  <div class="grid md:grid-cols-2 gap-5 mb-8">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+      <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Radar de Madurez Digital</p>
+      <canvas id="rChart"></canvas>
+    </div>
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+      <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-4">Índice por Dimensión</p>
+      <div id="r-bars" class="space-y-3"></div>
+      <p class="text-[10px] text-slate-700 mt-5 pt-4 border-t border-slate-800">1 = Inexistente · 2 = Incipiente · 3 = En Desarrollo · 4 = Avanzado · 5 = Referente</p>
+    </div>
+  </div>
+
+  <!-- ALERTA EJE CRÍTICO -->
+  <div id="r-alert" class="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-5 mb-8 flex items-start gap-4">
+    <div class="w-10 h-10 bg-rose-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+      <i class="fa-solid fa-triangle-exclamation text-rose-400"></i>
+    </div>
+    <div>
+      <p class="text-sm font-bold text-rose-300 mb-1">Eje crítico detectado</p>
+      <p id="r-alert-txt" class="text-xs text-rose-400/80 leading-relaxed"></p>
+    </div>
+  </div>
+
+  <!-- ANÁLISIS INTERACTIVO POR DIMENSIÓN -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-base font-bold flex items-center gap-2">
+        <i class="fa-solid fa-magnifying-glass-chart text-cyan-400"></i> Análisis por Dimensión
+      </h3>
+      <span class="text-xs text-slate-500">Haga clic en cada eje para expandir detalles y respuestas</span>
+    </div>
+    <div id="r-dims" class="space-y-3"></div>
+  </div>
+
+  <!-- HORIZONTES -->
+  <div class="mb-8">
+    <h3 class="text-base font-bold flex items-center gap-2 mb-2">
+      <i class="fa-solid fa-map text-cyan-400"></i> Hoja de Ruta · Horizontes de Acción
+    </h3>
+    <p class="text-xs text-slate-500 mb-5">Priorización automática basada en sus brechas reales. Cada horizonte define qué atacar y por dónde empezar.</p>
+    <div id="r-horizons" class="space-y-4"></div>
+  </div>
+
+  <!-- ACCIONES FINALES -->
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div>
+      <p class="text-sm font-bold text-white">Diagnóstico completado</p>
+      <p class="text-xs text-slate-500 mt-0.5">Descargue el informe en PDF o inicie una nueva evaluación</p>
+    </div>
+    <div class="flex gap-3 flex-shrink-0">
+      <button onclick="downloadPDF()" class="bg-cyan-500 text-slate-950 font-black px-5 py-3 rounded-xl hover:bg-cyan-400 transition text-sm flex items-center gap-2">
+        <i class="fa-solid fa-file-pdf"></i> Descargar Informe PDF
+      </button>
+      <button onclick="restart()" class="border border-slate-700 text-slate-400 font-semibold px-5 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition text-sm flex items-center gap-2">
+        <i class="fa-solid fa-rotate-left"></i> Nuevo Diagnóstico
+      </button>
+    </div>
+  </div>
+</div>
+
+</main>
+<footer class="border-t border-slate-800/50 mt-16 py-5 text-center">
+  <p class="text-xs text-slate-700">© 2026 William Andrés Gómez Lizarazo · Diagnóstico de Madurez Digital Profesional</p>
+</footer>
+
+<script>
+// ════════════════════════════════════════
+// CREDENCIALES
+// ════════════════════════════════════════
+const CREDS = [
+  {u:'admin',    p:'ejecutar2026'},
+  {u:'andrezgmz',p:'radar2026'},
+  {u:'demo',     p:'madurez2026'}
+];
+
+// ════════════════════════════════════════
+// DATOS: 8 EJES × 6 PREGUNTAS
+// ════════════════════════════════════════
+const AXES = [
+  {
+    key:'Estrategia & Gobierno', icon:'fa-chess-king', color:'#22d3ee',
+    desc:'¿La transformación digital tiene presupuesto propio y patrocinio explícito de la dirección, o depende de la buena voluntad del área de sistemas?',
+    qs:[
+      '¿Existe un presupuesto exclusivo y aprobado por la dirección para iniciativas de transformación digital, separado del presupuesto de mantenimiento de TI?',
+      '¿La alta dirección tiene un patrocinador nombrado formalmente para la transformación digital, con autoridad real para tomar decisiones y asignar recursos?',
+      '¿La estrategia digital está documentada con objetivos medibles (OKRs o KPIs) y horizonte de tiempo definido de 1 a 3 años?',
+      '¿El avance de la transformación digital se revisa formalmente en espacios directivos al menos una vez por trimestre, con evidencia medible?',
+      '¿Las iniciativas tecnológicas se evalúan con criterios de ROI y palancas de valor antes de aprobarse, o se aprueban por urgencia o tendencia del mercado?',
+      '¿La organización realiza ejercicios formales de retrospectiva (¿qué aprendimos?), análisis del presente (¿dónde estamos?) y prospectiva (¿qué escenarios nos esperan?) al menos una vez al año?'
+    ],
+    fb:{
+      bajo:{nv:'Inexistente / Incipiente',tx:'No existe gobierno real de la transformación digital. Las decisiones tecnológicas son reactivas y dependen de personas clave en vez de procesos institucionales. Cada iniciativa es un esfuerzo aislado sin respaldo formal.',ac:[
+        {t:'Designar un patrocinador ejecutivo', d:'Nombre formalmente a un líder con autoridad real sobre decisiones y presupuesto digital. Sin este rol, toda iniciativa muere en el primer obstáculo.'},
+        {t:'Formular la primera Estrategia Digital en 90 días', d:'Defina 3 objetivos digitales concretos con métricas de negocio y horizonte de 12 meses. No un plan estático — un documento vivo que se revise trimestralmente.'},
+        {t:'Implementar las 6 preguntas de validación', d:'Aplique este checklist a toda iniciativa tecnológica antes de aprobarla: impacto reglamentario, demanda real, UX esperada, impacto en margen, reducción de tiempos y cobertura de seguros.'}
+      ]},
+      medio:{nv:'En Desarrollo',tx:'Existe conciencia estratégica pero sin gobierno consolidado. Las iniciativas funcionan en silos, la revisión formal es inconsistente y el presupuesto digital no está claramente delimitado.',ac:[
+        {t:'Crear un Comité de Transformación Digital', d:'Establezca un comité multifuncional con reunión trimestral formal. Incluya representantes de TI, Operaciones, Comercial y Riesgos. Sin estructura, la coordinación depende de voluntad individual.'},
+        {t:'Conectar cada iniciativa a un OKR de negocio', d:'Ninguna iniciativa tecnológica debe existir sin un objetivo de negocio medible asignado. Esto fuerza la priorización y elimina proyectos huérfanos.'},
+        {t:'Implementar ejercicio retrospectiva / presente / prospectiva', d:'Una vez al año, el equipo directivo debe responder formalmente: ¿qué aprendimos del año?, ¿dónde estamos hoy en cada eje?, ¿qué escenarios externos debemos anticipar?'}
+      ]},
+      alto:{nv:'Avanzado / Referente',tx:'El gobierno digital está maduro. La estrategia es viva, conectada al negocio y con revisiones periódicas. El riesgo en este nivel es la complacencia: el mercado cambia más rápido que los ciclos anuales de planeación.',ac:[
+        {t:'Implementar revisiones estratégicas trimestrales cortas', d:'Las revisiones anuales son insuficientes. Incorpore micro-revisiones de 2 horas cada trimestre para ajustar la estrategia ante cambios del entorno antes de que sea tarde.'},
+        {t:'Construir un radar de tendencias tecnológicas activo', d:'Monitoree sistemáticamente tecnologías emergentes relevantes para su sector. Asigne a alguien la responsabilidad de nutrir este radar mensualmente.'},
+        {t:'Explorar monetización de capacidades digitales', d:'Evalúe si sus capacidades digitales pueden convertirse en servicios para terceros o en nuevas líneas de ingreso. Este es el salto de empresa digital a negocio digital.'}
+      ]}
+    }
+  },
+  {
+    key:'Organización & Colaboración', icon:'fa-users-gear', color:'#818cf8',
+    desc:'¿Existen equipos multifuncionales que trabajan sin silos jerárquicos, o cada decisión tecnológica cruza múltiples comités antes de ejecutarse?',
+    qs:[
+      '¿Existen equipos multifuncionales (TI, Operaciones, Comercial, Riesgos) dedicados a ejecutar proyectos de transformación digital sin silos jerárquicos?',
+      '¿Los proyectos tecnológicos se ejecutan con metodologías ágiles (Scrum, Kanban) con entregas iterativas cada 2 a 4 semanas, o bajo proyectos en cascada de muchos meses?',
+      '¿Las decisiones operativas de un proyecto digital pueden tomarse sin cruzar más de 2 niveles de aprobación jerárquica?',
+      '¿Existe un Product Owner o responsable de producto digital con autoridad real para priorizar el backlog sin depender de múltiples comités de aprobación?',
+      '¿Los equipos miden el tiempo efectivo de sus reuniones, eliminan reuniones sin agenda ni decisión, y tienen cultura de comunicación asíncrona para temas no urgentes?',
+      '¿La organización tiene indicadores formales de productividad de sus equipos (velocidad, cycle time, lead time) y los usa para optimizar la forma de trabajar, no para evaluar personas?'
+    ],
+    fb:{
+      bajo:{nv:'Inexistente / Incipiente',tx:'La estructura organizacional es el principal freno. Los silos crean duplicidad, fricción y lentitud. Las reuniones sin propósito drenan la capacidad disponible. Ningún software puede compensar un problema de diseño organizacional.',ac:[
+        {t:'Lanzar 2 células piloto multifuncionales', d:'Seleccione los 2 proyectos más críticos y conforme un equipo mixto de 4-6 personas con TI, negocio y operaciones. Mida velocidad de entrega vs. el modelo anterior en 60 días.'},
+        {t:'Auditar y eliminar reuniones ineficientes', d:'Levante un inventario de todas las reuniones recurrentes. Elimine toda reunión sin agenda, sin dueño o sin decisión. Transfiera temas operativos a canales asíncronos (chat, docs).'},
+        {t:'Implementar Scrum básico en un proyecto piloto', d:'Elija el proyecto más urgente y aplique Scrum simplificado: un Product Owner, Sprints de 2 semanas, Daily de 15 min, Retrospectiva al final. Mida qué cambia en 30 días.'}
+      ]},
+      medio:{nv:'En Desarrollo',tx:'El modelo colaborativo existe pero sigue frenado por aprobaciones verticales y reuniones ineficientes. La burocracia consume más tiempo que la ejecución real. Los equipos ágiles existen pero no están conectados a métricas de productividad.',ac:[
+        {t:'Mapear y eliminar cuellos de botella de aprobación', d:'Identifique los 5 procesos de aprobación que más tiempo consumen. Para cada uno, determine: ¿se puede delegar?, ¿se puede eliminar?, ¿se puede automatizar? Ejecute al menos 3 cambios en el próximo trimestre.'},
+        {t:'Implementar métricas de productividad de equipo', d:'Mida cycle time (tiempo de inicio a entrega) y velocidad (Story Points por Sprint). Úselas para mejorar el proceso, nunca para evaluar personas individualmente.'},
+        {t:'Establecer cultura de comunicación asíncrona', d:'Defina qué temas van a reunión y cuáles van a chat/doc. Toda reunión debe tener agenda previa, dueño y decisiones documentadas al finalizar. Mida el tiempo promedio de reunión por semana.'}
+      ]},
+      alto:{nv:'Avanzado / Referente',tx:'El modelo ágil está generando valor consistente. Las células entregan de forma predecible. El reto es escalar la cultura ágil a áreas de negocio más allá de TI y mantener la velocidad sin perder la cohesión.',ac:[
+        {t:'Extender Scrum/Kanban a áreas de negocio', d:'Aplique metodología ágil en Comercial, Riesgos y Operaciones. El agilismo no es exclusivo de TI — cualquier trabajo de conocimiento se beneficia de ciclos cortos y retrospectivas.'},
+        {t:'Evaluar escalamiento ágil con SAFe cuando existan 3+ células', d:'SAFe solo tiene sentido cuando hay múltiples células con dependencias cruzadas reales. No escale antes — la estructura de coordinación sin el problema que resolver es burocracia pura.'},
+        {t:'Documentar el modelo como caso de estudio', d:'Su modelo organizacional ágil es un activo diferenciador. Documentarlo y compartirlo externamente genera liderazgo de pensamiento y fortalece el posicionamiento como organización de referencia.'}
+      ]}
+    }
+  },
+  {
+    key:'Experiencia del Cliente', icon:'fa-star', color:'#f59e0b',
+    desc:'¿La vinculación y los trámites básicos son ágiles y digitales, o todavía dependen de la presencia física y de intervención humana manual?',
+    qs:[
+      '¿Un cliente o asociado puede vincularse (abrir cuenta o afiliarse) de forma 100% digital sin necesidad de ir a una oficina física?',
+      '¿Los trámites más frecuentes (consulta de saldo, solicitud de crédito, pagos, certificados) están disponibles en canales digitales sin intervención humana?',
+      '¿La organización mide el sentimiento del cliente de forma sistemática — NPS, CSAT, análisis de conversaciones, señales de abandono — y usa esos datos para mejorar procesos?',
+      '¿El tiempo de respuesta en canales digitales es inferior a 24 horas para el 80% de los casos, con SLA medido y reportado a la dirección?',
+      '¿La experiencia del cliente es consistente entre canales (presencial, web, app, telefónico), o varía significativamente dependiendo del canal que use?',
+      '¿La organización analiza el ciclo de vida completo del cliente identificando los momentos de mayor fricción y actúa sobre ellos con evidencia, no con intuición?'
+    ],
+    fb:{
+      bajo:{nv:'Inexistente / Incipiente',tx:'Sus clientes comparan su experiencia contra las mejores apps del mundo, no contra su competencia directa. Cada fricción es una puerta abierta. No medir el sentimiento del cliente equivale a operar sin timón.',ac:[
+        {t:'Aplicar el Hexágono de Experiencia', d:'Evalúe 6 dimensiones de la relación con el cliente: me conoce, me atiende, me informa, aprende de mí, me resuelve, me empodera. Calificando cada una de 1 a 5 identifica con precisión el punto más débil.'},
+        {t:'Digitalizar los 2 trámites más frecuentes', d:'Identifique cuáles son los trámites que más veces repite un cliente en un año. Digitalícelos completamente. El retorno es inmediato: menos carga operativa + mejor experiencia.'},
+        {t:'Implementar NPS mínimo en 3 preguntas', d:'Lance una encuesta de NPS de 3 preguntas en el canal más usado. No espere la solución perfecta — un NPS manual y consistente es más valioso que un sistema automatizado que no existe.'}
+      ]},
+      medio:{nv:'En Desarrollo',tx:'Los canales digitales existen pero la experiencia es inconsistente. Los procesos analógicos en el back-office sabotean la experiencia digital del frente. El sentimiento del cliente se mide pero no se usa para decidir.',ac:[
+        {t:'Digitalizar el back-office que frena el frente digital', d:'Identifique qué procesos internos (validaciones, firmas, aprobaciones) generan demoras en la respuesta al cliente. Use automatización o RPA para eliminarlos. El cliente ve la app — pero espera el proceso manual.'},
+        {t:'Conectar el NPS a decisiones de mejora trimestrales', d:'El NPS solo genera valor cuando sus resultados se revisan en sesiones formales y generan decisiones de cambio. Establezca un ciclo trimestral: medir → analizar → decidir → ejecutar.'},
+        {t:'Implementar análisis de abandono en canales digitales', d:'Mida en qué punto exacto los clientes abandonan un trámite digital. Cada punto de abandono es un defecto de diseño o de proceso que tiene solución técnica concreta.'}
+      ]},
+      alto:{nv:'Avanzado / Referente',tx:'Su experiencia digital es un diferenciador real. La medición es sistemática y se usa para decidir. El siguiente nivel es la anticipación: resolver necesidades antes de que el cliente las exprese.',ac:[
+        {t:'Implementar personalización basada en comportamiento', d:'Use los datos de uso para personalizar la experiencia: contenido relevante, ofertas oportunas, alertas proactivas. El objetivo es pasar de "me resuelve" a "aprende de mí" en el Hexágono.'},
+        {t:'Medir NPS por segmento y canal de forma automatizada', d:'Un NPS global oculta patrones críticos. Segmente por canal, por perfil de cliente y por etapa del ciclo de vida. Las diferencias entre segmentos son las oportunidades de acción más valiosas.'},
+        {t:'Conectar el análisis de sentimiento al tablero directivo', d:'El sentimiento del cliente debe ser un indicador de primer nivel en el tablero de gobierno, al mismo nivel que los indicadores financieros. Si la dirección no lo revisa, nadie en la organización lo prioriza.'}
+      ]}
+    }
+  },
+  {
+    key:'Tecnología & Plataformas', icon:'fa-microchip', color:'#34d399',
+    desc:'¿El core tecnológico está desacoplado y expone APIs, o es una caja cerrada que solo el proveedor original puede modificar?',
+    qs:[
+      '¿El sistema core (financiero, ERP u operativo) puede integrarse con nuevas soluciones mediante APIs, sin requerir desarrollo exclusivo del proveedor original?',
+      '¿La organización opera servicios en la nube para al menos sus sistemas más críticos, con elasticidad y disponibilidad 24/7?',
+      '¿Existe una hoja de ruta documentada de modernización tecnológica (migración de sistemas legacy, desacoplamiento, adopción cloud) con hitos y responsables definidos?',
+      '¿La organización puede desplegar actualizaciones o nuevas funcionalidades sin tiempos de inactividad prolongados, con pipelines de despliegue automatizados (CI/CD)?',
+      '¿Los sistemas transaccionales y de gestión están integrados en tiempo real, o requieren conciliaciones manuales periódicas para sincronizar información?',
+      '¿La organización tiene una política formal de ciberseguridad tecnológica con artefactos definidos: clasificación de activos, gestión de vulnerabilidades, control de accesos, cifrado de datos y plan de recuperación ante desastres (DRP)?'
+    ],
+    fb:{
+      bajo:{nv:'Inexistente / Incipiente',tx:'Los sistemas legacy son el lastre más costoso de la transformación. Está pagando mantenimiento de tecnología que no genera ventaja competitiva y bloquea cualquier iniciativa de innovación. Sin desacoplamiento, todo lo demás se construye sobre arena.',ac:[
+        {t:'Realizar inventario de deuda tecnológica con costo estimado', d:'Levante un mapa de todos los sistemas actuales: cuánto cuestan, qué tan integrables son, cuándo termina su vida útil. Sin este inventario no hay base para priorizar la modernización.'},
+        {t:'Elegir la estrategia de modernización correcta', d:'Existen 4 estrategias: desacoplamiento digital (recomendado para la mayoría), modernización en sitio, desacoplamiento en microservicios y reemplazo en paralelo. La elección depende del estado de cada sistema — no son intercambiables.'},
+        {t:'Formalizar política de ciberseguridad con artefactos mínimos', d:'Documente: clasificación de activos de información, matriz de riesgos tecnológicos, control de accesos por privilegio mínimo, política de cifrado y DRP con RTO/RPO definidos. Sin esto, cualquier apertura digital es un riesgo no gestionado.'}
+      ]},
+      medio:{nv:'En Desarrollo',tx:'La modernización está en marcha pero las integraciones parche son un riesgo operativo creciente. Cada nueva conexión sin arquitectura coherente aumenta la fragilidad del ecosistema y el costo de mantenimiento.',ac:[
+        {t:'Establecer un API Gateway central', d:'Centralice todas las integraciones a través de un API Gateway. Esto da visibilidad, control de accesos, monitoreo y la base para cualquier apertura futura a ecosistemas externos.'},
+        {t:'Diseñar hoja de ruta de modernización a 18 meses con hitos', d:'La modernización sin plan es una serie de urgencias. Defina qué sistemas migrar en qué orden, con responsables, presupuesto y criterios de éxito por fase. Preséntela a la dirección como un proyecto de negocio, no de TI.'},
+        {t:'Incorporar CI/CD en al menos un sistema crítico', d:'La capacidad de desplegar sin downtime es una ventaja competitiva. Implemente pipelines de integración y despliegue continuo en el sistema más activo. La curva de aprendizaje justifica el esfuerzo.'}
+      ]},
+      alto:{nv:'Avanzado / Referente',tx:'Su infraestructura es una ventaja competitiva real. Puede innovar a una velocidad que competidores con sistemas legacy no pueden igualar. El siguiente paso es convertir las capacidades tecnológicas en activos de negocio.',ac:[
+        {t:'Integrar IA/ML en procesos core de alto impacto', d:'Identifique 2-3 procesos donde la predicción cambia decisiones de negocio críticas: riesgo de mora, probabilidad de abandono, demanda de productos. Pilotee un modelo predictivo en cada uno.'},
+        {t:'Evaluar convertir capacidades tecnológicas en plataforma', d:'Si su arquitectura es robusta y desacoplada, considere ofrecerla como servicio a terceros. Una API bien diseñada puede convertirse en una nueva línea de ingresos y en una barrera de entrada difícil de replicar.'},
+        {t:'Adoptar prácticas de MLOps para escalar modelos de IA', d:'El verdadero valor de la IA está en los modelos en producción, no en los experimentos. MLOps es la disciplina que lleva un modelo del notebook al negocio con monitoreo, versionamiento y mejora continua.'}
+      ]}
+    }
+  },
+  {
+    key:'Información & Insights', icon:'fa-database', color:'#a78bfa',
+    desc:'¿Los datos están centralizados y gobernados, o dispersos en hojas de cálculo y sistemas que no se comunican entre sí?',
+    qs:[
+      '¿Existe una única fuente de verdad para los datos críticos del negocio (clientes, cartera, transacciones), o cada área maneja su propia versión con definiciones distintas?',
+      '¿La alta dirección toma decisiones con base en dashboards actualizados en tiempo real, o depende de reportes manuales consolidados con días de retraso?',
+      '¿Existe un modelo formal de gobierno de datos con roles definidos (Data Owner, Data Steward, Comité de Datos) y políticas de calidad, trazabilidad y ciclo de mejora?',
+      '¿La organización usa analítica predictiva para anticipar comportamientos críticos (mora temprana, abandono de clientes, demanda de productos) con modelos activos en producción?',
+      '¿El tratamiento de datos personales está formalizado conforme a la normativa vigente, con consentimientos documentados y auditables?',
+      '¿La organización ha implementado o está en proceso de implementar mecanismos de Open Data / Open Finance con doble consentimiento, APIs estandarizadas y política de compartición de datos conforme a regulación vigente?'
+    ],
+    fb:{
+      bajo:{nv:'Inexistente / Incipiente',tx:'Tomar decisiones sin datos confiables es competir con los ojos vendados. Sus competidores más ágiles ya saben cosas sobre su mercado que usted descubrirá meses después, cuando el costo de reaccionar sea mucho mayor. Sin gobierno de datos, la IA es una promesa imposible.',ac:[
+        {t:'Implementar dashboard ejecutivo con 5 KPIs críticos', d:'No espere el sistema perfecto. Construya un primer dashboard manual con los 5 indicadores que más importan para las decisiones de negocio. La velocidad de acceso a datos es su primer activo analítico.'},
+        {t:'Definir un Data Owner por área crítica', d:'Asigne formalmente a una persona la responsabilidad de la calidad y definición de los datos de su área. Sin dueños claros, nadie es responsable y cada área inventa su propia verdad.'},
+        {t:'Levantar manualmente indicadores críticos mientras se gobierna el dato', d:'No posponga la medición esperando el sistema ideal. Un KPI manual y consistente es mejor que un KPI automático que no existe. Mida ya, aunque sea en una hoja de cálculo bien estructurada.'}
+      ]},
+      medio:{nv:'En Desarrollo',tx:'Los datos existen pero no fluyen de forma ordenada. Sin una única fuente de verdad, las reuniones se convierten en debates sobre cuál número es el correcto. El problema no es tecnológico: es de gobernanza.',ac:[
+        {t:'Establecer la única fuente de verdad para los 3 indicadores más críticos', d:'Empiece pequeño: elija los 3 indicadores que más se debaten en reuniones directivas. Defina una sola fuente para cada uno y documéntela. El impacto en la calidad de las decisiones es inmediato.'},
+        {t:'Implementar las 4 capas del modelo de gobierno de datos', d:'Formalice: Capa 1 (Roles: Data Owner, Steward, Comité), Capa 2 (Políticas mínimas: ficha técnica por indicador, trazabilidad), Capa 3 (Arquitectura: fuentes, consolidación, consumo), Capa 4 (Ciclo de mejora trimestral).'},
+        {t:'Evaluar posición frente a regulación de Open Finance', d:'Revise si su organización está bajo el ámbito de regulación de Open Finance vigente. Evalúe qué capacidad técnica tiene hoy para implementar el doble consentimiento y compartición de datos por API.'}
+      ]},
+      alto:{nv:'Avanzado / Referente',tx:'Su cultura de datos es un diferenciador estructural. Puede anticipar el mercado cuando otros reaccionan. El siguiente nivel es pasar de BI descriptivo (qué pasó) a analítica prescriptiva (qué debería hacer) y democratizar los datos en toda la organización.',ac:[
+        {t:'Implementar modelos predictivos en churn y deterioro temprano', d:'Estos son los dos modelos de mayor ROI inmediato en cualquier organización con cartera o base de clientes. El deterioro temprano detectado semanas antes de que se refleje en los estados contables cambia completamente la gestión.'},
+        {t:'Explorar monetización ética de datos bajo Open Finance', d:'Con el gobierno de datos maduro, evalúe qué datos propios pueden generar valor si se comparten de forma controlada con socios del ecosistema. Diseñe el modelo de consentimiento y el esquema de valor antes de cualquier implementación.'},
+        {t:'Democratizar el acceso a datos en toda la organización', d:'Los datos no deben ser exclusivos del equipo de analítica. Implemente alfabetización de datos en todos los niveles. Cuando los equipos operativos pueden acceder a sus propios indicadores en tiempo real, la velocidad de mejora se multiplica.'}
+      ]}
+    }
+  },
+  {
+    key:'Crecimiento & Innovación', icon:'fa-lightbulb', color:'#fb923c',
+    desc:'¿Se ejecutan pilotos rápidos con aliados externos, o toda idea nueva muere en la fase de análisis y aprobación interminable?',
+    qs:[
+      '¿Existe un presupuesto y proceso formal para experimentar con nuevas iniciativas (pilotos, PMVs), separado del presupuesto operativo regular?',
+      '¿La organización tiene alianzas activas con fintechs, startups o proveedores de tecnología emergente para co-desarrollar o pilotar soluciones concretas?',
+      '¿El tiempo promedio desde que se aprueba una idea de innovación hasta que se lanza un piloto medible es inferior a 90 días?',
+      '¿Existe una metodología de innovación formal (design thinking, lean startup, jobs to be done) que los equipos aplican de forma consistente con criterios de evaluación definidos?',
+      '¿Los resultados de los pilotos — éxitos y fracasos — se documentan, comparten con el equipo y se usan para mejorar iniciativas futuras, o cada proyecto empieza desde cero?',
+      '¿La organización mide el retorno de sus inversiones en innovación (ROI de innovación) por proyecto y descarta iniciativas que no muestran tracción en 90 días?'
+    ],
+    fb:{
+      bajo:{nv:'Inexistente / Incipiente',tx:'Sin innovación estructurada, el crecimiento depende de factores externos no controlables. Las organizaciones que no innovan no se quedan quietas: retroceden frente a quienes sí lo hacen. Toda idea nueva muere en el proceso de aprobación antes de ver la luz.',ac:[
+        {t:'Asignar un fondo de experimentación del 2-3% del presupuesto operativo', d:'Sin presupuesto reservado, la innovación compite contra las urgencias operativas y siempre pierde. Un fondo pequeño pero fijo cambia radicalmente qué se puede explorar sin pedir aprobación extraordinaria.'},
+        {t:'Aplicar la Matriz de Valor y Dificultad a las ideas en cartera', d:'Clasifique todas las ideas en cartera en 4 cuadrantes: Alto Valor / Baja Dificultad (ejecutar ya), Alto Valor / Alta Dificultad (planificar con cuidado), Bajo Valor / Baja Dificultad (solo si sobra capacidad), Bajo Valor / Alta Dificultad (descartar).'},
+        {t:'Lanzar un PMV en 60 días', d:'Elija la idea más pequeña de alto valor que pueda validarse en 60 días con recursos mínimos. Un experimento pequeño ejecutado vale más que un plan grande en papel. El objetivo es aprendizaje, no perfección.'}
+      ]},
+      medio:{nv:'En Desarrollo',tx:'La innovación incremental existe pero es insuficiente. Sus competidores más disruptivos no están mejorando lo que ya existe: están creando nuevas categorías donde sus ventajas actuales no aplican.',ac:[
+        {t:'Abrir canal de innovación con el ecosistema externo', d:'Establezca contacto formal con al menos 3 startups o fintechs de su sector. No para comprarles — para co-experimentar. Las alianzas de innovación son más baratas y rápidas que el desarrollo propio.'},
+        {t:'Dedicar 20% de capacidad de innovación a iniciativas que cuestionen el modelo actual', d:'La innovación que solo mejora lo existente tiene un límite natural. Reserve una fracción del esfuerzo para explorar ideas que podrían obsoletar su propia operación antes de que lo haga un competidor externo.'},
+        {t:'Implementar ciclo formal de ideación trimestral', d:'Institucionalice la innovación: un proceso trimestral con criterios de evaluación claros, aprobación de la dirección y asignación de recursos. La innovación como proceso es más sostenible que la innovación como evento.'}
+      ]},
+      alto:{nv:'Avanzado / Referente',tx:'Su capacidad de innovación es un activo estratégico reconocido internamente y externamente. El reto es mantener velocidad sin perder foco. La innovación sin priorización estricta consume recursos sin generar impacto real.',ac:[
+        {t:'Implementar portafolio balanceado de innovación', d:'70% incremental (mejoras sobre lo existente) / 20% adyacente (expansión a mercados cercanos) / 10% disruptivo (nuevos modelos que podrían canibalizar lo actual). Sin este balance, el portafolio tiende a acumular proyectos incrementales de bajo impacto.'},
+        {t:'Medir ROI de innovación por proyecto con criterio de 90 días', d:'Establezca un criterio claro de descarte: toda iniciativa que no demuestre tracción medible en 90 días se cierra o reformula. La cultura de "dar tiempo" a proyectos sin evidencia es la forma más costosa de desperdiciar capacidad de innovación.'},
+        {t:'Explorar modelos de innovación abierta con alianzas formales', d:'Considere un fondo de inversión en startups del sector como vehículo de innovación e inteligencia de mercado simultáneos. O establezca un programa de aceleración interno que invite a startups a resolver problemas reales de su organización.'}
+      ]}
+    }
+  },
+  {
+    key:'Seguridad & Privacidad', icon:'fa-shield-halved', color:'#f43f5e',
+    desc:'¿Existe un Sistema de Gestión de Seguridad de la Información activo con simulacros reales, o la ciberseguridad es una carpeta de políticas que nadie revisa?',
+    qs:[
+      '¿Existe un Sistema de Gestión de Seguridad de la Información (SGSI) formalmente implementado, con políticas vigentes revisadas en el último año?',
+      '¿La organización realiza simulacros de incidentes de ciberseguridad (ransomware, phishing, pérdida de datos) al menos una vez al año, con el equipo directivo involucrado?',
+      '¿Existe monitoreo continuo 24/7 de amenazas y accesos no autorizados a sistemas críticos, con alertas automáticas y tiempos de respuesta definidos?',
+      '¿Los controles de seguridad se validan en cada despliegue de software nuevo (DevSecOps), o la revisión de seguridad es un paso posterior que frecuentemente se omite por urgencia?',
+      '¿Los contratos con proveedores tecnológicos incluyen cláusulas de seguridad, derecho de auditoría, protocolo de respuesta ante incidentes con terceros y blindaje de datos del cliente?',
+      '¿La organización tiene artefactos formales de ciberseguridad en operación: clasificación de activos, matriz de riesgos tecnológicos, control de accesos por privilegio mínimo, política de cifrado y plan de recuperación ante desastres (DRP) con RTO y RPO definidos?'
+    ],
+    fb:{
+      bajo:{nv:'Inexistente / Incipiente',tx:'Un incidente de ciberseguridad en este nivel puede ser irreversible: pérdida de datos de clientes, sanciones regulatorias, daño reputacional permanente y en muchos casos cierre de operaciones. El costo de no invertir en seguridad siempre supera el de invertir.',ac:[
+        {t:'Ejecutar análisis de vulnerabilidades urgente', d:'Contrate un análisis de penetración (pen test) básico sobre sus sistemas críticos. Sin saber dónde están las vulnerabilidades reales, cualquier plan de seguridad es una ilusión de control.'},
+        {t:'Implementar los 6 artefactos formales de ciberseguridad', d:'Documente y operacionalice: clasificación de activos de información, matriz de riesgos tecnológicos, control de accesos por privilegio mínimo, política de cifrado en tránsito y reposo, y DRP con RTO/RPO definidos.'},
+        {t:'Ejecutar simulacro de incidente con el equipo directivo', d:'El peor momento para aprender a responder a un incidente es cuando ocurre. Realice un simulacro tipo tabletop con el equipo directivo en los próximos 60 días. La respuesta que observa es su nivel real de preparación.'}
+      ]},
+      medio:{nv:'En Desarrollo',tx:'Las políticas existen pero no se aplican consistentemente. Las auditorías anuales detectan problemas después de que ya ocurrieron. En ciberseguridad, la postura reactiva es la más costosa — el tiempo entre la brecha y su detección importa más que la brecha misma.',ac:[
+        {t:'Implementar monitoreo continuo con SIEM básico', d:'Establezca monitoreo 24/7 con alertas automáticas sobre sus sistemas críticos. Reduzca el tiempo de detección de incidentes de días a horas. Cada hora adicional sin detección tiene un costo exponencial.'},
+        {t:'Incorporar DevSecOps en la Definición de Terminado de cada Sprint', d:'La seguridad que se revisa después del desarrollo es más cara y menos efectiva. Incluya validación de seguridad como requisito en la Definición de Terminado de cada historia de usuario en Scrum.'},
+        {t:'Revisar contratos de proveedores con los 4 puntos de gobierno de terceros', d:'Cada proveedor conectado es una extensión de su superficie de riesgo. Exija en cada contrato: cumplimiento de sus políticas de seguridad, derecho de auditoría, protocolo de respuesta ante incidentes y blindaje de datos del cliente en tránsito y reposo.'}
+      ]},
+      alto:{nv:'Avanzado / Referente',tx:'Su postura de seguridad es proactiva y madura. Es un activo diferenciador en mercados donde la confianza es el principal activo. El siguiente nivel es convertir la seguridad en argumento explícito de valor ante clientes y reguladores.',ac:[
+        {t:'Buscar certificaciones formales de seguridad', d:'ISO 27001 o SOC 2 convierten su postura de seguridad en un diferenciador comercial verificable. Reducen el costo de ventas B2B y abren puertas a clientes enterprise que requieren estos estándares.'},
+        {t:'Publicar su postura de seguridad como propuesta de valor', d:'La transparencia en seguridad genera confianza. Publique un resumen ejecutivo de sus controles y certificaciones. En sectores como el financiero o de salud, esto es un argumento de diferenciación que pocos competidores pueden replicar.'},
+        {t:'Explorar Zero Trust Architecture', d:'Zero Trust asume que ningún usuario o sistema es confiable por defecto, incluso dentro de la red. Es el modelo de seguridad más robusto para organizaciones con ecosistemas digitales abiertos y trabajo remoto. Evalúe la transición si aún no lo ha hecho.'}
+      ]}
+    }
+  },
+  {
+    key:'Operación & Ecosistemas', icon:'fa-network-wired', color:'#2dd4bf',
+    desc:'¿Los procesos de recaudo y pagos están automatizados en tiempo real, o requieren intervención manual diaria y conciliación periódica?',
+    qs:[
+      '¿Los procesos de recaudo, conciliación y pagos están automatizados en tiempo real, sin requerir intervención manual diaria o semanal?',
+      '¿La organización está integrada (o en proceso formal de integración) a esquemas de pagos digitales interoperables (PSE, Transfiya, QR, ACH u equivalentes)?',
+      '¿Existe una arquitectura de APIs documentada que permita conectarse con socios del ecosistema (fintechs, burós de crédito, aseguradoras, gobierno) sin desarrollos a medida para cada integración?',
+      '¿La organización tiene visibilidad en tiempo real del estado operativo de sus integraciones externas, con alertas automáticas ante fallas y protocolos de contingencia activados?',
+      '¿La organización ha evaluado formalmente su preparación para Open Finance / Open Banking y tiene una hoja de ruta de cumplimiento para los plazos regulatorios vigentes?',
+      '¿Los indicadores operativos del ecosistema (disponibilidad de integraciones, tiempos de conciliación, tasa de errores en transacciones digitales) se reportan a la dirección, no solo al equipo de TI?'
+    ],
+    fb:{
+      bajo:{nv:'Inexistente / Incipiente',tx:'Una organización completamente cerrada en la era de los ecosistemas está construyendo todo desde cero mientras otros se benefician de la red. Los procesos manuales de recaudo y conciliación son un cuello de botella que escala mal y genera errores costosos.',ac:[
+        {t:'Identificar las 3 integraciones externas de mayor impacto', d:'Mapee con qué actores externos debería estar conectado su sistema hoy: pasarelas de pago, burós de crédito, plataformas de comunicación, entidades regulatorias. Priorice la integración más crítica para el negocio.'},
+        {t:'Automatizar la conciliación del proceso de mayor volumen', d:'Identifique el proceso de conciliación manual más frecuente y costoso en tiempo. Cualquier proceso que se repite más de 2 veces por semana debe automatizarse. El retorno es inmediato en reducción de errores y tiempo.'},
+        {t:'Evaluar posición frente a Open Finance usando el checklist regulatorio', d:'Revise si su organización está en el ámbito de la regulación de Open Finance vigente en su país. Evalúe qué capacidad técnica tiene hoy para el doble consentimiento y compartición de datos por API. Este análisis es urgente si el plazo de cumplimiento está próximo.'}
+      ]},
+      medio:{nv:'En Desarrollo',tx:'Las alianzas son comerciales pero no técnicas. Las integraciones manuales o por archivo son un riesgo operativo que escala mal. Cada nueva integración sin arquitectura coherente aumenta la fragilidad del ecosistema.',ac:[
+        {t:'Migrar las 2 integraciones más frecuentes a APIs en tiempo real', d:'Reemplace los procesos de integración por archivo plano o manual con conexiones API directas. El retorno es inmediato: menor error humano, mayor velocidad y mejor experiencia para el cliente final.'},
+        {t:'Incorporar indicadores de ecosistema al tablero directivo', d:'La disponibilidad de integraciones y la tasa de errores en transacciones digitales son indicadores críticos de negocio, no solo de TI. Si la dirección no los monitorea, los problemas se detectan tarde y cuestan más.'},
+        {t:'Construir la hoja de ruta de cumplimiento Open Finance', d:'Diseñe un plan de cumplimiento en fases: diagnóstico de brechas técnicas, actualización de políticas de consentimiento, desarrollo de APIs requeridas, pruebas de integración y despliegue. La organización que llega preparada al plazo regulatorio tiene ventaja competitiva.'}
+      ]},
+      alto:{nv:'Avanzado / Referente',tx:'Su modelo de ecosistema genera valor real y diferenciado. Las integraciones automatizadas están reduciendo costos operativos y mejorando la experiencia. El siguiente nivel: convertirse en orquestador del ecosistema, no solo participante.',ac:[
+        {t:'Evaluar qué capacidades propias ofrecer como servicio externo', d:'Si su arquitectura está madura, considere exponer algunas capacidades propias como APIs consumibles por terceros. Una API bien diseñada puede ser una nueva línea de ingresos y una barrera de entrada que sus competidores no pueden replicar fácilmente.'},
+        {t:'Diseñar incentivos para ampliar el ecosistema de socios', d:'Cada nuevo participante en su ecosistema aumenta el valor para todos, incluyendo para usted. Diseñe un programa formal de socios con criterios de onboarding, niveles de integración y beneficios mutuos.'},
+        {t:'Explorar modelo de plataforma en su sector', d:'El modelo de plataforma genera efectos de red que se componen con el tiempo y crean barreras de entrada estructurales. Evalúe si puede posicionarse como la plataforma que otros actores de su sector usan para conectarse, en vez de ser un participante más en plataformas de terceros.'}
+      ]}
+    }
+  }
+];
+
+// ════════════════════════════════════════
+// ESTADO
+// ════════════════════════════════════════
+let userData = {};
+let currentAx = 0;
+let scores = []; // scores[i][j]
+
+let axisNotes = []; // notas por eje
+function initScores() {
+  scores = AXES.map(a => Array(a.qs.length).fill(0));
+  axisNotes = AXES.map(() => '');
+}
+
+// ════════════════════════════════════════
+// NAVEGACIÓN
+// ════════════════════════════════════════
+function show(id) {
+  ['s-login','s-start','s-axis','s-confirm','s-results'].forEach(s => {
+    const el = document.getElementById(s);
+    el.classList.add('hidden');
+    el.classList.remove('fade');
+  });
+  const el = document.getElementById(id);
+  el.classList.remove('hidden');
+  setTimeout(() => el.classList.add('fade'), 10);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ════════════════════════════════════════
+// LOGIN
+// ════════════════════════════════════════
+function doLogin() {
+  const u = document.getElementById('lu').value.trim();
+  const p = document.getElementById('lp').value.trim();
+  const err = document.getElementById('login-err');
+  const errTxt = document.getElementById('login-err-txt');
+
+  if (!u || !p) {
+    errTxt.textContent = 'Ingrese usuario y contraseña.';
+    err.classList.remove('hidden'); return;
+  }
+  if (!CREDS.some(c => c.u===u && c.p===p)) {
+    errTxt.textContent = 'Credenciales incorrectas.';
+    err.classList.remove('hidden'); return;
+  }
+  // Datos del usuario vendrán del módulo de roles en el siguiente incremento
+  // Por ahora usamos el nombre de usuario como identificador
+  userData = { user: u, nombre: u, cargo:'—', empresa:'—', email:'—', sector:'—' };
+  err.classList.add('hidden');
+  document.getElementById('start-name').textContent = u;
+  initScores();
+  show('s-start');
+}
+
+function goStart() { currentAx = 0; show('s-axis'); renderAx(); }
+function goBack() { currentAx = AXES.length - 1; show('s-axis'); renderAx(); }
+function restart() { initScores(); currentAx = 0; show('s-start'); }
+
+// ════════════════════════════════════════
+// RENDERIZADO DE EJE
+// ════════════════════════════════════════
+function renderAx() {
+  const ax = AXES[currentAx];
+  const pct = Math.round((currentAx / AXES.length) * 100);
+  document.getElementById('ax-label').textContent = `Eje ${currentAx+1} de ${AXES.length} · ${ax.key}`;
+  document.getElementById('ax-pct').textContent = `${pct}% completado`;
+  document.getElementById('ax-bar').style.width = pct + '%';
+  document.getElementById('ax-icon').className = `fa-solid ${ax.icon} text-lg`;
+  document.getElementById('ax-icon').style.color = ax.color;
+  document.getElementById('ax-title').textContent = ax.key;
+  document.getElementById('ax-desc').textContent = ax.desc;
+  document.getElementById('btn-prev').style.visibility = currentAx === 0 ? 'hidden' : 'visible';
+
+  const LABELS = {1:'Inexistente',2:'Incipiente',3:'En Desarrollo',4:'Avanzado',5:'Referente'};
+  const COLS = {1:'rose',2:'orange',3:'amber',4:'teal',5:'emerald'};
+
+  const container = document.getElementById('ax-qs');
+  container.innerHTML = '';
+  ax.qs.forEach((q, qi) => {
+    const saved = scores[currentAx][qi];
+    const div = document.createElement('div');
+    div.className = 'bg-slate-800/40 border border-slate-700/40 rounded-xl p-5';
+    div.innerHTML = `
+      <p class="text-sm font-semibold text-white leading-relaxed mb-4">
+        <span class="text-[10px] font-mono text-slate-600 mr-2">${currentAx+1}.${qi+1}</span>${q}
+      </p>
+      <div class="flex gap-2">
+        ${[1,2,3,4,5].map(v => {
+          const c = COLS[v]; const isSel = saved === v;
+          return `<button
+            class="rating-chip flex-1 py-2.5 rounded-lg border text-xs font-black transition
+              ${isSel ? `bg-${c}-500/25 border-${c}-400 text-${c}-300 sel` : `bg-slate-900 border-slate-700 text-slate-500 hover:border-${c}-500/50 hover:text-${c}-400`}"
+            onclick="pick(${currentAx},${qi},${v})"
+            data-ax="${currentAx}" data-qi="${qi}" data-v="${v}">
+            <div class="text-sm">${v}</div>
+            <div class="text-[9px] mt-0.5 opacity-70 leading-tight">${LABELS[v]}</div>
+          </button>`;
+        }).join('')}
+      </div>`;
+    container.appendChild(div);
+  });
+  checkNext();
+}
+
+function pick(ai, qi, v) {
+  scores[ai][qi] = v;
+  const COLS = {1:'rose',2:'orange',3:'amber',4:'teal',5:'emerald'};
+  document.querySelectorAll(`[data-ax="${ai}"][data-qi="${qi}"]`).forEach(btn => {
+    const bv = parseInt(btn.dataset.v); const c = COLS[bv];
+    btn.className = bv === v
+      ? `rating-chip flex-1 py-2.5 rounded-lg border text-xs font-black transition bg-${c}-500/25 border-${c}-400 text-${c}-300 sel`
+      : `rating-chip flex-1 py-2.5 rounded-lg border text-xs font-black transition bg-slate-900 border-slate-700 text-slate-500 hover:border-${c}-500/50 hover:text-${c}-400`;
+  });
+  checkNext();
+}
+
+function checkNext() {
+  document.getElementById('btn-next').disabled = scores[currentAx].some(s => s === 0);
+}
+
+function nextAx() {
+  if (currentAx < AXES.length - 1) { currentAx++; show('s-axis'); renderAx(); }
+  else { showConfirm(); }
+}
+function prevAx() { if (currentAx > 0) { currentAx--; show('s-axis'); renderAx(); } }
+
+// ════════════════════════════════════════
+// CONFIRMACIÓN
+// ════════════════════════════════════════
+function axAvg(i) { return parseFloat((scores[i].reduce((a,b)=>a+b,0)/scores[i].length).toFixed(2)); }
+function getColor(s) { return s<2?'#f43f5e':s<3?'#fb923c':s<4?'#f59e0b':s<4.5?'#2dd4bf':'#34d399'; }
+function getBadge(s) { return s<2?'text-rose-400 bg-rose-500/10 border-rose-500/30':s<3?'text-orange-400 bg-orange-500/10 border-orange-500/30':s<4?'text-amber-400 bg-amber-500/10 border-amber-500/30':s<4.5?'text-teal-400 bg-teal-500/10 border-teal-500/30':'text-emerald-400 bg-emerald-500/10 border-emerald-500/30'; }
+function getLvlLabel(s) { return s<2?'Inexistente':s<3?'Incipiente':s<4?'En Desarrollo':s<4.5?'Avanzado':'Referente'; }
+
+function showConfirm() {
+  const grid = document.getElementById('confirm-grid');
+  const summary = document.getElementById('confirm-summary');
+  grid.innerHTML = '';
+  summary.innerHTML = '';
+  AXES.forEach((ax, i) => {
+    const avg = axAvg(i);
+    grid.innerHTML += `
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 text-center">
+        <i class="fa-solid ${ax.icon} text-sm mb-1 block" style="color:${ax.color}"></i>
+        <div class="font-black text-sm" style="color:${getColor(avg)}">${avg}</div>
+        <div class="text-[9px] text-slate-600 mt-0.5 leading-tight">${ax.key.split(' & ')[0]}</div>
+      </div>`;
+    summary.innerHTML += `
+      <div class="flex items-center justify-between py-1.5 border-b border-slate-800 last:border-0">
+        <div class="flex items-center gap-2 text-xs text-slate-300">
+          <i class="fa-solid ${ax.icon} text-[10px]" style="color:${ax.color}"></i>${ax.key}
+        </div>
+        <span class="text-xs font-bold px-2 py-0.5 rounded-full border ${getBadge(avg)}">${avg}/5 · ${getLvlLabel(avg)}</span>
+      </div>`;
+  });
+  show('s-confirm');
+}
+
+// ════════════════════════════════════════
+// RESULTADOS
+// ════════════════════════════════════════
+function genResults() {
+  const avgs = AXES.map((_,i) => axAvg(i));
+  const global = parseFloat((avgs.reduce((a,b)=>a+b,0)/avgs.length).toFixed(1));
+  let level, summary;
+  if (global < 2.0) { level='Madurez Inicial'; summary='Su organización enfrenta brechas críticas en múltiples dimensiones. La prioridad inmediata es estabilizar los ejes más débiles antes de cualquier iniciativa de escala. Sin cimientos básicos, cada nueva herramienta suma complejidad sin valor.'; }
+  else if (global < 3.0) { level='Madurez Básica'; summary='Ha dado los primeros pasos pero las iniciativas son dispersas. El riesgo es invertir en tecnología sin arquitectura clara y terminar con más complejidad que antes. El foco debe ser conectar lo existente en una estrategia coherente antes de sumar nuevas herramientas.'; }
+  else if (global < 4.0) { level='En Desarrollo'; summary='Avances concretos pero gobernanza fragmentada. El reto no es empezar — es conectar las iniciativas existentes en una estrategia con OKRs medibles y horizontes claros. El eje más débil es el límite real de su capacidad de transformación.'; }
+  else if (global < 4.6) { level='Avanzado'; summary='Bases digitales sólidas. La mayoría de dimensiones operan con madurez real. El siguiente nivel es la diferenciación: convertir capacidades digitales en ventajas competitivas estructurales que sus competidores no puedan replicar en el corto plazo.'; }
+  else { level='Referente Digital'; summary='Está en el top de madurez digital de su sector. El desafío ahora es mantener la velocidad de innovación, escalar el modelo de forma sostenible y convertir capacidades digitales en nuevas fuentes de ingreso y ventajas estructurales de largo plazo.'; }
+
+  // Eje crítico
+  const minIdx = avgs.indexOf(Math.min(...avgs));
+  const minAx = AXES[minIdx];
+  const minAvg = avgs[minIdx];
+  document.getElementById('r-alert-txt').textContent = `${minAx.key} obtuvo ${minAvg}/5 — el eje más bajo determina el techo real de toda iniciativa que dependa de él. Sin mejorar este eje primero, los demás avances tendrán un impacto limitado.`;
+
+  document.getElementById('r-user').textContent = userData.nombre;
+  document.getElementById('r-empresa').textContent = userData.empresa !== '—' ? userData.empresa : '';
+  document.getElementById('r-level').textContent = level;
+  document.getElementById('r-badge').textContent = `Índice Global: ${global} / 5.0`;
+  document.getElementById('r-summary').textContent = summary;
+
+  window._result = { globalAvg: global, level, summary, axAvgs: avgs };
+  buildBars(avgs);
+  buildDims(avgs);
+  buildHorizons(avgs);
+  buildRadar(avgs);
+  sendToScript(avgs, global, level, summary);
+  show('s-results');
+}
+
+// ─── Barras ───
+function buildBars(avgs) {
+  const c = document.getElementById('r-bars');
+  c.innerHTML = '';
+  AXES.forEach((ax,i) => {
+    const avg = avgs[i];
+    c.innerHTML += `
+      <div>
+        <div class="flex justify-between items-center mb-1">
+          <span class="text-xs text-slate-400 flex items-center gap-1.5">
+            <i class="fa-solid ${ax.icon} text-[9px]" style="color:${ax.color}"></i>${ax.key}
+          </span>
+          <span class="text-xs font-black font-mono border px-2 py-0.5 rounded-full ${getBadge(avg)}">${avg}/5</span>
+        </div>
+        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+          <div class="bar-fill h-full rounded-full" style="width:0%;background:${getColor(avg)}" data-w="${avg/5*100}%"></div>
+        </div>
+      </div>`;
+  });
+  setTimeout(() => document.querySelectorAll('.bar-fill').forEach(b => b.style.width = b.dataset.w), 200);
+}
+
+// ─── Dimensiones interactivas ───
+function buildDims(avgs) {
+  const c = document.getElementById('r-dims');
+  c.innerHTML = '';
+  AXES.forEach((ax, i) => {
+    const avg = avgs[i];
+    const tier = avg < 2.5 ? 'bajo' : avg < 4.0 ? 'medio' : 'alto';
+    const fb = ax.fb[tier];
+    const borderCls = avg<2?'border-rose-500/40':avg<3?'border-orange-500/40':avg<4?'border-amber-500/40':avg<4.5?'border-teal-500/40':'border-emerald-500/40';
+
+    const actionsHtml = fb.ac.map(a => `
+      <div class="bg-slate-900 border border-slate-700/50 rounded-xl p-4 mb-3">
+        <p class="text-xs font-bold text-cyan-400 mb-1.5"><i class="fa-solid fa-bolt mr-1.5 text-[10px]"></i>${a.t}</p>
+        <p class="text-xs text-slate-400 leading-relaxed">${a.d}</p>
+      </div>`).join('');
+
+    const qsHtml = ax.qs.map((q, qi) => {
+      const sc = scores[i][qi];
+      const LABELS = {1:'Inexistente',2:'Incipiente',3:'En Desarrollo',4:'Avanzado',5:'Referente'};
+      const COLS = {1:'text-rose-400',2:'text-orange-400',3:'text-amber-400',4:'text-teal-400',5:'text-emerald-400'};
+      return `<div class="flex items-start gap-3 py-2.5 border-b border-slate-800/60 last:border-0">
+        <span class="text-[10px] font-mono text-slate-600 mt-0.5 flex-shrink-0">${i+1}.${qi+1}</span>
+        <span class="text-xs text-slate-400 flex-1 leading-relaxed">${q}</span>
+        <span class="text-xs font-black flex-shrink-0 ${COLS[sc]}">${sc}/5 <span class="font-normal text-[9px]">${LABELS[sc]}</span></span>
+      </div>`;
+    }).join('');
+
+    c.innerHTML += `
+      <div class="card-dim bg-slate-900 border ${borderCls} rounded-2xl overflow-hidden">
+        <button onclick="toggleDim(${i})"
+          class="w-full flex items-center justify-between p-5 text-left group hover:bg-slate-800/40 transition">
+          <div class="flex items-center gap-3">
+            <i class="fa-solid ${ax.icon} text-base" style="color:${ax.color}"></i>
+            <div>
+              <span class="text-sm font-bold text-white">${ax.key}</span>
+              <span class="ml-2 text-xs px-2 py-0.5 rounded-full border font-bold ${getBadge(avg)}">${avg}/5 · ${fb.nv}</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span id="note-chip-${i}" class="hidden text-[9px] bg-amber-500/10 border border-amber-500/30 text-amber-400 px-2 py-0.5 rounded-full font-bold">
+              <i class="fa-solid fa-note-sticky mr-1"></i>Nota
+            </span>
+            <span class="text-xs text-slate-500 hidden md:block">${fb.tx.substring(0,55)}...</span>
+            <i id="dim-arrow-${i}" class="fa-solid fa-chevron-down text-slate-600 group-hover:text-cyan-400 transition-transform duration-300 text-xs"></i>
+          </div>
+        </button>
+        <div id="dim-body-${i}" class="accordion-body border-t border-slate-800/60">
+          <div class="p-5 grid md:grid-cols-2 gap-5">
+            <div>
+              <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Diagnóstico</p>
+              <p class="text-sm text-slate-300 leading-relaxed mb-5">${fb.tx}</p>
+              <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Acciones prioritarias</p>
+              ${actionsHtml}
+            </div>
+            <div>
+              <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Sus respuestas por pregunta</p>
+              <div class="bg-slate-800/40 rounded-xl p-4 mb-4">${qsHtml}</div>
+              <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">
+                <i class="fa-solid fa-note-sticky text-amber-400 mr-1"></i>Notas y comentarios del evaluador
+              </p>
+              <textarea
+                id="note-${i}"
+                onchange="saveNote(${i})"
+                oninput="saveNote(${i})"
+                placeholder="Agregue observaciones, contexto organizacional, acuerdos del equipo o cualquier nota relevante para este eje..."
+                class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-xs text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 resize-none transition"
+                rows="4"
+              ></textarea>
+              <p class="text-[9px] text-slate-600 mt-1">Las notas se incluirán en el PDF del diagnóstico</p>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  });
+}
+
+function toggleDim(i) {
+  const body = document.getElementById(`dim-body-${i}`);
+  const arrow = document.getElementById(`dim-arrow-${i}`);
+  const isOpen = body.classList.contains('open');
+  // Cerrar todos
+  document.querySelectorAll('.accordion-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('[id^="dim-arrow-"]').forEach(a => a.style.transform = 'rotate(0deg)');
+  if (!isOpen) {
+    body.classList.add('open');
+    arrow.style.transform = 'rotate(180deg)';
+  }
+}
+
+// ─── Horizontes profundos ───
+function buildHorizons(avgs) {
+  const sorted = avgs.map((avg,i) => ({avg,i})).sort((a,b) => a.avg - b.avg);
+  const h1 = sorted.slice(0,3);
+  const h2 = sorted.slice(3,6);
+  const h3 = sorted.slice(6,8);
+
+  const H_DATA = [
+    {
+      id:'h1', label:'Horizonte 1', period:'Meses 1 a 6', icon:'fa-fire', color:'#f43f5e',
+      bg:'bg-rose-500/5', border:'border-rose-500/20', tc:'text-rose-400',
+      title:'Estabilizar — Cimientos críticos',
+      intro:'Estos son sus ejes más débiles. Sin estabilizarlos primero, cualquier iniciativa en los otros horizontes construirá sobre bases inestables. La regla es clara: no avanzar al Horizonte 2 hasta que estos ejes superen el nivel 3.',
+      axes: h1,
+      recomend: [
+        {icon:'fa-bullseye', txt:'Defina un OKR específico por cada eje de este horizonte. Sin objetivos medibles, el avance es invisible y no genera compromiso institucional.'},
+        {icon:'fa-calendar-check', txt:'Asigne un responsable y un presupuesto concreto a cada eje. La responsabilidad difusa es la causa más común de que los planes de transformación no se ejecuten.'},
+        {icon:'fa-gauge-high', txt:'Establezca revisiones mensuales del avance en estos ejes. La frecuencia importa: mensual en Horizonte 1, trimestral en Horizontes 2 y 3.'}
+      ]
+    },
+    {
+      id:'h2', label:'Horizonte 2', period:'Meses 6 a 18', icon:'fa-rocket', color:'#f59e0b',
+      bg:'bg-amber-500/5', border:'border-amber-500/20', tc:'text-amber-400',
+      title:'Automatizar y escalar',
+      intro:'Con los cimientos del Horizonte 1 estabilizados, estos ejes son el siguiente nivel de madurez. Aquí la organización pasa de corregir deficiencias a construir capacidades que generan ventaja competitiva real.',
+      axes: h2,
+      recomend: [
+        {icon:'fa-chart-line', txt:'Conecte cada iniciativa de este horizonte a un KPI de negocio con meta cuantificada. Los proyectos de transformación sin métricas de impacto son proyectos de gasto, no de inversión.'},
+        {icon:'fa-users-gear', txt:'Escale las células ágiles: cada iniciativa de este horizonte debe tener un equipo multifuncional con Product Owner, Scrum Master y capacidad de entrega en Sprints de 2 semanas.'},
+        {icon:'fa-plug', txt:'Priorice integraciones que multipliquen el valor de lo construido en el Horizonte 1. La automatización y los ecosistemas solo funcionan sobre datos gobernados y sistemas desacoplados.'}
+      ]
+    },
+    {
+      id:'h3', label:'Horizonte 3', period:'Mes 18 en adelante', icon:'fa-star', color:'#34d399',
+      bg:'bg-emerald-500/5', border:'border-emerald-500/20', tc:'text-emerald-400',
+      title:'Predecir y liderar el ecosistema',
+      intro:'Sus dimensiones más maduras. El reto en este horizonte no es construir — es mantener la velocidad de innovación y convertir las capacidades construidas en ventajas competitivas que el mercado reconozca.',
+      axes: h3,
+      recomend: [
+        {icon:'fa-brain', txt:'Explore inteligencia artificial y analítica predictiva en las capacidades de este horizonte. Los datos gobernados y los sistemas desacoplados son el prerrequisito — si están listos, el valor de la IA es inmediato.'},
+        {icon:'fa-share-nodes', txt:'Evalúe convertirse en orquestador del ecosistema. Las organizaciones más maduras digitalmente no participan en plataformas de terceros — crean las plataformas que otros usan.'},
+        {icon:'fa-trophy', txt:'Documente y comparta sus capacidades como caso de referencia. El liderazgo de pensamiento en transformación digital es un activo de posicionamiento que genera nuevas oportunidades de negocio.'}
+      ]
+    }
+  ];
+
+  const c = document.getElementById('r-horizons');
+  c.innerHTML = '';
+  H_DATA.forEach(h => {
+    const axHtml = h.axes.map(({avg,i}) => `
+      <div class="flex items-center justify-between py-2 border-b border-slate-700/40 last:border-0">
+        <div class="flex items-center gap-2 text-xs text-slate-300">
+          <i class="fa-solid ${AXES[i].icon} text-[10px]" style="color:${AXES[i].color}"></i>
+          ${AXES[i].key}
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="h-1.5 w-16 bg-slate-700 rounded-full overflow-hidden">
+            <div class="h-full rounded-full" style="width:${avg/5*100}%;background:${getColor(avg)}"></div>
+          </div>
+          <span class="text-xs font-black font-mono" style="color:${getColor(avg)}">${avg}/5</span>
+        </div>
+      </div>`).join('');
+
+    const recHtml = h.recomend.map(r => `
+      <div class="flex gap-3 items-start">
+        <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style="background:${h.color}18;border:1px solid ${h.color}30">
+          <i class="fa-solid ${r.icon} text-[10px]" style="color:${h.color}"></i>
+        </div>
+        <p class="text-xs text-slate-400 leading-relaxed">${r.txt}</p>
+      </div>`).join('');
+
+    c.innerHTML += `
+      <div class="${h.bg} border ${h.border} rounded-2xl overflow-hidden">
+        <div class="p-5 grid md:grid-cols-2 gap-5">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <i class="fa-solid ${h.icon} text-sm" style="color:${h.color}"></i>
+              <span class="text-sm font-black ${h.tc}">${h.label}</span>
+              <span class="text-xs text-slate-500 font-mono">${h.period}</span>
+            </div>
+            <h4 class="text-base font-bold text-white mb-2">${h.title}</h4>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">${h.intro}</p>
+            <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-700/40">${axHtml}</div>
+          </div>
+          <div>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Cómo ejecutar este horizonte</p>
+            <div class="space-y-3">${recHtml}</div>
+          </div>
+        </div>
+      </div>`;
+  });
+}
+
+// ─── Radar Chart ───
+function buildRadar(avgs) {
+  setTimeout(() => {
+    const ctx = document.getElementById('rChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: AXES.map(a => a.key.split(' & ')[0]),
+        datasets: [{
+          data: avgs,
+          backgroundColor: 'rgba(34,211,238,.10)',
+          borderColor: 'rgba(34,211,238,.9)',
+          borderWidth: 2,
+          pointBackgroundColor: avgs.map(s => getColor(s)),
+          pointBorderColor: '#0f172a',
+          pointBorderWidth: 2,
+          pointRadius: 5
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          r: {
+            angleLines: { color: 'rgba(255,255,255,.06)' },
+            grid: { color: 'rgba(255,255,255,.06)' },
+            pointLabels: { color: 'rgba(148,163,184,1)', font: { size: 9, weight: '600' } },
+            ticks: { backdropColor:'transparent', color:'rgba(71,85,105,1)', stepSize:1, showLabelBackdrop:false, font:{size:8} },
+            min:0, max:5
+          }
+        }
+      }
+    });
+  }, 150);
+}
+
+// ─── Notas por eje ───
+function saveNote(i) {
+  axisNotes[i] = document.getElementById(`note-${i}`).value;
+  const chip = document.getElementById(`note-chip-${i}`);
+  if (chip) chip.classList.toggle('hidden', !axisNotes[i].trim());
+}
+
+// ─── Descarga PDF ───
+function downloadPDF() {
+  const btn = document.querySelector('button[onclick="downloadPDF()"]');
+  const orig = btn.innerHTML;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generando PDF...';
+  btn.disabled = true;
+
+  // Construir el contenido del PDF como HTML temporal
+  const { globalAvg, level, summary, axAvgs } = window._result || {};
+  if (!globalAvg) { btn.innerHTML = orig; btn.disabled = false; return; }
+
+  const LABELS = {1:'Inexistente',2:'Incipiente',3:'En Desarrollo',4:'Avanzado',5:'Referente'};
+  const levelLabel = lvl => LABELS[Math.round(lvl)] || getLvlLabel(lvl);
+
+  let dimSections = '';
+  AXES.forEach((ax, i) => {
+    const avg = axAvgs[i];
+    const tier = avg < 2.5 ? 'bajo' : avg < 4.0 ? 'medio' : 'alto';
+    const fb = ax.fb[tier];
+    const nota = axisNotes[i] ? axisNotes[i].trim() : '';
+    const notaHtml = nota ? `<div style="background:#1c1f2e;border:1px solid #f59e0b33;border-radius:8px;padding:10px 12px;margin-top:10px"><p style="font-size:9px;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">📝 Nota del evaluador</p><p style="font-size:10px;color:#cbd5e1;line-height:1.6">${nota.replace(/\n/g,'<br>')}</p></div>` : '';
+    const scoreRow = ax.qs.map((q,qi) => `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #1e293b;font-size:9px"><span style="color:#94a3b8;flex:1;padding-right:8px">${i+1}.${qi+1} ${q.substring(0,75)}...</span><span style="font-weight:700;color:${getColor(scores[i][qi])};flex-shrink:0">${scores[i][qi]}/5</span></div>`).join('');
+    const acHtml = fb.ac.map(a => `<div style="margin-bottom:8px"><p style="font-size:9px;font-weight:700;color:#22d3ee;margin-bottom:2px">→ ${a.t}</p><p style="font-size:9px;color:#94a3b8;line-height:1.5">${a.d.substring(0,150)}...</p></div>`).join('');
+
+    dimSections += `
+      <div style="background:#0f172a;border:1px solid ${ax.color}33;border-radius:12px;padding:16px;margin-bottom:14px;page-break-inside:avoid">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <span style="font-size:12px;font-weight:800;color:${ax.color}">${ax.key}</span>
+          <span style="font-size:10px;font-weight:700;color:${getColor(avg)};background:${getColor(avg)}18;padding:3px 8px;border-radius:20px;border:1px solid ${getColor(avg)}40">${avg}/5 · ${fb.nv}</span>
+        </div>
+        <p style="font-size:10px;color:#cbd5e1;line-height:1.6;margin-bottom:10px">${fb.tx}</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div>
+            <p style="font-size:8px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Acciones prioritarias</p>
+            ${acHtml}
+          </div>
+          <div>
+            <p style="font-size:8px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Respuestas por pregunta</p>
+            ${scoreRow}
+          </div>
+        </div>
+        ${notaHtml}
+      </div>`;
+  });
+
+  const sorted = axAvgs.map((avg,i)=>({avg,i})).sort((a,b)=>a.avg-b.avg);
+  const hRows = (arr) => arr.map(({avg,i}) => `<div style="display:flex;justify-content:space-between;font-size:10px;padding:3px 0;border-bottom:1px solid #1e293b"><span style="color:#cbd5e1">${AXES[i].key}</span><span style="font-weight:700;color:${getColor(avg)}">${avg}/5</span></div>`).join('');
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <style>
+    body{font-family:'Inter',sans-serif;background:#0f172a;color:#f1f5f9;margin:0;padding:0}
+    *{box-sizing:border-box}
+    @page{margin:16mm}
+  </style></head><body>
+  <div style="background:linear-gradient(135deg,#0f172a,#1e1b4b);padding:32px;border-radius:16px;margin-bottom:20px">
+    <p style="font-size:9px;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Diagnóstico de Madurez Digital · Informe Profesional</p>
+    <h1 style="font-size:26px;font-weight:900;color:#f1f5f9;margin:0 0 4px">${level}</h1>
+    <p style="font-size:13px;color:#22d3ee;font-weight:700;margin:0 0 16px">Índice Global: ${globalAvg} / 5.0</p>
+    <p style="font-size:11px;color:#94a3b8;line-height:1.7;margin:0 0 16px">${summary}</p>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <div><span style="font-size:9px;color:#475569;text-transform:uppercase;font-weight:700">Evaluador</span><p style="font-size:11px;color:#e2e8f0;font-weight:600;margin:2px 0 0">${userData.user}</p></div>
+      <div><span style="font-size:9px;color:#475569;text-transform:uppercase;font-weight:700">Fecha</span><p style="font-size:11px;color:#e2e8f0;font-weight:600;margin:2px 0 0">${new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'})}</p></div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
+    ${AXES.map((ax,i)=>`<div style="background:#0f172a;border:1px solid ${ax.color}33;border-radius:10px;padding:10px;text-align:center"><p style="font-size:8px;color:${ax.color};font-weight:700;margin:0 0 4px">${ax.key.split(' & ')[0]}</p><p style="font-size:18px;font-weight:900;color:${getColor(axAvgs[i])};margin:0">${axAvgs[i]}</p></div>`).join('')}
+  </div>
+
+  <h2 style="font-size:13px;font-weight:800;color:#f1f5f9;margin:20px 0 12px;border-bottom:1px solid #1e293b;padding-bottom:8px">Análisis por Dimensión</h2>
+  ${dimSections}
+
+  <h2 style="font-size:13px;font-weight:800;color:#f1f5f9;margin:20px 0 12px;border-bottom:1px solid #1e293b;padding-bottom:8px">Hoja de Ruta · Horizontes de Acción</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
+    <div style="background:#f43f5e0a;border:1px solid #f43f5e30;border-radius:10px;padding:14px">
+      <p style="font-size:9px;font-weight:800;color:#f43f5e;text-transform:uppercase;margin:0 0 2px">Horizonte 1 · Meses 1–6</p>
+      <p style="font-size:8px;color:#f43f5e80;margin:0 0 10px">Estabilizar</p>
+      ${hRows(sorted.slice(0,3))}
+    </div>
+    <div style="background:#f59e0b0a;border:1px solid #f59e0b30;border-radius:10px;padding:14px">
+      <p style="font-size:9px;font-weight:800;color:#f59e0b;text-transform:uppercase;margin:0 0 2px">Horizonte 2 · Meses 6–18</p>
+      <p style="font-size:8px;color:#f59e0b80;margin:0 0 10px">Automatizar y escalar</p>
+      ${hRows(sorted.slice(3,6))}
+    </div>
+    <div style="background:#34d3990a;border:1px solid #34d39930;border-radius:10px;padding:14px">
+      <p style="font-size:9px;font-weight:800;color:#34d399;text-transform:uppercase;margin:0 0 2px">Horizonte 3 · Mes 18+</p>
+      <p style="font-size:8px;color:#34d39980;margin:0 0 10px">Predecir y liderar</p>
+      ${hRows(sorted.slice(6,8))}
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:16px;border-top:1px solid #1e293b;margin-top:20px">
+    <p style="font-size:9px;color:#475569;margin:0">© 2026 William Andrés Gómez Lizarazo · andrezgmz.github.io · Diagnóstico de Madurez Digital Profesional</p>
+  </div>
+  </body></html>`;
+
+  // Generar y descargar PDF con html2pdf
+  const opt = {
+    margin: [8, 8, 8, 8],
+    filename: `Diagnostico_Madurez_Digital_${userData.user}_${new Date().toISOString().slice(0,10)}.pdf`,
+    image: { type:'jpeg', quality:0.95 },
+    html2canvas: { scale:2, backgroundColor:'#0f172a', useCORS:true, logging:false },
+    jsPDF: { unit:'mm', format:'a4', orientation:'portrait' },
+    pagebreak: { mode:['avoid-all','css'] }
+  };
+
+  const container = document.createElement('div');
+  container.innerHTML = html;
+  container.style.cssText = 'position:absolute;left:-9999px;top:0;width:210mm;background:#0f172a';
+  document.body.appendChild(container);
+
+  html2pdf().set(opt).from(container.querySelector('body')).save().then(() => {
+    document.body.removeChild(container);
+    btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i>PDF descargado';
+    btn.className = btn.className.replace('bg-cyan-500','bg-emerald-500').replace('hover:bg-cyan-400','hover:bg-emerald-400');
+    setTimeout(() => {
+      btn.innerHTML = orig;
+      btn.className = btn.className.replace('bg-emerald-500','bg-cyan-500').replace('hover:bg-emerald-400','hover:bg-cyan-400');
+      btn.disabled = false;
+    }, 3000);
+  }).catch(() => {
+    document.body.removeChild(container);
+    btn.innerHTML = orig;
+    btn.disabled = false;
+  });
+}
+
+// ─── Envío al Google Script ───
+function sendToScript(avgs, global, level, summary) {
+  let diag = `DIAGNÓSTICO DE MADUREZ DIGITAL\n`;
+  diag += `Organización: ${userData.empresa} · Evaluador: ${userData.nombre} · ${userData.cargo}\n`;
+  diag += `Correo: ${userData.email} · Sector: ${userData.sector}\n`;
+  diag += `${'─'.repeat(50)}\n`;
+  diag += `ÍNDICE GLOBAL: ${global}/5.0 — ${level}\n${summary}\n\n`;
+  diag += `DIAGNÓSTICO POR DIMENSIÓN\n${'─'.repeat(50)}\n\n`;
+  AXES.forEach((ax,i) => {
+    const avg = avgs[i];
+    const tier = avg < 2.5 ? 'bajo' : avg < 4.0 ? 'medio' : 'alto';
+    const fb = ax.fb[tier];
+    diag += `${i+1}. ${ax.key} → ${avg}/5.0 [${fb.nv}]\n`;
+    diag += `   ${fb.tx}\n`;
+    fb.ac.forEach(a => { diag += `   → ${a.t}: ${a.d.substring(0,100)}...\n`; });
+    diag += `   Respuestas: ${scores[i].join(' · ')}\n\n`;
+  });
+
+  const payload = new URLSearchParams({
+    FormType:'radar_pro',
+    Nombre: userData.nombre, Cargo: userData.cargo,
+    Cooperativa: userData.empresa, Email: userData.email, Sector: userData.sector,
+    'Puntaje Promedio': global, 'Nivel Alcanzado': level,
+    'Detalle Respuestas por Dimensión': JSON.stringify(AXES.reduce((acc,ax,i)=>{ acc[ax.key]={promedio:avgs[i],respuestas:scores[i]}; return acc; },{})),
+    'Diagnostico Completo': diag
+  });
+
+  fetch('https://script.google.com/macros/s/AKfycbxoEeXu9LjLpTe1UYXqJiDYFv6kiaGcp5FoiE88hykhWagFB4NCN7K0j--HN3esmTLAZQ/exec', {
+    method:'POST', body:payload, mode:'no-cors'
+  }).catch(()=>{});
+}
+</script>
+</body>
+</html>
