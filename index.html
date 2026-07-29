@@ -1,523 +1,730 @@
 <!DOCTYPE html>
 <html lang="es">
-    <!-- Motor de Agendamiento Flotante (Calendly) -->
-    <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
-    <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>William Andrés Gómez Lizarazo | Director de Operaciones & Transformación Digital</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        .accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease-out, padding 0.4s ease;
-        }
-    </style>
+    <meta name="description" content="Consultor en Transformación Digital. Más de 10 años liderando operaciones y gobierno corporativo en el sector financiero-cooperativo y público.">
+
+    <!-- Preconexiones -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://assets.calendly.com">
+
+    <!-- Fuente Inter (solo pesos necesarios) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome diferido -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+          media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
+
+    <!-- Calendly CSS diferido -->
+    <link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css"
+          media="print" onload="this.media='all'">
+
+<style>
+/* ─── RESET & BASE ─────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:#f8fafc;color:#1e293b;line-height:1.6}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:inherit}
+input,textarea,select{font-family:inherit}
+
+/* ─── LAYOUT ───────────────────────────────────── */
+.container{max-width:80rem;margin:0 auto;padding:0 1rem}
+.container-sm{max-width:48rem;margin:0 auto;padding:0 1rem}
+.container-md{max-width:64rem;margin:0 auto;padding:0 1rem}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem}
+.grid-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;text-align:center}
+.flex{display:flex}.flex-col{flex-direction:column}
+.items-center{align-items:center}.justify-between{justify-content:space-between}
+.justify-center{justify-content:center}.justify-end{justify-content:flex-end}
+.gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}.gap-12{gap:3rem}
+.w-full{width:100%}.h-full{height:100%}
+.hidden{display:none}
+.sticky{position:sticky;top:0;z-index:50}
+.relative{position:relative}.overflow-hidden{overflow:hidden}
+
+/* ─── ESPACIADO ────────────────────────────────── */
+.py-3{padding-top:.75rem;padding-bottom:.75rem}
+.py-4{padding-top:1rem;padding-bottom:1rem}
+.py-6{padding-top:1.5rem;padding-bottom:1.5rem}
+.py-8{padding-top:2rem;padding-bottom:2rem}
+.py-14{padding-top:3.5rem;padding-bottom:3.5rem}
+.py-20{padding-top:5rem;padding-bottom:5rem}
+.py-24{padding-top:6rem;padding-bottom:6rem}
+.px-4{padding-left:1rem;padding-right:1rem}
+.px-8{padding-left:2rem;padding-right:2rem}
+.p-4{padding:1rem}.p-6{padding:1.5rem}.p-8{padding:2rem}
+.p-35{padding:.875rem}
+.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}
+.mt-6{margin-top:1.5rem}.mt-7{margin-top:1.75rem}.mt-8{margin-top:2rem}
+.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}
+.mb-8{margin-bottom:2rem}.mb-12{margin-bottom:3rem}.mb-16{margin-bottom:4rem}
+
+/* ─── TIPOGRAFÍA ───────────────────────────────── */
+.text-xs{font-size:.75rem}.text-sm{font-size:.875rem}.text-base{font-size:1rem}
+.text-lg{font-size:1.125rem}.text-xl{font-size:1.25rem}.text-2xl{font-size:1.5rem}
+.text-3xl{font-size:1.875rem}.text-4xl{font-size:2.25rem}.text-5xl{font-size:3rem}
+.font-medium{font-weight:500}.font-semibold{font-weight:600}.font-bold{font-weight:700}
+.font-extrabold{font-weight:800}.font-black{font-weight:900}
+.tracking-tight{letter-spacing:-.025em}.tracking-wider{letter-spacing:.05em}
+.tracking-widest{letter-spacing:.1em}.uppercase{text-transform:uppercase}
+.italic{font-style:italic}.text-center{text-align:center}.leading-tight{line-height:1.25}
+.leading-relaxed{line-height:1.625}
+
+/* ─── COLORES ──────────────────────────────────── */
+.text-white{color:#fff}.text-slate-300{color:#cbd5e1}.text-slate-400{color:#94a3b8}
+.text-slate-500{color:#64748b}.text-slate-600{color:#475569}.text-slate-700{color:#334155}
+.text-slate-800{color:#1e293b}.text-slate-900{color:#0f172a}.text-slate-950{color:#020617}
+.text-cyan-400{color:#22d3ee}.text-cyan-600{color:#0891b2}
+.text-indigo-600{color:#4f46e5}
+.bg-white{background:#fff}.bg-slate-50{background:#f8fafc}.bg-slate-100{background:#f1f5f9}
+.bg-slate-800{background:#1e293b}.bg-slate-900{background:#0f172a}.bg-slate-950{background:#020617}
+.bg-cyan-500{background:#06b6d4}.bg-cyan-400{background:#22d3ee}
+.bg-indigo-600{background:#4f46e5}.bg-indigo-500{background:#6366f1}
+.bg-emerald-600{background:#059669}
+
+/* ─── BORDES Y SOMBRAS ─────────────────────────── */
+.rounded{border-radius:.25rem}.rounded-lg{border-radius:.5rem}.rounded-xl{border-radius:.75rem}
+.rounded-2xl{border-radius:1rem}.rounded-3xl{border-radius:1.5rem}.rounded-full{border-radius:9999px}
+.border{border-width:1px;border-style:solid}.border-b{border-bottom:1px solid}
+.border-t{border-top:1px solid}
+.border-slate-100{border-color:#f1f5f9}.border-slate-200{border-color:#e2e8f0}
+.border-slate-700{border-color:#334155}.border-slate-800{border-color:#1e293b}
+.border-slate-900{border-color:#0f172a}
+.shadow-sm{box-shadow:0 1px 2px 0 rgba(0,0,0,.05)}
+.shadow-lg{box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1)}
+.shadow-xl{box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1)}
+.shadow-2xl{box-shadow:0 25px 50px -12px rgba(0,0,0,.25)}
+.shadow-md{box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1)}
+.shadow-cyan{box-shadow:0 10px 15px -3px rgba(6,182,212,.2)}
+.shadow-indigo{box-shadow:0 10px 15px -3px rgba(79,70,229,.2)}
+
+/* ─── GRADIENTES ───────────────────────────────── */
+.hero-bg{background:linear-gradient(135deg,#020617 0%,#0f172a 50%,#1e1b4b 100%)}
+.text-gradient{background:linear-gradient(90deg,#22d3ee,#2dd4bf);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.btn-gradient{background:linear-gradient(90deg,#06b6d4,#2dd4bf);color:#020617}
+
+/* ─── NAVEGACIÓN ───────────────────────────────── */
+nav{background:#020617;color:#fff;border-bottom:1px solid #0f172a;box-shadow:0 4px 6px -1px rgba(0,0,0,.1)}
+.nav-inner{max-width:80rem;margin:0 auto;padding:0 1.5rem;display:flex;justify-content:space-between;align-items:center;height:4rem}
+.nav-brand{font-weight:700;font-size:1.125rem;letter-spacing:.05em;color:#22d3ee}
+.nav-links{display:flex;align-items:center;gap:2rem}
+.nav-links a{font-size:.875rem;font-weight:500;color:#fff;transition:color .2s}
+.nav-links a:hover{color:#22d3ee}
+.btn-nav-cyan{background:#06b6d4;color:#020617;padding:.5rem 1rem;border-radius:.25rem;font-weight:700;font-size:.875rem;transition:background .2s}
+.btn-nav-cyan:hover{background:#22d3ee}
+.btn-nav-indigo{background:#4f46e5;color:#fff;padding:.5rem 1rem;border-radius:.25rem;font-weight:700;font-size:.875rem;display:flex;align-items:center;gap:.375rem;transition:background .2s}
+.btn-nav-indigo:hover{background:#6366f1}
+
+/* ─── BOTONES ──────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:.75rem 2rem;border-radius:.5rem;font-weight:700;font-size:.875rem;transition:all .2s;text-align:center}
+.btn-cyan{background:#06b6d4;color:#020617;box-shadow:0 10px 15px -3px rgba(6,182,212,.2)}
+.btn-cyan:hover{background:#22d3ee;transform:scale(1.05)}
+.btn-indigo{background:#4f46e5;color:#fff;box-shadow:0 10px 15px -3px rgba(79,70,229,.2)}
+.btn-indigo:hover{background:#6366f1;transform:scale(1.05)}
+.btn-outline{border:1px solid #334155;color:#cbd5e1}
+.btn-outline:hover{background:#1e293b}
+.btn-dark{background:#020617;color:#fff;width:100%;padding:1rem;border-radius:.75rem;font-weight:700;font-size:1rem;border:none;transition:background .2s}
+.btn-dark:hover{background:#1e293b}
+
+/* ─── HERO ─────────────────────────────────────── */
+.hero{padding:6rem 1rem}
+.hero-content{max-width:80rem;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
+.hero-badge{display:inline-block;color:#22d3ee;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;padding:.25rem .75rem;background:rgba(6,182,212,.1);border-radius:9999px}
+.hero h1{font-size:3rem;font-weight:800;line-height:1.15;margin-top:1rem;color:#fff}
+.hero p{margin-top:1.5rem;color:#cbd5e1;font-size:1.125rem}
+.hero-btns{margin-top:2rem;display:flex;flex-wrap:wrap;gap:1rem}
+.profile-wrap{display:flex;justify-content:flex-end}
+.profile-img{width:20rem;height:24rem;border-radius:1rem;overflow:hidden;border:4px solid #1e293b;box-shadow:0 25px 50px -12px rgba(0,0,0,.5);background:#0f172a}
+.profile-img img{width:100%;height:100%;object-fit:cover;object-position:top}
+
+/* ─── MÉTRICAS ─────────────────────────────────── */
+.metrics{background:#fff;padding:3.5rem 0;border-bottom:1px solid #f1f5f9;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.metric-num{font-size:2.25rem;font-weight:900;color:#0f172a}
+.metric-num.cyan{color:#0891b2}
+.metric-label{font-size:.75rem;font-weight:700;color:#64748b;margin-top:.5rem;text-transform:uppercase;letter-spacing:.05em}
+
+/* ─── FRAMEWORK ────────────────────────────────── */
+.section-white{padding:5rem 1rem}
+.section-dark{background:#0f172a;color:#fff;padding:6rem 1rem}
+.section-gray{background:#f1f5f9;padding:6rem 1rem;border-top:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0}
+.section-title{font-size:1.875rem;font-weight:700;color:#0f172a;letter-spacing:-.025em}
+.section-sub{color:#475569;margin-top:1rem}
+.card{background:#fff;padding:2rem;border-radius:.75rem;box-shadow:0 1px 2px rgba(0,0,0,.05);border:1px solid rgba(226,232,240,.6)}
+.card-pilar{font-size:1.5rem;font-weight:700;color:#1e1b4b;margin-bottom:.5rem}
+.card h3{font-weight:700;font-size:1.125rem;color:#0f172a}
+.card p{color:#475569;font-size:.875rem;margin-top:.5rem}
+
+/* ─── PUNTOS DE DOLOR ──────────────────────────── */
+.pain-card{background:#f8fafc;padding:2rem;border-radius:1rem;border:1px solid rgba(226,232,240,.8);display:flex;flex-direction:column;justify-content:space-between;transition:box-shadow .3s}
+.pain-card:hover{box-shadow:0 10px 15px -3px rgba(0,0,0,.1)}
+.pain-icon{background:rgba(15,23,42,.05);width:3rem;height:3rem;border-radius:.75rem;display:flex;align-items:center;justify-content:center;font-size:1.25rem;margin-bottom:1.5rem}
+.pain-card h3{font-weight:700;font-size:1.125rem;color:#0f172a;margin-bottom:.75rem;letter-spacing:-.025em}
+.pain-card p{color:#475569;font-size:.875rem;line-height:1.625;margin-bottom:1rem}
+.pain-box{background:#fff;padding:1rem;border-radius:.75rem;border:1px solid rgba(226,232,240,.6);margin-top:1rem}
+.pain-box p{font-size:.75rem;font-weight:600;color:#0f172a;line-height:1.625}
+.pain-box strong{color:#4f46e5;font-weight:700}
+.cta-dark{background:#020617;color:#fff;padding:2rem 3rem;border-radius:1.5rem;text-align:center;border:1px solid #0f172a;box-shadow:0 25px 50px -12px rgba(0,0,0,.5);max-width:56rem;margin:0 auto}
+.cta-dark p{font-size:1.125rem;color:#cbd5e1;line-height:1.625;margin-bottom:2rem;max-width:42rem;margin-left:auto;margin-right:auto;margin-bottom:2rem}
+.cta-btns{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center}
+
+/* ─── SERVICIOS (acordeón) ─────────────────────── */
+.accordion-wrap{max-width:56rem;margin:0 auto}
+.accordion-item{border:1px solid #1e293b;background:#020617;border-radius:.75rem;overflow:hidden;transition:border-color .3s;margin-bottom:1rem}
+.accordion-item:hover{border-color:rgba(6,182,212,.3)}
+.accordion-btn{width:100%;display:flex;align-items:center;justify-content:space-between;padding:1.5rem;text-align:left;background:none;border:none;color:#fff;cursor:pointer}
+.accordion-btn-left{display:flex;align-items:flex-start;gap:1rem}
+.acc-icon{margin-top:.25rem;background:rgba(6,182,212,.1);color:#22d3ee;padding:.75rem;border-radius:.5rem;transition:all .3s;font-size:1.125rem}
+.accordion-btn:hover .acc-icon{background:#06b6d4;color:#020617}
+.acc-title{font-size:1.125rem;font-weight:700;color:#fff;transition:color .2s}
+.accordion-btn:hover .acc-title{color:#22d3ee}
+.acc-sub{color:#94a3b8;font-size:.875rem;margin-top:.25rem}
+.acc-arrow{color:#475569;transition:transform .3s;font-size:.75rem;margin-left:1rem}
+.accordion-btn:hover .acc-arrow{color:#22d3ee}
+.accordion-content{max-height:0;overflow:hidden;transition:max-height .4s ease-out}
+.acc-body{padding:1.5rem;padding-top:0;margin-left:4rem;border-top:1px solid rgba(15,23,42,.6);display:grid;gap:1rem;font-size:.875rem;color:#cbd5e1}
+.acc-body p strong{color:#22d3ee}
+.acc-body p{margin-top:.5rem}
+
+/* ─── TARIFAS ──────────────────────────────────── */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;max-width:72rem;margin:0 auto;align-items:stretch}
+.price-card{background:#fff;padding:2rem;border-radius:1rem;border:1px solid #e2e8f0;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 1px 2px rgba(0,0,0,.05);transition:all .3s}
+.price-card:hover{box-shadow:0 20px 25px -5px rgba(0,0,0,.1);transform:translateY(-.25rem)}
+.price-card-dark{background:#020617;border:2px solid #22d3ee;color:#fff;position:relative}
+.price-card-dark:hover{transform:scale(1.02)}
+.price-badge-top{position:absolute;top:0;right:1.5rem;transform:translateY(-50%);background:#22d3ee;color:#020617;font-size:.75rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;padding:.25rem 1rem;border-radius:9999px;box-shadow:0 4px 6px rgba(0,0,0,.1)}
+.price-tag-sm{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:.25rem .75rem;border-radius:9999px}
+.price-tag-sm.gray{background:#f1f5f9;color:#64748b}
+.price-tag-sm.cyan{background:rgba(6,182,212,.1);color:#22d3ee}
+.price-icon{font-size:1.25rem;color:#94a3b8}
+.price-icon.cyan{color:#22d3ee}
+.price-title{font-weight:700;font-size:1.25rem;color:#0f172a;margin-top:1rem}
+.price-title-w{color:#fff}
+.price-desc{font-size:.75rem;color:#64748b;margin-top:.5rem;line-height:1.625}
+.price-desc-gray{color:#94a3b8}
+.price-amount{font-size:1.875rem;font-weight:900;color:#0f172a}
+.price-amount-w{color:#fff}
+.price-cop{font-size:.875rem;font-weight:600;color:#0891b2;font-family:monospace;margin-top:.25rem}
+.price-cop-cyan{color:#22d3ee}
+.price-note{font-size:.6875rem;color:#94a3b8;margin-top:.25rem}
+.price-divider{margin:1.5rem 0;padding-top:1rem;border-top:1px solid #f1f5f9}
+.price-divider-dark{border-top-color:#0f172a}
+.price-features{list-style:none;display:flex;flex-direction:column;gap:.75rem;font-size:.875rem;color:#475569;margin-bottom:2rem}
+.price-features-w{color:#cbd5e1}
+.price-features li{display:flex;align-items:center;gap:.5rem}
+.price-features li i{color:#06b6d4;font-size:.75rem}
+.btn-price-dark{width:100%;background:#020617;color:#fff;font-weight:700;padding:.75rem 1rem;border-radius:.75rem;border:none;cursor:pointer;text-align:center;display:block;transition:background .2s;box-shadow:0 4px 6px rgba(0,0,0,.1)}
+.btn-price-dark:hover{background:#1e293b}
+.btn-price-cyan{width:100%;background:#06b6d4;color:#020617;font-weight:900;padding:.75rem 1rem;border-radius:.75rem;border:none;cursor:pointer;text-align:center;display:block;transition:background .2s}
+.btn-price-cyan:hover{background:#22d3ee}
+
+/* ─── RECURSOS ─────────────────────────────────── */
+.resource-card{background:#fff;padding:2rem;border-radius:.75rem;box-shadow:0 1px 2px rgba(0,0,0,.05);border:1px solid #e2e8f0;display:flex;flex-direction:column;justify-content:space-between}
+.resource-tag{font-size:.75rem;font-weight:700;margin-bottom:.5rem}
+.resource-tag.cyan{color:#0891b2}
+.resource-tag.indigo{color:#1e1b4b}
+.resource-card h3{font-weight:700;font-size:1.25rem;color:#0f172a}
+.resource-card p{font-size:.875rem;color:#475569;margin-top:.75rem;line-height:1.625}
+.resource-link{display:inline-flex;align-items:center;gap:.5rem;font-size:.875rem;font-weight:700;color:#0f172a;background:#f1f5f9;padding:.5rem 1rem;border-radius:.5rem;transition:all .2s;width:100%;justify-content:center}
+.resource-link:hover{color:#0891b2;background:rgba(226,232,240,.7)}
+.resource-link-divider{margin-top:2rem;padding-top:1rem;border-top:1px solid #f1f5f9}
+
+/* ─── TESTIMONIOS ──────────────────────────────── */
+.testi-card{background:#fff;padding:1.5rem;border-radius:.75rem;box-shadow:0 1px 2px rgba(0,0,0,.05);border:1px solid rgba(226,232,240,.7);display:flex;flex-direction:column;justify-content:space-between}
+.testi-card p{color:#475569;font-size:.875rem;font-style:italic}
+.testi-divider{margin-top:1.5rem;padding-top:1rem;border-top:1px solid #e2e8f0}
+.testi-name{font-weight:700;font-size:.875rem;color:#0f172a}
+.testi-role{font-size:.75rem;color:#64748b}
+
+/* ─── CONTACTO ─────────────────────────────────── */
+.contact-form{background:#fff;padding:2rem;border-radius:1.5rem;box-shadow:0 20px 25px -5px rgba(0,0,0,.1);border:1px solid rgba(226,232,240,.6);text-align:left}
+.form-label{display:block;font-size:.875rem;font-weight:600;color:#334155;margin-bottom:.5rem}
+.form-input{width:100%;padding:.875rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:.75rem;font-size:.875rem;font-family:inherit;outline:none;transition:box-shadow .2s;color:#1e293b}
+.form-input:focus{box-shadow:0 0 0 2px #020617}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.form-space{margin-top:1.5rem}
+.form-note{text-align:center;font-size:.75rem;color:#94a3b8;font-style:italic;margin-top:1rem}
+
+/* ─── FOOTER ───────────────────────────────────── */
+footer{background:#020617;color:#94a3b8;padding:2rem;text-align:center;font-size:.875rem;border-top:1px solid #0f172a}
+footer p{margin-bottom:.5rem}
+footer a{color:#94a3b8;transition:color .2s}
+footer a:hover{color:#fff}
+
+/* ─── BADGE DARK/SERVICE ───────────────────────── */
+.badge{display:inline-block;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;padding:.25rem .75rem;border-radius:9999px}
+.badge-red{color:#ef4444;background:rgba(239,68,68,.1)}
+.badge-cyan-dark{color:#22d3ee;background:rgba(6,182,212,.1)}
+.badge-indigo{color:#1e1b4b;background:rgba(30,27,75,.05)}
+
+/* ─── RESPONSIVE ───────────────────────────────── */
+@media(max-width:768px){
+  .hero-content{grid-template-columns:1fr;gap:2rem}
+  .profile-wrap{justify-content:center}
+  .hero h1{font-size:2.25rem}
+  .grid-2,.grid-3,.grid-4,.pricing-grid,.grid-metrics{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .hero-btns{flex-direction:column}
+  .cta-btns{flex-direction:column}
+}
+@media(min-width:768px) and (max-width:1024px){
+  .grid-4{grid-template-columns:1fr 1fr}
+  .pricing-grid{grid-template-columns:1fr}
+}
+</style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans leading-relaxed">
+<body>
 
-    <!-- Navbar -->
-    <nav class="bg-slate-950 text-white sticky top-0 z-50 shadow-md border-b border-slate-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-            <span class="font-bold text-lg tracking-wider text-cyan-400">WILLIAM ANDRÉS GÓMEZ</span>
-            <div class="hidden md:flex space-x-8 items-center">
-                <a href="#inicio" class="hover:text-cyan-400 transition text-sm font-medium">Inicio</a>
-                <a href="#framework" class="hover:text-cyan-400 transition text-sm font-medium">Framework</a>
-                <a href="#servicios" class="hover:text-cyan-400 transition text-sm font-medium">Servicios</a>
-                <a href="#tarifas" class="hover:text-cyan-400 transition text-sm font-medium">Tarifas</a>
-                <a href="#recursos" class="hover:text-cyan-400 transition text-sm font-medium">Documentos Públicos</a>
-                <a href="radar.html" class="bg-cyan-500 text-slate-950 px-4 py-2 rounded font-bold hover:bg-cyan-400 transition text-sm">Diagnóstico Digital</a>
-                <a href="radar_diagnostico.html" class="bg-indigo-600 text-white px-4 py-2 rounded font-bold hover:bg-indigo-500 transition text-sm flex items-center gap-1.5">
-                    <i class="fa-solid fa-lock text-xs"></i>Plataforma de Diagnóstico
-                </a>
-            </div>
+<!-- ═══ NAVBAR ═══════════════════════════════════════ -->
+<nav>
+    <div class="nav-inner">
+        <span class="nav-brand">WILLIAM ANDRÉS GÓMEZ</span>
+        <div class="nav-links">
+            <a href="#inicio">Inicio</a>
+            <a href="#framework">Framework</a>
+            <a href="#servicios">Servicios</a>
+            <a href="#tarifas">Tarifas</a>
+            <a href="#recursos">Documentos Públicos</a>
+            <a href="radar.html" class="btn-nav-cyan">Diagnóstico Digital</a>
+            <a href="radar_diagnostico.html" class="btn-nav-indigo">
+                <i class="fa-solid fa-lock" style="font-size:.75rem"></i>Plataforma de Diagnóstico
+            </a>
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <!-- Hero Section -->
-    <section id="inicio" class="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white py-24 px-4">
-        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+<!-- ═══ HERO ══════════════════════════════════════════ -->
+<section id="inicio" class="hero-bg">
+    <div class="hero">
+        <div class="hero-content">
             <div>
-                <span class="text-cyan-400 font-semibold uppercase tracking-widest text-xs px-3 py-1 bg-cyan-500/10 rounded-full">Director de Operaciones · Scrum Master Senior · Consultor en Transformación Digital</span>
-                <h1 class="text-4xl md:text-5xl font-extrabold mt-4 leading-tight">
-                    Resultados medibles para su <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">transformación digital</span>
-                </h1>
-                <p class="mt-6 text-slate-300 text-lg">
-                    Más de 10 años liderando operaciones, gobierno corporativo y transformación digital en el sector financiero-cooperativo y público. Acompaño a Juntas Directivas y Alta Gerencia a diseñar hojas de ruta digitales con resultados atados a KPIs reales — no promesas tecnológicas.
-                </p>
-                <div class="mt-8 flex flex-col sm:flex-row gap-4">
-                    <a href="radar.html" class="bg-cyan-500 text-slate-950 px-8 py-3 rounded-lg font-bold text-center hover:bg-cyan-400 transition transform hover:scale-105 shadow-lg shadow-cyan-500/20">
-                        Diagnóstico de Madurez Gratuito
+                <span class="hero-badge">FECOLFIN · IFC Banco Mundial · Alcaldía Kennedy · AC Seguros · Comerciacoop</span>
+                <h1>Ejecuté la transformación digital. <span class="text-gradient">Ahora la dirijo para su organización.</span></h1>
+                <p>Fui Director Operativo de FECOLFIN durante 10 años, coordiné el DigiLab 3.0 del IFC con el Banco Mundial, presidí el Consejo de Administración de Comerciacoop supervisando $9.000M COP, y rediseñé procesos públicos en la Alcaldía de Kennedy. No consulto desde la teoría — consulto desde haber estado en la silla donde usted está hoy.</p>
+                <div class="hero-btns">
+                    <a href="radar.html" class="btn btn-cyan">Medir mi Madurez Digital — Gratis</a>
+                    <a href="radar_diagnostico.html" class="btn btn-indigo">
+                        <i class="fa-solid fa-lock" style="font-size:.75rem"></i>&nbsp;Diagnóstico Profesional
                     </a>
-                    <a href="radar_diagnostico.html" class="bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold text-center hover:bg-indigo-500 transition transform hover:scale-105 shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-lock text-xs"></i>Plataforma de Diagnóstico
-                    </a>
-                    <a href="#recursos" class="border border-slate-700 px-8 py-3 rounded-lg font-semibold text-center hover:bg-slate-800 transition text-slate-300">
-                        Biblioteca de Recursos
-                    </a>
+                    <a href="#recursos" class="btn btn-outline">Descargar Recursos</a>
                 </div>
             </div>
-            <div class="flex justify-center md:justify-end">
-                <div class="relative w-72 h-86 md:w-80 md:h-96 rounded-2xl overflow-hidden border-4 border-slate-800 shadow-2xl bg-slate-900">
-                    <img src="img/foto-perfil.png" alt="William Andrés Gómez Lizarazo" class="w-full h-full object-cover object-top">
+            <div class="profile-wrap">
+                <div class="profile-img">
+                    <img src="img/foto-perfil.png" alt="William Andrés Gómez Lizarazo" loading="eager" decoding="async">
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Métricas de Alto Impacto -->
-    <section class="bg-white py-14 border-b border-slate-100 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+<!-- ═══ MÉTRICAS ══════════════════════════════════════ -->
+<section class="metrics">
+    <div class="container">
+        <div class="grid-metrics">
             <div class="p-4">
-                <p class="text-4xl font-black text-slate-900">70%</p>
-                <p class="text-xs font-bold text-slate-500 mt-2 uppercase tracking-wider">Reducción en tiempos de trámite · Alcaldía de Kennedy</p>
+                <p class="metric-num">70%</p>
+                <p class="metric-label">Reducción en tiempos de trámite · Alcaldía de Kennedy</p>
             </div>
             <div class="p-4">
-                <p class="text-4xl font-black text-slate-900">$9.000M+</p>
-                <p class="text-xs font-bold text-slate-500 mt-2 uppercase tracking-wider">COP en Presupuestos Institucionales Supervisados</p>
+                <p class="metric-num">$9.000M+</p>
+                <p class="metric-label">COP en Presupuestos Institucionales Supervisados</p>
             </div>
             <div class="p-4">
-                <p class="text-4xl font-black text-slate-900">+10 Años</p>
-                <p class="text-xs font-bold text-slate-500 mt-2 uppercase tracking-wider">Alta Dirección · Sector Financiero, Cooperativo y Público</p>
+                <p class="metric-num">+10 Años</p>
+                <p class="metric-label">Alta Dirección · Sector Financiero, Cooperativo y Público</p>
             </div>
             <div class="p-4">
-                <p class="text-4xl font-black text-cyan-600">IFC · CertJoin · MBA</p>
-                <p class="text-xs font-bold text-slate-500 mt-2 uppercase tracking-wider">Banco Mundial · Scrum Master · MIU City University Miami</p>
+                <p class="metric-num cyan">IFC · CertJoin · MBA</p>
+                <p class="metric-label">Banco Mundial · Scrum Master · MIU City University Miami</p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- El Framework de Transformación -->
-    <section id="framework" class="py-20 px-4 max-w-7xl mx-auto">
-        <div class="text-center max-w-3xl mx-auto mb-16">
-            <h2 class="text-3xl font-bold text-slate-900 tracking-tight">El Framework de Transformación: De la Teoría a la Ejecución</h2>
-            <p class="text-slate-600 mt-4">La innovación aislada es un centro de costos e ideas sin ejecutar; la innovación conectada es un centro de ingresos y mejor experiencia del cliente.</p>
+<!-- ═══ FRAMEWORK ════════════════════════════════════ -->
+<section id="framework" class="section-white">
+    <div class="container">
+        <div style="text-align:center;max-width:48rem;margin:0 auto 4rem">
+            <h2 class="section-title">Cómo trabajo. Lo que ha producido.</h2>
+            <p class="section-sub">Cada uno de estos pasos viene de haberlo ejecutado primero — no de haberlo diseñado en una consultoría.</p>
         </div>
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200/60">
-                <div class="text-indigo-950 text-2xl font-bold mb-2">Pilar 1</div>
-                <h3 class="font-bold text-lg text-slate-900">Diagnóstico y Hoja de Ruta</h3>
-                <p class="text-slate-600 text-sm mt-2">Evaluación sobre 8 ejes críticos (metodología IFC DigiLab – Banco Mundial). Construcción de la "Casa Digital" con brechas priorizadas y plan a 12 y 36 meses.</p>
-            </div>
-            <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200/60">
-                <div class="text-indigo-950 text-2xl font-bold mb-2">Pilar 2</div>
-                <h3 class="font-bold text-lg text-slate-900">Automatización de Procesos</h3>
-                <p class="text-slate-600 text-sm mt-2">Digitalización de flujos operativos con Google Workspace, Apps Script y Power BI. Resultados comprobados: de 30 días a 7 días en ciclos de pago (Alcaldía de Kennedy).</p>
-            </div>
-            <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200/60">
-                <div class="text-indigo-950 text-2xl font-bold mb-2">Pilar 3</div>
-                <h3 class="font-bold text-lg text-slate-900">Agilismo y Gobierno Corporativo</h3>
-                <p class="text-slate-600 text-sm mt-2">Implementación de células Scrum/Kanban y marcos OKR. Experiencia como Presidente de Consejo de Administración supervisando presupuestos de $9.000M COP.</p>
-            </div>
-            <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200/60">
-                <div class="text-indigo-950 text-2xl font-bold mb-2">Pilar 4</div>
-                <h3 class="font-bold text-lg text-slate-900">Ecosistemas e Innovación</h3>
-                <p class="text-slate-600 text-sm mt-2">Alianzas B2B con Fintechs y modelos Open Banking. Coordinación de 6 programas de inmersión en Silicon Valley para más de 90 directivos del sector financiero.</p>
-            </div>
+        <div class="grid-4">
+            <div class="card"><div class="card-pilar">Paso 1</div><h3>Diagnóstico con metodología IFC</h3><p>La misma herramienta que coordiné en el DigiLab 3.0 del Banco Mundial aplicada a su realidad. 8 ejes, resultados en 5 minutos, sin consultores externos adicionales.</p></div>
+            <div class="card"><div class="card-pilar">Paso 2</div><h3>Automatización con lo que ya tiene</h3><p>En la Alcaldía de Kennedy pasé un proceso de pago a 700+ contratistas de 30 días a 7 — sin nuevos sistemas. Con Google Workspace, Apps Script y rediseño de proceso. Eso mismo aplica en su organización.</p></div>
+            <div class="card"><div class="card-pilar">Paso 3</div><h3>Equipos que entregan en 2 semanas</h3><p>Certificado Scrum Master y Product Owner. Formé 16 hojas de ruta ágiles con directivos del sector cooperativo en el Diplomado de la Universidad Juan N. Corpas. La metodología que le enseño es la que yo uso.</p></div>
+            <div class="card"><div class="card-pilar">Paso 4</div><h3>Conexión al ecosistema correcto</h3><p>Gestioné alianzas con IFC, Rabobank, Sicredi y WOCCU. Coordiné 6 misiones en Silicon Valley para más de 90 directivos. Sé qué funciona y qué es turismo disfrazado de innovación.</p></div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Puntos de Dolor -->
-    <section id="puntos-dolor" class="py-24 px-4 bg-white border-t border-b border-slate-200">
-        <div class="max-w-5xl mx-auto">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <span class="text-red-500 font-bold uppercase tracking-widest text-xs px-3 py-1 bg-red-500/10 rounded-full">Análisis Crítico Operativo</span>
-                <h2 class="text-3xl md:text-4xl font-black text-slate-950 mt-4 tracking-tight leading-tight">
-                    ¿Por qué el 70% de los proyectos tecnológicos no generan el ROI esperado?
-                </h2>
-                <p class="mt-6 text-slate-600 text-base leading-relaxed">
-                    La mayoría de las organizaciones invierten millones en licencias y nuevos sistemas, esperando que la tecnología por sí sola resuelva sus ineficiencias operativas. Sin embargo, en la Alta Gerencia seguimos viendo los mismos cuellos de botella. La transformación no falla por falta de presupuesto, falla por estos tres enemigos silenciosos:
-                </p>
+<!-- ═══ PUNTOS DE DOLOR ═══════════════════════════════ -->
+<section id="puntos-dolor" style="padding:6rem 1rem;background:#fff;border-top:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0">
+    <div class="container-md">
+        <div style="text-align:center;max-width:48rem;margin:0 auto 4rem">
+            <span class="badge badge-red">Lo que vi en 10 años en Consejos de Administración</span>
+            <h2 style="font-size:2.25rem;font-weight:900;color:#020617;margin-top:1rem;letter-spacing:-.025em;line-height:1.2">Como Presidente de Consejo aprendí que el problema casi nunca es el software. Casi siempre es lo que pasa antes de comprarlo.</h2>
+            <p style="margin-top:1.5rem;color:#475569;font-size:1rem;line-height:1.625">En Comerciacoop supervisé presupuestos superiores a $9.000M COP y estuve en todas las conversaciones donde se decidían inversiones tecnológicas. El mismo patrón se repite en cooperativas, empresas públicas y privadas. Tres errores que destruyen el ROI antes de que el proyecto empiece:</p>
+        </div>
+        <div class="grid-3" style="margin-bottom:4rem">
+            <div class="pain-card">
+                <div>
+                    <div class="pain-icon"><i class="fa-solid fa-users-gear"></i></div>
+                    <h3>Aprobaron la tecnología sin transformar el equipo.</h3>
+                    <p>En el DigiLab 3.0 con el IFC trabajé con cooperativas que llevaban años comprando software sin resultados. El patrón siempre era el mismo: nadie gestionó el cambio cultural antes de implementar. El caso ilustrativo no es hipotético — lo viví en sesiones con más de 90 directivos del sector.</p>
+                </div>
+                <div class="pain-box"><p><strong>La señal de alerta:</strong> ¿Cuántos proyectos tecnológicos aprobó su Consejo en los últimos 3 años que hoy están subutilizados o abandonados?</p></div>
             </div>
-            <div class="grid md:grid-cols-3 gap-8 items-stretch mb-16">
-                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-200/80 flex flex-col justify-between transition-all duration-300 hover:shadow-md">
-                    <div>
-                        <div class="bg-slate-950/5 text-slate-900 w-12 h-12 rounded-xl flex items-center justify-center mb-6 text-xl">
-                            <i class="fa-solid fa-users-gear"></i>
-                        </div>
-                        <h3 class="font-bold text-lg text-slate-950 mb-3 tracking-tight">1. La ilusión de la agilidad (Cultura estancada)</h3>
-                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
-                            Comprar el mejor software del mercado no sirve de nada si su equipo sigue operando con burocracia tradicional. Implementar metodologías como Scrum parece fácil en la teoría, pero llevarlo a la práctica choca contra la resistencia interna al cambio.
-                        </p>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-200/60 mt-4">
-                        <p class="text-xs font-semibold text-slate-900 leading-relaxed">
-                            <span class="text-indigo-600 font-bold">La realidad de su Junta:</span> ¿Su equipo ha adoptado las nuevas herramientas para generar valor, o simplemente rebautizaron sus viejas reuniones como "Dailys" y siguen trabajando en cascada?
-                        </p>
-                    </div>
+            <div class="pain-card">
+                <div>
+                    <div class="pain-icon"><i class="fa-solid fa-chart-pie"></i></div>
+                    <h3>Tienen datos en todos lados. No tienen una sola verdad.</h3>
+                    <p>En AC Seguros construí desde cero el modelo analítico que centralizó la toma de decisiones gerenciales. Lo que encontré al llegar: el core con saldos, el CRM con historiales, y cada área con su propio Excel con su propia versión de la realidad. Eso no es gestión de datos — es gestión del caos.</p>
                 </div>
-                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-200/80 flex flex-col justify-between transition-all duration-300 hover:shadow-md">
-                    <div>
-                        <div class="bg-slate-950/5 text-slate-900 w-12 h-12 rounded-xl flex items-center justify-center mb-6 text-xl">
-                            <i class="fa-solid fa-chart-pie"></i>
-                        </div>
-                        <h3 class="font-bold text-lg text-slate-950 mb-3 tracking-tight">2. El síndrome de los silos (Ricos en datos, pobres en conocimiento)</h3>
-                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
-                            La información crítica está dispersa: una parte en el sistema core, otra en el CRM y el resto en múltiples archivos de Excel creados por cada departamento. Al no existir una Gobernanza de Datos clara, la responsabilidad se diluye.
-                        </p>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-200/60 mt-4">
-                        <p class="text-xs font-semibold text-slate-900 leading-relaxed">
-                            <span class="text-indigo-600 font-bold">La realidad de su Junta:</span> ¿Sus decisiones gerenciales se toman viendo Dashboards unificados en tiempo real, o dependen de reportes manuales que tardan días en consolidarse?
-                        </p>
-                    </div>
+                <div class="pain-box"><p><strong>La señal de alerta:</strong> ¿Cuánto tiempo tarda su equipo en consolidar el informe gerencial mensual? Si es más de un día, el problema ya existe.</p></div>
+            </div>
+            <div class="pain-card">
+                <div>
+                    <div class="pain-icon"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                    <h3>Digitalizaron la fachada. La fábrica operativa sigue igual.</h3>
+                    <p>En la Alcaldía de Kennedy no compré ningún sistema nuevo. Rediseñé el proceso de pago a 700+ contratistas usando las herramientas que ya existían y pasé de 30 días a 7. El 70% del ahorro fue rediseño de proceso. El 30% fue digitalización. En ese orden — no al revés.</p>
                 </div>
-                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-200/80 flex flex-col justify-between transition-all duration-300 hover:shadow-md">
-                    <div>
-                        <div class="bg-slate-950/5 text-slate-900 w-12 h-12 rounded-xl flex items-center justify-center mb-6 text-xl">
-                            <i class="fa-solid fa-mobile-screen-button"></i>
+                <div class="pain-box"><p><strong>La señal de alerta:</strong> ¿Qué porcentaje de sus trámites digitales termina sin intervención humana manual? Si no sabe la respuesta, ese es el primer diagnóstico que necesita.</p></div>
+            </div>
+        </div>
+        <div class="cta-dark">
+            <p>Si alguna de esas preguntas generó incomodidad, tiene sentido. Son las preguntas que deberían hacerse antes de aprobar el próximo presupuesto tecnológico. Empiece por saber exactamente dónde está su organización hoy.</p>
+            <div class="cta-btns">
+                <a href="radar.html" class="btn btn-cyan">Hacer el Diagnóstico Gratuito — 5 minutos</a>
+                <a href="#contacto" style="border:1px solid #334155;color:#cbd5e1;padding:.75rem 1.5rem;border-radius:.75rem;font-weight:700;font-size:.875rem;transition:background .2s;display:inline-flex;align-items:center">Hablar con Andrés directamente</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ SERVICIOS ═════════════════════════════════════ -->
+<section id="servicios" class="section-dark">
+    <div class="container-md">
+        <div style="text-align:center;margin-bottom:4rem">
+            <span class="badge badge-cyan-dark">Tres formas de trabajar juntos</span>
+            <h2 style="font-size:2.25rem;font-weight:900;margin-top:.75rem;letter-spacing:-.025em">El mismo método que apliqué en FECOLFIN, Kennedy y Comerciacoop — ahora disponible para su organización.</h2>
+            <p style="color:#94a3b8;margin-top:1rem">Expanda cada modalidad para ver exactamente qué incluye y qué puede esperar.</p>
+        </div>
+        <div class="accordion-wrap">
+            <!-- Acordeón 1 -->
+            <div class="accordion-item">
+                <button class="accordion-btn" onclick="toggleAccordion(1)">
+                    <div class="accordion-btn-left">
+                        <div class="acc-icon"><i class="fa-solid fa-route"></i></div>
+                        <div>
+                            <div class="acc-title">Diagnóstico + Hoja de Ruta Digital</div>
+                            <div class="acc-sub">El mismo punto de partida que usé en el DigiLab 3.0 con el IFC — adaptado a la escala y sector de su organización.</div>
                         </div>
-                        <h3 class="font-bold text-lg text-slate-950 mb-3 tracking-tight">3. Digitalización cosmética (Tecnología subutilizada)</h3>
-                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
-                            Lanzar una App básica o pagar licencias corporativas no convierte a una entidad en "digital". Muchas organizaciones asumen su nivel de modernización sin haber medido jamás su Índice de Madurez Digital (IMD) real frente al mercado.
-                        </p>
                     </div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-200/60 mt-4">
-                        <p class="text-xs font-semibold text-slate-900 leading-relaxed">
-                            <span class="text-indigo-600 font-bold">La realidad de su Junta:</span> ¿Están pagando infraestructuras tecnológicas costosas de las que apenas extraen una fracción de su potencial?
-                        </p>
+                    <i id="arrow-1" class="fa-solid fa-chevron-down acc-arrow"></i>
+                </button>
+                <div id="content-1" class="accordion-content">
+                    <div class="acc-body">
+                        <p style="margin-top:1rem"><strong>Diagnóstico honesto en 8 ejes:</strong> Metodología IFC DigiLab que coordiné con el Banco Mundial, aplicada a su realidad operativa. No un cuestionario genérico — una evaluación que identifica exactamente en qué ejes está débil antes de que comprometa un solo peso de presupuesto.</p>
+                        <p><strong>Automatización con lo que ya tiene:</strong> Antes de proponer sistemas nuevos, miro qué tiene y qué no está usando bien. En Kennedy rediseñé el proceso de pagos a 700+ contratistas de 30 a 7 días sin comprar nada nuevo — solo Google Workspace, Apps Script y rediseño de flujo.</p>
+                        <p style="margin-bottom:.5rem"><strong>Ejecución ágil con resultados en 30 días:</strong> Certificado Scrum Master y Product Owner. Conformo una célula de trabajo con su equipo y entrego un resultado medible en el primer mes — no un documento con recomendaciones para el siguiente trimestre.</p>
                     </div>
                 </div>
             </div>
-            <div class="bg-slate-950 text-white p-8 md:p-12 rounded-3xl text-center border border-slate-900 shadow-2xl max-w-4xl mx-auto">
-                <p class="text-base md:text-lg text-slate-300 leading-relaxed mb-8 max-w-3xl mx-auto">
-                    No compre más software hasta alinear su modelo operativo. La transformación digital es una decisión estructural, no un gasto de TI. Permítanos auditar sus procesos y diseñar la hoja de ruta digital de su organización.
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="radar.html" class="bg-cyan-500 text-slate-950 font-black px-6 py-4 rounded-xl text-sm hover:bg-cyan-400 transition transform hover:scale-105 shadow-lg shadow-cyan-500/10">
-                        Mida su Madurez Digital Gratis ➡️
+            <!-- Acordeón 2 -->
+            <div class="accordion-item">
+                <button class="accordion-btn" onclick="toggleAccordion(2)">
+                    <div class="accordion-btn-left">
+                        <div class="acc-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                        <div>
+                            <div class="acc-title">Advisory Board — Criterio Ejecutivo en su Consejo</div>
+                            <div class="acc-sub">Fui Presidente de Consejo de Administración 4 años. Sé qué preguntas hacerle a un proveedor de tecnología que el área de sistemas no va a hacer.</div>
+                        </div>
+                    </div>
+                    <i id="arrow-2" class="fa-solid fa-chevron-down acc-arrow"></i>
+                </button>
+                <div id="content-2" class="accordion-content">
+                    <div class="acc-body">
+                        <p style="margin-top:1rem"><strong>El criterio que falta en la sala:</strong> Presidí el Consejo de Comerciacoop (2020-2024) y el Comité de Riesgos, supervisando indicadores SARC/SARL/SARO y cumplimiento ante Supersolidaria. Sé cómo se toman las decisiones en un Consejo y qué información real necesita la dirección para decidir bien en tecnología.</p>
+                        <p><strong>Business Intelligence que la gerencia realmente usa:</strong> En AC Seguros construí desde cero el modelo analítico centralizado con tableros Power BI para monitoreo en tiempo real de KPIs financieros y de producción. El objetivo no es tener dashboards bonitos — es que la dirección deje de tomar decisiones a ciegas.</p>
+                        <p style="margin-bottom:.5rem"><strong>Auditoría de proveedores TI:</strong> He estado en la mesa de decisión cuando llegan los proveedores. Conozco los contratos con cláusulas de mantenimiento que duplican el costo en el año 2, las demos que no muestran el back-office y las promesas de integración que nunca se cumplen.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Acordeón 3 -->
+            <div class="accordion-item">
+                <button class="accordion-btn" onclick="toggleAccordion(3)">
+                    <div class="accordion-btn-left">
+                        <div class="acc-icon"><i class="fa-solid fa-earth-americas"></i></div>
+                        <div>
+                            <div class="acc-title">Misiones de Innovación — Silicon Valley y LATAM</div>
+                            <div class="acc-sub">Coordiné 6 programas de inmersión con el IFC y Globaltech Bridge para más de 90 directivos. No los acompaño como guía — los diseño y los dirijo.</div>
+                        </div>
+                    </div>
+                    <i id="arrow-3" class="fa-solid fa-chevron-down acc-arrow"></i>
+                </button>
+                <div id="content-3" class="accordion-content">
+                    <div class="acc-body">
+                        <p style="margin-top:1rem"><strong>Por qué las misiones cambian lo que las capacitaciones no pueden:</strong> Un directivo que ve en Silicon Valley cómo una fintech procesa crédito en 4 minutos vuelve con una urgencia diferente. No es motivación — es evidencia. En 6 programas con más de 90 directivos del sector financiero-cooperativo, el patrón fue consistente: quienes hicieron la misión iniciaron proyectos de transformación en menos de 30 días.</p>
+                        <p style="margin-bottom:.5rem"><strong>Tech Scouting con criterio regulatorio colombiano:</strong> Gestioné alianzas con el IFC (Banco Mundial), Rabobank, Sicredi y WOCCU. Cada misión termina con un mapa de innovaciones filtradas por viabilidad real en el contexto regulatorio colombiano — no con una lista de tendencias globales que no aplican aquí.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ TARIFAS ═══════════════════════════════════════ -->
+<section id="tarifas" class="section-gray">
+    <div class="container">
+        <div style="text-align:center;max-width:48rem;margin:0 auto 4rem">
+            <span class="badge badge-indigo">Sin letra pequeña</span>
+            <h2 style="font-size:2.25rem;font-weight:900;color:#020617;margin-top:.75rem;letter-spacing:-.025em">Invierta en lo que le va a generar retorno. No en lo que suena bien.</h2>
+            <p style="color:#475569;margin-top:1rem">Tres puntos de entrada según el momento de su organización. Todos con alcance claro, entregables definidos y sin compromisos de largo plazo hasta que vea resultados.</p>
+        </div>
+        <div class="pricing-grid">
+            <!-- Tarjeta 1 -->
+            <div class="price-card">
+                <div>
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                        <span class="price-tag-sm gray">Punto de partida</span>
+                        <i class="fa-solid fa-compass price-icon"></i>
+                    </div>
+                    <div class="price-title">Sesión de Diagnóstico Estratégico</div>
+                    <div class="price-desc">Para gerentes y directivos que tienen una decisión tecnológica pendiente y necesitan un criterio externo e imparcial antes de comprometerse.</div>
+                    <div class="price-divider">
+                        <div class="price-amount">Gratis</div>
+                        <div class="price-cop">Primera sesión sin costo</div>
+                        <div class="price-note">30 minutos · Agenda limitada · Sin compromiso</div>
+                    </div>
+                    <ul class="price-features">
+                        <li><i class="fa-solid fa-circle-check"></i>Revisión de su situación digital actual</li>
+                        <li><i class="fa-solid fa-circle-check"></i>Identificación del cuello de botella principal</li>
+                        <li><i class="fa-solid fa-circle-check"></i>Recomendación concreta de próximo paso</li>
+                    </ul>
+                </div>
+                <button onclick="Calendly.initPopupWidget({url:'https://calendly.com/andreszer20/sesion-estrategica-de-desbloqueo'});return false;" class="btn-price-dark">Reservar mi sesión gratuita</button>
+            </div>
+            <!-- Tarjeta 2 destacada -->
+            <div class="price-card price-card-dark">
+                <div class="price-badge-top">Más solicitado</div>
+                <div>
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                        <span class="price-tag-sm cyan">Retainer mensual</span>
+                        <i class="fa-solid fa-handshake-angle price-icon cyan"></i>
+                    </div>
+                    <div class="price-title price-title-w">Criterio Ejecutivo Permanente</div>
+                    <div class="price-desc price-desc-gray">Para Juntas y Consejos que toman decisiones tecnológicas de alto impacto y necesitan un asiento consultivo independiente — no un proveedor con intereses propios.</div>
+                    <div class="price-divider price-divider-dark">
+                        <div class="price-amount price-amount-w">Desde $400 <span style="font-size:.75rem;font-weight:700;color:#94a3b8;font-family:monospace">USD/mes</span></div>
+                        <div class="price-cop price-cop-cyan">$1.500.000 COP / mes</div>
+                        <div class="price-note">Compromiso mensual · Sin permanencia mínima</div>
+                    </div>
+                    <ul class="price-features price-features-w">
+                        <li><i class="fa-solid fa-circle-check" style="color:#22d3ee"></i>Presencia en sesiones de Junta o Comité</li>
+                        <li><i class="fa-solid fa-circle-check" style="color:#22d3ee"></i>Auditoría de propuestas de proveedores TI</li>
+                        <li><i class="fa-solid fa-circle-check" style="color:#22d3ee"></i>Dashboards ejecutivos con KPIs que importan</li>
+                    </ul>
+                </div>
+                <button onclick="window.location.href='#contacto'" class="btn-price-cyan">Solicitar propuesta personalizada</button>
+            </div>
+            <!-- Tarjeta 3 -->
+            <div class="price-card">
+                <div>
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                        <span class="price-tag-sm gray">Transformación completa</span>
+                        <i class="fa-solid fa-rocket price-icon"></i>
+                    </div>
+                    <div class="price-title">Proyecto de Transformación con ROI garantizado</div>
+                    <div class="price-desc">Para organizaciones listas para transformar un proceso core de punta a punta — con métricas de éxito definidas por contrato y honorarios atados a resultados reales.</div>
+                    <div class="price-divider">
+                        <div class="price-amount" style="font-size:1.5rem">Tarifa base + éxito</div>
+                        <div class="price-cop">Esquema Success Fee</div>
+                        <div class="price-note">Si no hay resultado medible, no hay pago de éxito</div>
+                    </div>
+                    <ul class="price-features">
+                        <li><i class="fa-solid fa-circle-check"></i>Rediseño operativo completo del proceso</li>
+                        <li><i class="fa-solid fa-circle-check"></i>Célula ágil de ejecución desde el día uno</li>
+                        <li><i class="fa-solid fa-circle-check"></i>KPIs de resultado definidos antes de empezar</li>
+                    </ul>
+                </div>
+                <button onclick="Calendly.initPopupWidget({url:'https://calendly.com/andreszer20/sesion-estrategica-de-desbloqueo'});return false;" class="btn-price-dark">Conversemos sobre su proyecto</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ RECURSOS ══════════════════════════════════════ -->
+<section id="recursos" style="padding:5rem 1rem;background:#f1f5f9">
+    <div class="container">
+        <div style="text-align:center;max-width:32rem;margin:0 auto 3rem">
+            <h2 class="section-title">Llévese algo de valor antes de decidir</h2>
+            <p style="color:#475569;margin-top:.75rem">Dos documentos ejecutivos que puede descargar ahora mismo. Sin formularios. Sin llamadas de seguimiento no solicitadas.</p>
+        </div>
+        <div class="grid-2" style="max-width:48rem;margin:0 auto">
+            <div class="resource-card">
+                <div>
+                    <div class="resource-tag cyan">Para el Consejo y la Gerencia</div>
+                    <h3>Propuesta de Servicios: qué, cómo y con qué resultados</h3>
+                    <p>El desglose completo de la metodología de trabajo, los entregables por fase, la matriz de ROI esperado y los esquemas de vinculación. Todo lo que necesita para evaluarlo internamente y tomar una decisión informada.</p>
+                </div>
+                <div class="resource-link-divider">
+                    <a href="documentos/Propuesta%20de%20servicios%20de%20Consultoria%20General.pdf" target="_blank" class="resource-link">
+                        <i class="fa-solid fa-file-pdf" style="color:#ef4444"></i> Descargar Portafolio (PDF)
                     </a>
-                    <a href="#contacto" class="border border-slate-700 font-bold px-6 py-4 rounded-xl text-sm hover:bg-slate-900 transition text-slate-300">
-                        Agendar Sesión de Desbloqueo Estratégico
+                </div>
+            </div>
+            <div class="resource-card">
+                <div>
+                    <div class="resource-tag indigo">Para equipos que empezaron pero están atascados</div>
+                    <h3>Agile Acceleration Blueprint: del primer Sprint a resultados reales</h3>
+                    <p>Guía práctica para organizaciones que adoptaron el discurso ágil pero no están viendo resultados. Incluye el modelo de implementación por fases, los errores más comunes y cómo evitarlos desde el día uno.</p>
+                </div>
+                <div class="resource-link-divider">
+                    <a href="documentos/Agismo_vs_Cooperativas.pdf" target="_blank" class="resource-link">
+                        <i class="fa-solid fa-file-pdf" style="color:#0891b2"></i> Descargar Guía (PDF)
                     </a>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Servicios -->
-    <section id="servicios" class="bg-slate-900 text-white py-24 px-4">
-        <div class="max-w-4xl mx-auto">
-            <div class="text-center mb-16">
-                <span class="text-cyan-400 font-semibold uppercase tracking-widest text-xs px-3 py-1 bg-cyan-500/10 rounded-full">Ingeniería del Cambio Organizacional</span>
-                <h2 class="text-3xl md:text-4xl font-black tracking-tight mt-3">Modelos de Intervención Estructural</h2>
-                <p class="text-slate-400 mt-4 text-base">Haga clic sobre cada modelo operativo para desglosar sus pilares de entrega de valor.</p>
+<!-- ═══ TESTIMONIOS ═══════════════════════════════════ -->
+<section id="testimonios" style="padding:5rem 1rem">
+    <div class="container">
+        <div style="text-align:center;max-width:32rem;margin:0 auto 4rem">
+            <h2 class="section-title">Lo que dicen quienes ya tomaron la decisión</h2>
+            <p style="color:#475569;margin-top:.75rem">No testimonios genéricos. Personas con nombre, cargo y contexto real.</p>
+        </div>
+        <div class="grid-3">
+            <div class="testi-card">
+                <p>"Manifiesto que conozco la idoneidad del doctor William Andrés Gómez Lizarazo... Ha demostrado un destacado liderazgo como Presidente del Consejo de Administración de la cooperativa Comerciacoop, una de las más importantes del país."</p>
+                <div class="testi-divider">
+                    <div class="testi-name">Antonio Sarmiento</div>
+                    <div class="testi-role">Ex-Profesor U. Javeriana, La Salle y U. Cooperativa</div>
+                </div>
             </div>
-            <div class="space-y-4">
-                <div class="border border-slate-800 bg-slate-950 rounded-xl overflow-hidden transition-all duration-300 hover:border-cyan-500/30">
-                    <button onclick="toggleAccordion(1)" class="w-full flex items-center justify-between p-6 text-left focus:outline-none group">
-                        <div class="flex items-start space-x-4">
-                            <div class="mt-1 bg-cyan-500/10 text-cyan-400 p-3 rounded-lg group-hover:bg-cyan-500 group-hover:text-slate-950 transition-all duration-300">
-                                <i class="fa-solid fa-route text-lg"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-lg md:text-xl font-bold text-white group-hover:text-cyan-400 transition-colors">Servicio I: Hojas de Ruta y Consultoría</h3>
-                                <p class="text-slate-400 text-sm mt-1">Proyectos con alcance definido: Auditoría de madurez y optimización profunda de procesos.</p>
-                            </div>
-                        </div>
-                        <i id="arrow-1" class="fa-solid fa-chevron-down text-slate-600 group-hover:text-cyan-400 transition-transform duration-300 ml-4"></i>
-                    </button>
-                    <div id="content-1" class="accordion-content bg-slate-900/40">
-                        <div class="p-6 pt-0 ml-16 border-t border-slate-900/60 grid gap-4 text-sm text-slate-300">
-                            <p class="mt-4"><strong class="text-cyan-400">Diagnóstico de Madurez Digital:</strong> Aplicamos la metodología IFC DigiLab (Banco Mundial) sobre 8 ejes críticos para identificar brechas reales y construir su hoja de ruta a 12 y 36 meses — no una presentación, un plan ejecutable.</p>
-                            <p><strong class="text-cyan-400">Automatización de Procesos:</strong> Digitalización de flujos operativos con Google Workspace, Apps Script y Power BI. Caso real: ciclo de pago a 700+ contratistas en la Alcaldía de Kennedy reducido de 30 a 7 días.</p>
-                            <p class="mb-2"><strong class="text-cyan-400">Células Ágiles y PMVs:</strong> Implementación de Scrum/Kanban con entregas iterativas en 30 días. Bajo mi mentoría, 16 directivos de cooperativas construyeron sus propias hojas de ruta digitales (Diplomado Juan N. Corpas – FECOLFIN).</p>
-                        </div>
-                    </div>
+            <div class="testi-card">
+                <p>"Andrés es una persona orientada al resultado, con alta capacidad de liderazgo, gestión de procesos, diseño estratégico... Es un ser humano con habilidades blandas que le permiten movilizar cambios."</p>
+                <div class="testi-divider">
+                    <div class="testi-name">Jennifer Paola Restrepo C.</div>
+                    <div class="testi-role">Magíster en Comportamiento del Consumidor & Especialista en Mercadeo</div>
                 </div>
-                <div class="border border-slate-800 bg-slate-950 rounded-xl overflow-hidden transition-all duration-300 hover:border-cyan-500/30">
-                    <button onclick="toggleAccordion(2)" class="w-full flex items-center justify-between p-6 text-left focus:outline-none group">
-                        <div class="flex items-start space-x-4">
-                            <div class="mt-1 bg-cyan-500/10 text-cyan-400 p-3 rounded-lg group-hover:bg-cyan-500 group-hover:text-slate-950 transition-all duration-300">
-                                <i class="fa-solid fa-shield-halved text-lg"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-lg md:text-xl font-bold text-white group-hover:text-cyan-400 transition-colors">Servicio II: Advisory Board y Gobierno</h3>
-                                <p class="text-slate-400 text-sm mt-1">Modelo Retainer mensual para Consejos de Administración. Asiento consultivo imparcial.</p>
-                            </div>
-                        </div>
-                        <i id="arrow-2" class="fa-solid fa-chevron-down text-slate-600 group-hover:text-cyan-400 transition-transform duration-300 ml-4"></i>
-                    </button>
-                    <div id="content-2" class="accordion-content bg-slate-900/40">
-                        <div class="p-6 pt-0 ml-16 border-t border-slate-900/60 grid gap-4 text-sm text-slate-300">
-                            <p class="mt-4"><strong class="text-cyan-400">Gobierno Corporativo Digital:</strong> Acompañamiento a Consejos de Administración como asiento consultivo independiente. Experiencia directa como Presidente de Consejo supervisando $9.000M COP y cumplimiento ante Supersolidaria.</p>
-                            <p><strong class="text-cyan-400">Business Intelligence y Datos:</strong> Construcción de tableros de control en Power BI para monitoreo en tiempo real de KPIs financieros y operativos. Caso real: modelo analítico centralizado para AC Seguros desde cero.</p>
-                            <p class="mb-2"><strong class="text-cyan-400">Evaluación de Proveedores TI:</strong> Auditoría técnica e imparcial de ofertas de software y contratos tecnológicos para blindar el presupuesto de su Consejo frente a sobrecostos ocultos y promesas sin respaldo.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="border border-slate-800 bg-slate-950 rounded-xl overflow-hidden transition-all duration-300 hover:border-cyan-500/30">
-                    <button onclick="toggleAccordion(3)" class="w-full flex items-center justify-between p-6 text-left focus:outline-none group">
-                        <div class="flex items-start space-x-4">
-                            <div class="mt-1 bg-cyan-500/10 text-cyan-400 p-3 rounded-lg group-hover:bg-cyan-500 group-hover:text-slate-950 transition-all duration-300">
-                                <i class="fa-solid fa-earth-americas text-lg"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-lg md:text-xl font-bold text-white group-hover:text-cyan-400 transition-colors">Servicio III: Misiones de Inmersión</h3>
-                                <p class="text-slate-400 text-sm mt-1">Programas a Silicon Valley y LATAM. Tech Scouting para +90 directivos entrenados.</p>
-                            </div>
-                        </div>
-                        <i id="arrow-3" class="fa-solid fa-chevron-down text-slate-600 group-hover:text-cyan-400 transition-transform duration-300 ml-4"></i>
-                    </button>
-                    <div id="content-3" class="accordion-content bg-slate-900/40">
-                        <div class="p-6 pt-0 ml-16 border-t border-slate-900/60 grid gap-4 text-sm text-slate-300">
-                            <p class="mt-4"><strong class="text-cyan-400">Inmersión en Silicon Valley:</strong> Coordiné 6 programas de inmersión en Silicon Valley y misiones en LATAM para más de 90 directivos del sector financiero-cooperativo (alianza FECOLFIN – Globaltech Bridge, 2017-2018). La exposición directa a startups tecnológicas es el catalizador más efectivo para vencer la resistencia al cambio en la alta dirección.</p>
-                            <p class="mb-2"><strong class="text-cyan-400">Tech Scouting y Alianzas B2B:</strong> Gestión de alianzas estratégicas internacionales con Banco Mundial (IFC), Rabobank, Sicredi y WOCCU. Identificación y evaluación de innovaciones aplicables directamente a la regulación colombiana y al contexto cooperativo/financiero.</p>
-                        </div>
-                    </div>
+            </div>
+            <div class="testi-card">
+                <p>"En mi experiencia con Andrés puedo decir que es un profesional muy comprometido y con un gran sentido de pertenencia, proactivo y cercano."</p>
+                <div class="testi-divider">
+                    <div class="testi-name">Carlos Valbuena</div>
+                    <div class="testi-role">Agile Coach</div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Tarifas -->
-    <section id="tarifas" class="py-24 px-4 bg-slate-100 border-t border-b border-slate-200">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <span class="text-indigo-950 font-bold uppercase tracking-widest text-xs px-3 py-1 bg-indigo-950/5 rounded-full">Transparencia de Gobierno Corporativo</span>
-                <h2 class="text-3xl md:text-4xl font-black text-slate-950 mt-3 tracking-tight">Modelos de Acompañamiento y Honorarios</h2>
-                <p class="text-slate-600 mt-4 text-base">Esquemas comerciales claros diseñados exclusivamente para la alta dirección institucional.</p>
-            </div>
-            <div class="grid md:grid-cols-3 gap-8 items-stretch max-w-6xl mx-auto">
-                <div class="bg-white p-8 rounded-2xl border border-slate-200 flex flex-col justify-between shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                    <div>
-                        <div class="flex justify-between items-start">
-                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-3 py-1 rounded-full">Consultorio</span>
-                            <i class="fa-solid fa-stethoscope text-slate-400 text-xl"></i>
-                        </div>
-                        <h3 class="font-bold text-xl text-slate-950 mt-4">Sesión Estratégica de Desbloqueo</h3>
-                        <p class="text-slate-500 text-xs mt-2 leading-relaxed">Ideal para Juntas o Gerentes que requieren destrabar un cuello de botella de forma inmediata o analizar su vector de madurez.</p>
-                        <div class="my-6 pt-4 border-t border-slate-100">
-                            <p class="text-3xl font-black text-slate-950">Gratis</p>
-                            <p class="text-sm font-semibold text-cyan-600 mt-1 font-mono">Diagnóstico sin costo</p>
-                            <p class="text-slate-400 text-[11px] mt-1">30 minutos · Cupos limitados</p>
-                        </div>
-                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
-                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-cyan-500 mr-2 text-xs"></i> 30 minutos de consultoría privada 1-a-1</li>
-                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-cyan-500 mr-2 text-xs"></i> Análisis profundo de su Radar de Madurez</li>
-                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-cyan-500 mr-2 text-xs"></i> Plan táctico de mitigación de brechas</li>
-                        </ul>
-                    </div>
-                    <button onclick="window.location.href='#contacto'; return false;" class="w-full bg-slate-950 text-white font-bold py-3 px-4 rounded-xl hover:bg-slate-800 transition text-center shadow-md cursor-pointer">
-                        Agendar Diagnóstico Gratuito
-                    </button>
-                </div>
-                <div class="bg-slate-950 p-8 rounded-2xl border-2 border-cyan-400 flex flex-col justify-between shadow-xl relative transition-all duration-300 hover:scale-[1.02] text-white">
-                    <div class="absolute top-0 right-6 transform -translate-y-1/2 bg-cyan-400 text-slate-950 text-xs font-black uppercase tracking-widest px-4 py-1 rounded-full shadow-md">
-                        Más Solicitado
-                    </div>
-                    <div>
-                        <div class="flex justify-between items-start">
-                            <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider bg-cyan-400/10 px-3 py-1 rounded-full">Retainer Mensual</span>
-                            <i class="fa-solid fa-handshake-angle text-cyan-400 text-xl"></i>
-                        </div>
-                        <h3 class="font-bold text-xl text-white mt-4">Advisory Board / Asiento Consultivo</h3>
-                        <p class="text-slate-400 text-xs mt-2 leading-relaxed">Socio estratégico continuo para comités directivos. Aseguramiento técnico de decisiones complejas TI.</p>
-                        <div class="my-6 pt-4 border-t border-slate-100">
-                            <p class="text-3xl font-black text-white">Desde $400 <span class="text-xs font-bold text-slate-400 font-mono tracking-tight">USD/Mes</span></p>
-                            <p class="text-sm font-semibold text-cyan-400 mt-1 font-mono">$1.500.000 COP / Mes</p>
-                            <p class="text-slate-500 text-[11px] mt-1">Acompañamiento bajo fee corporativo</p>
-                        </div>
-                        <ul class="space-y-3 text-sm text-slate-300 mb-8">
-                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-cyan-400 mr-2 text-xs"></i> Acompañamiento continuo a Juntas Directivas</li>
-                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-cyan-400 mr-2 text-xs"></i> Evaluación experta e imparcial de proveedores TI</li>
-                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-cyan-400 mr-2 text-xs"></i> Gobierno de datos y monitoreo de ROI ágil</li>
-                        </ul>
-                    </div>
-                    <button onclick="window.location.href='#contacto';" class="w-full bg-cyan-500 text-slate-950 font-black py-3 px-4 rounded-xl hover:bg-cyan-400 transition text-center shadow-lg shadow-cyan-400/10">
-                        Solicitar Propuesta a la Medida
-                    </button>
-                </div>
-                <div class="bg-white p-8 rounded-2xl border border-slate-200 flex flex-col justify-between shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                    <div>
-                        <div class="flex justify-between items-start">
-                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-3 py-1 rounded-full">End-to-End</span>
-                            <i class="fa-solid fa-chart-line text-slate-400 text-xl"></i>
-                        </div>
-                        <h3 class="font-bold text-xl text-slate-950 mt-4">Transformación Integral Avanzada</h3>
-                        <p class="text-slate-500 text-xs mt-2 leading-relaxed">Rediseño estructural de procesos core de su entidad atado directamente a resultados medibles por contrato.</p>
-                        <div class="my-6 pt-4 border-t border-slate-100">
-                            <p class="text-2xl font-black text-slate-950">Tarifa Base + Bono de Éxito</p>
-                            <p class="text-sm font-semibold text-cyan-600 mt-1 font-mono">Esquema Success Fee</p>
-                            <p class="text-slate-400 text-[11px] mt-1">Estructurado según volumen operativo</p>
-                        </div>
-                        <ul class="space-y-3 text-sm text-slate-600 mb-8">
-                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-cyan-500 mr-2 text-xs"></i> Rediseño operativo completo (End-to-End)</li>
-                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-cyan-500 mr-2 text-xs"></i> Despliegue in situ de Células Scrum activas</li>
-                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-cyan-500 mr-2 text-xs"></i> Honorarios atados a KPIs (Ej. -50% en tiempos)</li>
-                        </ul>
-                    </div>
-                    <button onclick="window.location.href='#contacto'; return false;" class="w-full bg-slate-950 text-white font-bold py-3 px-4 rounded-xl hover:bg-slate-800 transition text-center shadow-md">
-                        Agendar Café Virtual Gratuito
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Recursos -->
-    <section id="recursos" class="py-20 px-4 bg-slate-100">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center max-w-2xl mx-auto mb-12">
-                <h2 class="text-3xl font-bold text-slate-900">Biblioteca de Consulta y Recursos Públicos</h2>
-                <p class="text-slate-600 mt-3">Documentos de valor estratégico listos para descarga y análisis de la alta dirección.</p>
-            </div>
-            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
-                    <div>
-                        <div class="text-xs font-bold text-cyan-600 uppercase tracking-wider mb-2">Portafolio Ejecutivo</div>
-                        <h3 class="font-bold text-xl text-slate-900">Propuesta de Servicios de Consultoría General</h3>
-                        <p class="text-slate-600 text-sm mt-3 leading-relaxed">Acceda al desglose completo de los pilares metodológicos, la matriz de retorno de inversión (ROI) esperada y los esquemas de acompañamiento para Consejos de Administración.</p>
-                    </div>
-                    <div class="mt-8 pt-4 border-t border-slate-100">
-                        <a href="documentos/Propuesta%20de%20servicios%20de%20Consultoria%20General.pdf" target="_blank" class="inline-flex items-center text-sm font-bold text-slate-950 hover:text-cyan-600 transition bg-slate-100 hover:bg-slate-200/70 px-4 py-2 rounded-lg w-full justify-center">
-                            <i class="fa-solid fa-file-pdf mr-2 text-red-500"></i> Descargar Portafolio (PDF)
-                        </a>
-                    </div>
-                </div>
-                <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
-                    <div>
-                        <div class="text-xs font-bold text-indigo-950 uppercase tracking-wider mb-2">Estrategia Ágil</div>
-                        <h3 class="font-bold text-xl text-slate-900">Agile Acceleration Blueprint</h3>
-                        <p class="text-slate-600 text-sm mt-3 leading-relaxed">Guía técnica estructural sobre la aplicación de marcos de trabajo ágiles, mitigación de riesgos operativos y aceleración institucional.</p>
-                    </div>
-                    <div class="mt-8 pt-4 border-t border-slate-100">
-                        <a href="documentos/Agismo_vs_Cooperativas.pdf" target="_blank" class="inline-flex items-center text-sm font-bold text-slate-950 hover:text-cyan-600 transition bg-slate-100 hover:bg-slate-200/70 px-4 py-2 rounded-lg w-full justify-center">
-                            <i class="fa-solid fa-file-pdf mr-2 text-cyan-600"></i> Descargar Guia (PDF)
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonios -->
-    <section id="testimonios" class="py-20 px-4 max-w-7xl mx-auto">
-        <div class="text-center max-w-2xl mx-auto mb-16">
-            <h2 class="text-3xl font-bold text-slate-900">Prueba Social: El Impacto en la Voz del Sector</h2>
-            <p class="text-slate-600 mt-3">Recomendaciones consolidadas de directivos, aliados y la academia.</p>
-        </div>
-        <div class="grid md:grid-cols-3 gap-8">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200/70 flex flex-col justify-between">
-                <p class="text-slate-600 text-sm italic">"Manifiesto que conozco la idoneidad del doctor William Andrés Gómez Lizarazo... Ha demostrado un destacado liderazgo como Presidente del Consejo de Administración de la cooperativa Comerciacoop, una de las más importantes del país."</p>
-                <div class="mt-6 border-t pt-4">
-                    <p class="font-bold text-sm text-slate-900">Antonio Sarmiento</p>
-                    <p class="text-xs text-slate-500">Ex-Profesor U. Javeriana, La Salle y U. Cooperativa</p>
-                </div>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200/70 flex flex-col justify-between">
-                <p class="text-slate-600 text-sm italic">"Andrés es una persona orientada al resultado, con alta capacidad de liderazgo, gestión de procesos, diseño estratégico... Es un ser humano con habilidades blandas que le permiten movilizar cambios."</p>
-                <div class="mt-6 border-t pt-4">
-                    <p class="font-bold text-sm text-slate-900">Jennifer Paola Restrepo C.</p>
-                    <p class="text-xs text-slate-500">Magíster en Comportamiento del Consumidor & Especialista en Mercadeo</p>
-                </div>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200/70 flex flex-col justify-between">
-                <p class="text-slate-600 text-sm italic">"En mi experiencia con Andrés puedo decir que es un profesional muy comprometido y con un gran sentido de pertenencia, proactivo y cercano."</p>
-                <div class="mt-6 border-t pt-4">
-                    <p class="font-bold text-sm text-slate-900">Carlos Valbuena</p>
-                    <p class="text-xs text-slate-500">Agile Coach</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contacto -->
-    <section id="contacto" class="py-20 px-4 max-w-3xl mx-auto text-center">
-        <h2 class="text-3xl font-extrabold text-slate-950 tracking-tight">Construyamos el futuro de su entidad</h2>
-        <p class="text-slate-600 mt-3 mb-8 text-sm max-w-xl mx-auto">
-            La transformación digital no es un destino tecnológico; es una decisión estratégica de supervivencia y crecimiento. Inicie su diagnóstico hoy.
-        </p>
+<!-- ═══ CONTACTO ══════════════════════════════════════ -->
+<section id="contacto" style="padding:5rem 1rem">
+    <div class="container-sm" style="text-align:center">
+        <h2 style="font-size:1.875rem;font-weight:800;color:#020617;letter-spacing:-.025em">Cuénteme su situación. Le doy un diagnóstico inicial sin costo.</h2>
+        <p style="color:#475569;margin-top:.75rem;margin-bottom:2rem;font-size:.875rem;max-width:32rem;margin-left:auto;margin-right:auto">Estuve 10 años tomando y ejecutando decisiones de transformación digital. Si me describe en dos líneas su reto más urgente, le respondo con lo que haría yo en su lugar — no con una propuesta comercial.</p>
         <form action="https://script.google.com/macros/s/AKfycbxoEeXu9LjLpTe1UYXqJiDYFv6kiaGcp5FoiE88hykhWagFB4NCN7K0j--HN3esmTLAZQ/exec"
-              method="POST"
-              onsubmit="submitGeneralContact(event)"
-              class="bg-white p-8 rounded-3xl shadow-xl border border-slate-200/60 text-left space-y-6">
+              method="POST" onsubmit="submitGeneralContact(event)" class="contact-form">
             <input type="hidden" name="FormType" value="agenda">
             <div>
-                <label class="block text-sm font-semibold text-slate-700">Nombre Completo</label>
-                <input type="text" name="Nombre" required class="w-full mt-2 p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-950 transition text-sm">
+                <label class="form-label">Nombre Completo</label>
+                <input type="text" name="Nombre" required class="form-input">
             </div>
-            <div class="grid md:grid-cols-2 gap-6">
+            <div class="form-grid form-space">
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700">Correo Institucional</label>
-                    <input type="email" name="Email" required class="w-full mt-2 p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-950 transition text-sm">
+                    <label class="form-label">Correo Institucional</label>
+                    <input type="email" name="Email" required class="form-input">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700">Empresa / Entidad</label>
-                    <input type="text" name="Cooperativa" required class="w-full mt-2 p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-950 transition text-sm">
+                    <label class="form-label">Empresa / Entidad</label>
+                    <input type="text" name="Cooperativa" required class="form-input">
                 </div>
             </div>
-            <div>
-                <label class="block text-sm font-semibold text-slate-700">¿Cuál es el reto principal de su organización?</label>
-                <textarea name="Reto_Principal" rows="4" required class="w-full mt-2 p-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-950 transition text-sm" placeholder="Describa brevemente la situación de su proyecto tecnológico o el área de interés crítico..."></textarea>
+            <div class="form-space">
+                <label class="form-label">¿Cuál es el reto más urgente que necesita resolver?</label>
+                <textarea name="Reto_Principal" rows="4" required class="form-input" placeholder="Ej: Llevamos 6 meses con un proyecto de digitalización que no avanza. Tenemos reuniones pero no resultados. Necesitamos entender qué está fallando..."></textarea>
             </div>
-            <button type="submit" class="w-full bg-slate-950 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl text-center text-base cursor-pointer">
-                Registrar Datos y Elegir Hora en Agenda
-            </button>
-            <p class="text-center text-xs text-slate-400 italic">
-                *Al hacer clic, sus datos se guardarán de forma segura y se desplegará inmediatamente la disponibilidad de la agenda ejecutiva.
-            </p>
+            <div class="form-space">
+                <button type="submit" class="btn-dark">Enviar y elegir hora en mi agenda</button>
+            </div>
+            <p class="form-note">Sus datos no se venden ni se usan para spam. Le respondo en menos de 24 horas hábiles.</p>
         </form>
-    </section>
+    </div>
+</section>
 
-    <footer class="bg-slate-950 text-slate-400 py-8 text-center text-sm border-t border-slate-900">
-        <p>&copy; 2026 William Andrés Gómez Lizarazo. Todos los derechos reservados.</p>
-        <p class="mt-2">Bogotá D.C., Colombia | <a href="mailto:andrezgmz@outlook.com" class="hover:text-white transition">andrezgmz@outlook.com</a> | +57 3167836311</p>
-    </footer>
+<!-- ═══ FOOTER ════════════════════════════════════════ -->
+<footer>
+    <p>&copy; 2026 William Andrés Gómez Lizarazo. Todos los derechos reservados.</p>
+    <p>Bogotá D.C., Colombia | <a href="mailto:andrezgmz@outlook.com">andrezgmz@outlook.com</a> | +57 3167836311</p>
+</footer>
 
-    <script>
-        function toggleAccordion(id) {
-            for (let i = 1; i <= 3; i++) {
-                const content = document.getElementById(`content-${i}`);
-                const arrow = document.getElementById(`arrow-${i}`);
-                if (i === id) {
-                    if (content.style.maxHeight === "" || content.style.maxHeight === "0px") {
-                        content.style.maxHeight = content.scrollHeight + "px";
-                        arrow.style.transform = "rotate(180deg)";
-                    } else {
-                        content.style.maxHeight = "0px";
-                        arrow.style.transform = "rotate(0deg)";
-                    }
-                } else {
-                    content.style.maxHeight = "0px";
-                    arrow.style.transform = "rotate(0deg)";
-                }
+<script>
+function toggleAccordion(id) {
+    for (let i = 1; i <= 3; i++) {
+        const content = document.getElementById(`content-${i}`);
+        const arrow = document.getElementById(`arrow-${i}`);
+        if (i === id) {
+            if (content.style.maxHeight === "" || content.style.maxHeight === "0px") {
+                content.style.maxHeight = content.scrollHeight + "px";
+                arrow.style.transform = "rotate(180deg)";
+            } else {
+                content.style.maxHeight = "0px";
+                arrow.style.transform = "rotate(0deg)";
             }
+        } else {
+            content.style.maxHeight = "0px";
+            arrow.style.transform = "rotate(0deg)";
         }
+    }
+}
 
-        function submitGeneralContact(event) {
-            event.preventDefault();
-            const form = event.target;
-            const btn = form.querySelector('button[type="submit"]');
-            const originalText = btn.innerText;
-            btn.innerText = "Registrando Solicitud...";
-            btn.disabled = true;
+function submitGeneralContact(event) {
+    event.preventDefault();
+    const form = event.target;
+    const btn = form.querySelector('button[type="submit"]');
+    const originalText = btn.innerText;
+    btn.innerText = "Registrando Solicitud...";
+    btn.disabled = true;
 
-            const handleSuccess = () => {
-                btn.innerText = "¡Sesión Solicitada con Éxito!";
-                btn.className = "w-full bg-emerald-600 text-white font-bold py-4 rounded-xl transition shadow-lg";
-                const _nombre = form.Nombre.value;
-                const _email = form.Email.value;
-                form.reset();
-                Calendly.initPopupWidget({url: 'https://calendly.com/andreszer20/sesion-estrategica-de-desbloqueo', prefill: { name: _nombre, email: _email }});
-                setTimeout(() => {
-                    btn.innerText = originalText;
-                    btn.className = "w-full bg-slate-950 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition shadow-lg";
-                    btn.disabled = false;
-                }, 4000);
-            };
+    const handleSuccess = () => {
+        btn.innerText = "¡Sesión Solicitada con Éxito!";
+        btn.style.background = "#059669";
+        const _nombre = form.Nombre.value;
+        const _email = form.Email.value;
+        form.reset();
+        Calendly.initPopupWidget({url: 'https://calendly.com/andreszer20/sesion-estrategica-de-desbloqueo', prefill: { name: _nombre, email: _email }});
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.style.background = "";
+            btn.disabled = false;
+        }, 4000);
+    };
 
-            fetch(form.action, {
-                method: form.method,
-                body: new URLSearchParams(new FormData(form)),
-                mode: 'no-cors'
-            })
-            .then(handleSuccess)
-            .catch(handleSuccess);
-        }
-    </script>
+    fetch(form.action, {
+        method: form.method,
+        body: new URLSearchParams(new FormData(form)),
+        mode: 'no-cors'
+    })
+    .then(handleSuccess)
+    .catch(handleSuccess);
+}
+</script>
+
+<!-- Calendly JS al final — no bloquea el render inicial -->
+<script src="https://assets.calendly.com/assets/external/widget.js" defer></script>
 </body>
 </html>
