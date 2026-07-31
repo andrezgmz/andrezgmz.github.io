@@ -1988,25 +1988,14 @@ function renderPalancaExpandida(p) {
       </div>
 
       <!-- Campos -->
-      <div class="grid grid-cols-2 gap-4 mb-4">
-        <div>
-          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-            ¿Por qué esta palanca es prioritaria para su organización?
-          </label>
-          <textarea rows="3" placeholder="Ej: El crecimiento de ingresos digitales es clave para sostener la transformación sin aumentar la base de costos fijos..."
-            onchange="updatePalancaData('${p.id}','descripcion',null,this.value)"
-            class="w-full p-2.5 bg-slate-700 border border-slate-600 rounded-xl text-[10px] text-white placeholder-slate-600 focus:outline-none focus:ring-1 resize-none"
-            style="--tw-ring-color:${p.color}">${data.descripcion}</textarea>
-        </div>
-        <div>
-          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-            Iniciativas vinculadas a esta palanca
-          </label>
-          <textarea rows="3" placeholder="Ej: App móvil, Automatización de pagos, Dashboard BI..."
-            onchange="updatePalancaData('${p.id}','iniciativas',null,this.value)"
-            class="w-full p-2.5 bg-slate-700 border border-slate-600 rounded-xl text-[10px] text-white placeholder-slate-600 focus:outline-none focus:ring-1 resize-none"
-            style="--tw-ring-color:${p.color}">${data.iniciativas}</textarea>
-        </div>
+      <div class="mb-4">
+        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+          ¿Por qué esta palanca es prioritaria para su organización?
+        </label>
+        <textarea rows="3" placeholder="Ej: El crecimiento de ingresos digitales es clave para sostener la transformación sin aumentar la base de costos fijos..."
+          onchange="updatePalancaData('${p.id}','descripcion',null,this.value)"
+          class="w-full p-2.5 bg-slate-700 border border-slate-600 rounded-xl text-[10px] text-white placeholder-slate-600 focus:outline-none focus:ring-1 resize-none"
+          style="--tw-ring-color:${p.color}">${data.descripcion}</textarea>
       </div>
 
       <div class="mb-4">
@@ -2031,6 +2020,7 @@ function renderPalancaExpandida(p) {
         </button>
       </div>
     </div>`;
+}
 }
 
 function expandirPalanca(id) {
@@ -2061,7 +2051,22 @@ function eliminarPalanca(id) {
   updateTotalPalancas();
 }
 
-function updatePalancaData(palancaId, campo, indice, val) {
+function updateIniField(id, campo, val) {
+  const ini = iniciativas.find(x => x.id === id);
+  if (!ini) return;
+  ini[campo] = val;
+  if (campo === 'dificultad') recalcScores();
+  if (campo === 'nombre') updateHorizonteSelects();
+}
+
+function updateImpacto(id, palanca, val) {
+  const ini = iniciativas.find(x => x.id === id);
+  if (!ini) return;
+  ini.impactos[palanca] = parseInt(val);
+  recalcScores();
+  // Re-renderizar solo los botones de impacto del expandido para no perder el foco
+  renderIniciativas();
+}
   if (!palancaData[palancaId]) palancaData[palancaId] = { descripcion:'', kpis:['','',''], nota:'', iniciativas:'' };
   if (campo === 'kpis') {
     palancaData[palancaId].kpis[indice] = val;
@@ -2084,19 +2089,196 @@ function updateTotalPalancas() {
   el.className = `text-sm font-black ${total===100?'text-emerald-400':total>100?'text-rose-400':'text-white'}`;
 }
 
-// ── INICIATIVAS 3×3 ──────────────────────────────────
+// ── INICIATIVAS — patrón expandible igual que palancas ──
+let iniciativaExpandida = null;
+
+function renderIniciativas() {
+  const grid = document.getElementById('ini-grid');
+  grid.innerHTML = '';
+  if (iniciativas.length === 0) {
+    grid.innerHTML = '<p class="text-xs text-slate-600 italic col-span-3 text-center py-6">No hay iniciativas. Use "+ Agregar" para comenzar.</p>';
+    return;
+  }
+
+  if (iniciativaExpandida) {
+    // Una expandida + resto como resumen
+    iniciativas.forEach(ini => {
+      if (ini.id === iniciativaExpandida) {
+        grid.innerHTML += renderIniExpandida(ini);
+      } else {
+        grid.innerHTML += renderIniResumen(ini);
+      }
+    });
+  } else {
+    // Todas en resumen — grid 3 columnas
+    grid.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+      ${iniciativas.map(ini => renderIniResumen(ini)).join('')}
+    </div>`;
+  }
+}
+
+function renderIniResumen(ini) {
+  const guardada = ini.desc || ini.horizonte || Object.values(ini.impactos).some(v => v > 0);
+  const hColor   = ini.horizonte === 'h1' ? '#f43f5e' : ini.horizonte === 'h2' ? '#f59e0b' : ini.horizonte === 'h3' ? '#10b981' : '#475569';
+  const hLabel   = ini.horizonte ? ini.horizonte.toUpperCase() : '—';
+  const topImpacto = PALANCAS.reduce((best, p) => {
+    const v = ini.impactos[p.id] || 0;
+    return v > (ini.impactos[best?.id] || 0) ? p : best;
+  }, null);
+
+  return `
+    <div onclick="expandirIniciativa('${ini.id}')"
+      class="bg-slate-800 border ${guardada ? 'border-slate-600' : 'border-slate-700'} rounded-xl p-3 cursor-pointer hover:border-slate-500 transition group relative"
+      title="Haga clic para trabajar esta iniciativa">
+      <!-- Encabezado -->
+      <div class="flex items-start justify-between gap-2 mb-2">
+        <p class="text-[10px] font-bold text-white leading-snug flex-1">${ini.nombre || '<span class="text-slate-600 italic">Sin nombre</span>'}</p>
+        <span id="score-${ini.id}" class="text-[10px] font-black text-cyan-400 flex-shrink-0">${ini.pct > 0 ? ini.pct.toFixed(1)+'%' : '—'}</span>
+      </div>
+      <!-- Descripción truncada -->
+      ${ini.desc ? `<p class="text-[9px] text-slate-400 mb-2 line-clamp-2">${ini.desc}</p>` : ''}
+      <!-- Fila de datos -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-[8px] font-bold px-1.5 py-0.5 rounded" style="background:${hColor}20;color:${hColor}">${hLabel}</span>
+          <span class="text-[8px] text-slate-600">Dif: ${ini.dificultad === 1 ? 'Baja' : ini.dificultad === 2 ? 'Media' : 'Alta'}</span>
+        </div>
+        ${topImpacto && (ini.impactos[topImpacto.id]||0) > 0
+          ? `<span class="text-[8px] text-slate-600 truncate max-w-[80px]" title="Mayor impacto en ${topImpacto.label}">
+               <i class="fa-solid ${topImpacto.icon} text-[7px]" style="color:${topImpacto.color}"></i>
+               ${topImpacto.label.split(' ')[0]}
+             </span>` : ''}
+      </div>
+      <!-- Badge guardado -->
+      ${guardada ? `<div class="absolute top-1.5 right-1.5"><span class="text-[7px] font-black px-1 py-0.5 rounded bg-cyan-500/10 text-cyan-500">✓</span></div>` : ''}
+      ${!guardada ? `<div class="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition"><i class="fa-solid fa-pen text-[8px] text-slate-500"></i></div>` : ''}
+    </div>`;
+}
+
+function renderIniExpandida(ini) {
+  const impHtml = PALANCAS.map(p => {
+    const v = ini.impactos[p.id] || 0;
+    return `
+      <div class="flex flex-col gap-1.5">
+        <div class="flex items-center gap-1.5">
+          <i class="fa-solid ${p.icon} text-[9px]" style="color:${p.color}"></i>
+          <span class="text-[9px] text-slate-400">${p.label}</span>
+          <span class="text-[9px] font-bold ml-auto" style="color:${p.color}">${v > 0 ? ['','Bajo','Medio','Alto'][v] : 'Nulo'}</span>
+        </div>
+        <div class="flex gap-1">
+          ${[0,1,2,3].map(opt => `
+            <button onclick="updateImpacto('${ini.id}','${p.id}',${opt})"
+              class="flex-1 py-1 rounded text-[9px] font-black transition"
+              style="${v === opt
+                ? `background:${p.color}30;border:1px solid ${p.color};color:${p.color}`
+                : 'background:rgb(30 41 59);border:1px solid rgb(51 65 85);color:rgb(100 116 139)'}"
+              onmouseover="if(${opt}!==${v})this.style.borderColor='${p.color}80'"
+              onmouseout="if(${opt}!==${v})this.style.borderColor='rgb(51 65 85)'">
+              ${opt}
+            </button>`).join('')}
+        </div>
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="bg-slate-800 border-2 border-cyan-500/40 rounded-2xl p-5 col-span-full">
+      <!-- Cabecera -->
+      <div class="flex items-start justify-between mb-5 gap-4">
+        <div class="flex-1">
+          <input type="text" value="${ini.nombre}" placeholder="Nombre de la iniciativa..."
+            onchange="updateIniField('${ini.id}','nombre',this.value)"
+            class="w-full bg-transparent text-sm font-black text-white border-b border-slate-600 focus:outline-none focus:border-cyan-500 pb-1 mb-1">
+          <p class="text-[9px] text-slate-500">Complete los campos y presione Guardar — el recuadro mostrará el resumen.</p>
+        </div>
+        <div class="flex items-center gap-3 flex-shrink-0">
+          <span id="score-${ini.id}" class="text-lg font-black text-cyan-400">${ini.pct > 0 ? ini.pct.toFixed(1)+'%' : '—'}</span>
+          <button onclick="guardarIniciativa('${ini.id}')"
+            class="bg-cyan-500 text-slate-950 font-black text-xs px-5 py-2.5 rounded-xl hover:bg-cyan-400 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-check text-[10px]"></i> Guardar
+          </button>
+        </div>
+      </div>
+
+      <!-- Descripción -->
+      <div class="mb-4">
+        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">¿Qué hacer y cómo?</label>
+        <textarea rows="2" placeholder="Describa brevemente el alcance de la iniciativa y las acciones clave a ejecutar..."
+          onchange="updateIniField('${ini.id}','desc',this.value)"
+          class="w-full p-2.5 bg-slate-700 border border-slate-600 rounded-xl text-[10px] text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-500 resize-none">${ini.desc}</textarea>
+      </div>
+
+      <!-- Impactos por palanca -->
+      <div class="mb-4">
+        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">
+          Impacto en cada palanca — 0 Nulo · 1 Bajo · 2 Medio · 3 Alto
+        </label>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">${impHtml}</div>
+      </div>
+
+      <!-- Dificultad y Horizonte -->
+      <div class="flex flex-wrap gap-4 pt-4 border-t border-slate-700">
+        <div class="flex items-center gap-2">
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Dificultad:</label>
+          ${[1,2,3].map(d => {
+            const lbl = d===1?'Baja':d===2?'Media':'Alta';
+            const col = d===1?'#10b981':d===2?'#f59e0b':'#f43f5e';
+            return `<button onclick="updateIniField('${ini.id}','dificultad',${d})"
+              class="px-3 py-1 rounded-lg text-[10px] font-black transition"
+              style="${ini.dificultad===d ? `background:${col}20;border:1px solid ${col};color:${col}` : 'background:rgb(30 41 59);border:1px solid rgb(51 65 85);color:rgb(100 116 139)'}">${lbl}</button>`;
+          }).join('')}
+        </div>
+        <div class="flex items-center gap-2">
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Horizonte:</label>
+          ${['h1','h2','h3'].map(h => {
+            const col = h==='h1'?'#f43f5e':h==='h2'?'#f59e0b':'#10b981';
+            const lbl = h==='h1'?'H1 · Meses 1-6':h==='h2'?'H2 · Meses 6-18':'H3 · Mes 18+';
+            return `<button onclick="quickAssignHorizonte('${ini.id}','${h}')"
+              class="px-3 py-1 rounded-lg text-[10px] font-black transition"
+              style="${ini.horizonte===h ? `background:${col}20;border:1px solid ${col};color:${col}` : 'background:rgb(30 41 59);border:1px solid rgb(51 65 85);color:rgb(100 116 139)'}">${lbl}</button>`;
+          }).join('')}
+          ${ini.horizonte ? `<button onclick="quickAssignHorizonte('${ini.id}','')"
+            class="px-2 py-1 rounded-lg text-[10px] text-slate-500 hover:text-rose-400 transition"
+            style="background:rgb(30 41 59);border:1px solid rgb(51 65 85)">✕</button>` : ''}
+        </div>
+        <button onclick="eliminarIniciativa('${ini.id}')"
+          class="ml-auto text-[10px] border border-rose-500/30 text-rose-400 px-3 py-1 rounded-lg hover:bg-rose-500/10 transition flex items-center gap-1">
+          <i class="fa-solid fa-trash text-[9px]"></i> Eliminar
+        </button>
+      </div>
+    </div>`;
+}
+
+function expandirIniciativa(id) {
+  iniciativaExpandida = id;
+  renderIniciativas();
+  setTimeout(() => {
+    const grid = document.getElementById('ini-grid');
+    if (grid) grid.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }, 100);
+}
+
+function guardarIniciativa(id) {
+  iniciativaExpandida = null;
+  renderIniciativas();
+  renderHorizonteItems();
+  renderEsfuerzoHorizontes();
+}
+
+function eliminarIniciativa(id) {
+  ['h1','h2','h3'].forEach(h => { horizonteMap[h] = horizonteMap[h].filter(x => x !== id); });
+  iniciativas = iniciativas.filter(x => x.id !== id);
+  iniciativaExpandida = null;
+  renderIniciativas();
+  recalcScores();
+  updateHorizonteSelects();
+  renderHorizonteItems();
+  renderEsfuerzoHorizontes();
+}
+
 function addIniciativa() {
-  iniciativas.push({
-    id: 'ini-' + Date.now(),
-    nombre: '',
-    desc: '',
-    eje: '',
-    impactos: {},
-    dificultad: 2,
-    horizonte: null,
-    score: 0,
-    pct: 0
-  });
+  const id = 'ini-' + Date.now();
+  iniciativas.push({ id, nombre:'', desc:'', eje:'', impactos:{}, dificultad:2, horizonte:null, score:0, pct:0 });
+  iniciativaExpandida = id; // abre expandida automáticamente
   renderIniciativas();
   recalcScores();
   updateHorizonteSelects();
@@ -2107,76 +2289,12 @@ function removeLastIniciativa() {
   const last = iniciativas[iniciativas.length - 1];
   ['h1','h2','h3'].forEach(h => { horizonteMap[h] = horizonteMap[h].filter(id => id !== last.id); });
   iniciativas.pop();
+  iniciativaExpandida = null;
   renderIniciativas();
   recalcScores();
   updateHorizonteSelects();
   renderHorizonteItems();
 }
-
-function renderIniciativas() {
-  const grid = document.getElementById('ini-grid');
-  grid.innerHTML = '';
-  if (iniciativas.length === 0) {
-    grid.innerHTML = '<p class="text-xs text-slate-600 italic col-span-3 text-center py-6">No hay iniciativas. Use "+ Agregar" para comenzar.</p>';
-    return;
-  }
-  iniciativas.forEach((ini, idx) => {
-    const impHtml = PALANCAS.map(p => `
-      <div class="flex flex-col items-center gap-0.5">
-        <span class="text-[8px] text-slate-600" title="${p.label}">${p.label.split(' ')[0].substring(0,4)}</span>
-        <select onchange="updateImpacto('${ini.id}','${p.id}',+this.value)"
-          class="w-full p-0.5 bg-slate-700 border border-slate-600 rounded text-[9px] text-center text-white focus:outline-none">
-          ${[0,1,2,3].map(v=>`<option value="${v}" ${(ini.impactos[p.id]||0)==v?'selected':''}>${v}</option>`).join('')}
-        </select>
-      </div>`).join('');
-
-    grid.innerHTML += `
-      <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3 flex flex-col gap-2">
-        <div class="flex items-center justify-between gap-2">
-          <span class="text-[9px] font-mono text-slate-600">#${idx+1}</span>
-          <input type="text" value="${ini.nombre}" placeholder="Nombre de la iniciativa..."
-            onchange="updateIniField('${ini.id}','nombre',this.value)"
-            class="flex-1 bg-transparent border-b border-slate-600 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 pb-0.5">
-          <span id="score-${ini.id}" class="text-[10px] font-black text-cyan-400 flex-shrink-0 w-10 text-right">0%</span>
-        </div>
-        <textarea rows="2" placeholder="Describa brevemente qué hacer y cómo..."
-          onchange="updateIniField('${ini.id}','desc',this.value)"
-          class="w-full bg-slate-700 border border-slate-600 rounded-lg p-2 text-[10px] text-slate-300 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-500 resize-none">${ini.desc}</textarea>
-        <div>
-          <p class="text-[9px] text-slate-600 mb-1">Impacto por palanca (0=Nulo → 3=Alto)</p>
-          <div class="grid grid-cols-6 gap-1">${impHtml}</div>
-        </div>
-        <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-700">
-          <div class="flex items-center gap-1.5">
-            <span class="text-[9px] text-slate-500">Dificultad:</span>
-            <select onchange="updateIniField('${ini.id}','dificultad',+this.value)"
-              class="p-1 bg-slate-700 border border-slate-600 rounded text-[9px] text-white focus:outline-none">
-              <option value="1" ${ini.dificultad==1?'selected':''}>1 Baja</option>
-              <option value="2" ${ini.dificultad==2?'selected':''}>2 Media</option>
-              <option value="3" ${ini.dificultad==3?'selected':''}>3 Alta</option>
-            </select>
-          </div>
-          <div class="flex items-center gap-1">
-            <span class="text-[9px] text-slate-500">Horizonte:</span>
-            <select onchange="quickAssignHorizonte('${ini.id}',this.value)"
-              class="p-1 bg-slate-700 border border-slate-600 rounded text-[9px] text-white focus:outline-none">
-              <option value="" ${!ini.horizonte?'selected':''}>—</option>
-              <option value="h1" ${ini.horizonte=='h1'?'selected':''}>H1</option>
-              <option value="h2" ${ini.horizonte=='h2'?'selected':''}>H2</option>
-              <option value="h3" ${ini.horizonte=='h3'?'selected':''}>H3</option>
-            </select>
-          </div>
-        </div>
-      </div>`;
-  });
-}
-
-function updateIniField(id, campo, val) {
-  const ini = iniciativas.find(x=>x.id===id);
-  if (!ini) return;
-  ini[campo] = val;
-  if (campo === 'dificultad') recalcScores();
-  if (campo === 'nombre') updateHorizonteSelects();
 }
 
 function updateImpacto(id, palanca, val) {
