@@ -544,7 +544,7 @@
       <p class="text-xs text-slate-500 leading-relaxed"><strong class="text-slate-400">Impacto:</strong> 0=Nulo · 1=Bajo · 2=Medio · 3=Alto &nbsp;|&nbsp; <strong class="text-slate-400">Dificultad:</strong> 1=Baja · 2=Media · 3=Alta &nbsp;|&nbsp; <strong class="text-slate-400">Score:</strong> (impactos × pesos) ÷ dificultad · normalizado a 100%</p>
     </div>
     <!-- Grid 3×3 de iniciativas -->
-    <div id="ini-grid" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+    <div id="ini-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch"></div>
 
     <!-- Ranking -->
     <div id="ranking-result" class="hidden mt-5 pt-5 border-t border-slate-800">
@@ -2111,17 +2111,17 @@ function renderIniciativas() {
       }
     });
   } else {
-    // Todas en resumen — grid 3 columnas
-    grid.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-      ${iniciativas.map(ini => renderIniResumen(ini)).join('')}
-    </div>`;
+    // Todas en resumen
+    grid.innerHTML = iniciativas.map(ini => renderIniResumen(ini)).join('');
   }
 }
 
 function renderIniResumen(ini) {
   const guardada = ini.desc || ini.horizonte || Object.values(ini.impactos).some(v => v > 0);
   const hColor   = ini.horizonte === 'h1' ? '#f43f5e' : ini.horizonte === 'h2' ? '#f59e0b' : ini.horizonte === 'h3' ? '#10b981' : '#475569';
-  const hLabel   = ini.horizonte ? ini.horizonte.toUpperCase() : '—';
+  const hLabel   = ini.horizonte ? ini.horizonte.toUpperCase() : 'Sin horiz.';
+  const dColor   = ini.dificultad === 1 ? '#10b981' : ini.dificultad === 2 ? '#f59e0b' : '#f43f5e';
+  const dLabel   = ini.dificultad === 1 ? 'Baja' : ini.dificultad === 2 ? 'Media' : 'Alta';
   const topImpacto = PALANCAS.reduce((best, p) => {
     const v = ini.impactos[p.id] || 0;
     return v > (ini.impactos[best?.id] || 0) ? p : best;
@@ -2129,30 +2129,33 @@ function renderIniResumen(ini) {
 
   return `
     <div onclick="expandirIniciativa('${ini.id}')"
-      class="bg-slate-800 border ${guardada ? 'border-slate-600' : 'border-slate-700'} rounded-xl p-3 cursor-pointer hover:border-slate-500 transition group relative"
+      class="bg-slate-800 border ${guardada ? 'border-slate-600' : 'border-slate-700'} rounded-xl p-4 cursor-pointer hover:border-slate-500 hover:bg-slate-800/70 transition group relative flex flex-col h-full"
       title="Haga clic para trabajar esta iniciativa">
+      <!-- Badge guardado / editar -->
+      <div class="absolute top-3 right-3">
+        ${guardada
+          ? `<span class="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"><i class="fa-solid fa-check text-[7px]"></i></span>`
+          : `<i class="fa-solid fa-pen text-[9px] text-slate-600 opacity-0 group-hover:opacity-100 transition"></i>`}
+      </div>
       <!-- Encabezado -->
-      <div class="flex items-start justify-between gap-2 mb-2">
-        <p class="text-[10px] font-bold text-white leading-snug flex-1">${ini.nombre || '<span class="text-slate-600 italic">Sin nombre</span>'}</p>
-        <span id="score-${ini.id}" class="text-[10px] font-black text-cyan-400 flex-shrink-0">${ini.pct > 0 ? ini.pct.toFixed(1)+'%' : '—'}</span>
+      <div class="pr-7 mb-2">
+        <p class="text-[12px] font-bold text-white leading-snug line-clamp-2 mb-1.5">${ini.nombre || '<span class="text-slate-600 italic font-normal">Sin nombre</span>'}</p>
+        <span id="score-${ini.id}" class="text-sm font-black text-cyan-400">${ini.pct > 0 ? ini.pct.toFixed(1)+'%' : '—'}</span>
       </div>
       <!-- Descripción truncada -->
-      ${ini.desc ? `<p class="text-[9px] text-slate-400 mb-2 line-clamp-2">${ini.desc}</p>` : ''}
+      ${ini.desc
+        ? `<p class="text-[10px] text-slate-400 leading-relaxed line-clamp-2 mb-3">${ini.desc}</p>`
+        : `<p class="text-[10px] text-slate-600 italic mb-3">Sin descripción</p>`}
       <!-- Fila de datos -->
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <span class="text-[8px] font-bold px-1.5 py-0.5 rounded" style="background:${hColor}20;color:${hColor}">${hLabel}</span>
-          <span class="text-[8px] text-slate-600">Dif: ${ini.dificultad === 1 ? 'Baja' : ini.dificultad === 2 ? 'Media' : 'Alta'}</span>
-        </div>
+      <div class="mt-auto pt-3 border-t border-slate-700/60 flex flex-wrap items-center gap-1.5">
+        <span class="text-[8px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap" style="background:${hColor}20;color:${hColor}">${hLabel}</span>
+        <span class="text-[8px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap" style="background:${dColor}20;color:${dColor}">Dif: ${dLabel}</span>
         ${topImpacto && (ini.impactos[topImpacto.id]||0) > 0
-          ? `<span class="text-[8px] text-slate-600 truncate max-w-[80px]" title="Mayor impacto en ${topImpacto.label}">
+          ? `<span class="text-[8px] text-slate-500 flex items-center gap-1 ml-auto truncate max-w-[90px]" title="Mayor impacto en ${topImpacto.label}">
                <i class="fa-solid ${topImpacto.icon} text-[7px]" style="color:${topImpacto.color}"></i>
                ${topImpacto.label.split(' ')[0]}
              </span>` : ''}
       </div>
-      <!-- Badge guardado -->
-      ${guardada ? `<div class="absolute top-1.5 right-1.5"><span class="text-[7px] font-black px-1 py-0.5 rounded bg-cyan-500/10 text-cyan-500">✓</span></div>` : ''}
-      ${!guardada ? `<div class="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition"><i class="fa-solid fa-pen text-[8px] text-slate-500"></i></div>` : ''}
     </div>`;
 }
 
