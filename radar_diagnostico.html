@@ -5,6 +5,40 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Diagnóstico de Madurez Digital | Herramienta Profesional</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<style>
+/* ── Safelist de clases dinámicas que Tailwind CDN no puede detectar ── */
+/* Rating chips: colores por valor 1-5 */
+.bg-rose-500\/25   { background-color: rgb(244 63 94 / 0.25); }
+.bg-orange-500\/25 { background-color: rgb(249 115 22 / 0.25); }
+.bg-amber-500\/25  { background-color: rgb(245 158 11 / 0.25); }
+.bg-teal-500\/25   { background-color: rgb(20 184 166 / 0.25); }
+.bg-emerald-500\/25{ background-color: rgb(16 185 129 / 0.25); }
+
+.border-rose-400   { border-color: rgb(251 113 133); }
+.border-orange-400 { border-color: rgb(251 146 60); }
+.border-amber-400  { border-color: rgb(251 191 36); }
+.border-teal-400   { border-color: rgb(45 212 191); }
+.border-emerald-400{ border-color: rgb(52 211 153); }
+
+.text-rose-300     { color: rgb(252 165 165); }
+.text-orange-300   { color: rgb(253 186 116); }
+.text-amber-300    { color: rgb(252 211 77); }
+.text-teal-300     { color: rgb(94 234 212); }
+.text-emerald-300  { color: rgb(110 231 183); }
+
+.text-rose-400     { color: rgb(251 113 133); }
+.text-orange-400   { color: rgb(251 146 60); }
+.text-amber-400    { color: rgb(251 191 36); }
+.text-teal-400     { color: rgb(45 212 191); }
+.text-emerald-400  { color: rgb(52 211 153); }
+
+/* Ranking bars */
+.bg-rose-500   { background-color: rgb(244 63 94); }
+.bg-orange-500 { background-color: rgb(249 115 22); }
+.bg-amber-500  { background-color: rgb(245 158 11); }
+.bg-teal-500   { background-color: rgb(20 184 166); }
+.bg-emerald-500{ background-color: rgb(16 185 129); }
+</style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -979,7 +1013,14 @@ function renderAx() {
   document.getElementById('btn-prev').style.visibility = currentAx === 0 ? 'hidden' : 'visible';
 
   const LABELS = {1:'Inexistente',2:'Incipiente',3:'En Desarrollo',4:'Avanzado',5:'Referente'};
-  const COLS   = {1:'rose',2:'orange',3:'amber',4:'teal',5:'emerald'};
+  // Colores por valor — usando style inline para evitar dependencia de Tailwind CDN en JS dinámico
+  const CHIP_COLORS = {
+    1: { bg:'rgb(244 63 94 / 0.20)',  border:'rgb(251 113 133)', text:'rgb(252 165 165)', hover:'#f43f5e' },
+    2: { bg:'rgb(249 115 22 / 0.20)', border:'rgb(251 146 60)',  text:'rgb(253 186 116)', hover:'#f97316' },
+    3: { bg:'rgb(245 158 11 / 0.20)', border:'rgb(251 191 36)',  text:'rgb(252 211 77)',  hover:'#f59e0b' },
+    4: { bg:'rgb(20 184 166 / 0.20)', border:'rgb(45 212 191)',  text:'rgb(94 234 212)',  hover:'#14b8a6' },
+    5: { bg:'rgb(16 185 129 / 0.20)', border:'rgb(52 211 153)',  text:'rgb(110 231 183)', hover:'#10b981' },
+  };
 
   const container = document.getElementById('ax-qs');
   container.innerHTML = '';
@@ -987,21 +1028,38 @@ function renderAx() {
   ax.qs.forEach((q, qi) => {
     const saved = scores[currentAx][qi];
 
-    // Parsear el texto de la pregunta para extraer la pregunta limpia y los anclajes 1, 3, 5
-    // Formato esperado: "Valore del 1 al 5 [aspecto]: 1 = [texto], 3 = [texto], 5 = [texto]."
+    // Parsear: extraer título limpio y anclajes 1, 3, 5
     let titulo = q;
     let ancla1 = '', ancla3 = '', ancla5 = '';
     const colonIdx = q.indexOf(':');
     if (colonIdx !== -1) {
-      titulo = q.substring(0, colonIdx + 1).replace(/^Valore del 1 al 5\s*/i, '').replace(/:$/, '').trim();
+      titulo = q.substring(0, colonIdx).replace(/^Valore del 1 al 5\s*/i, '').trim();
       const resto = q.substring(colonIdx + 1);
-      const m1 = resto.match(/1\s*=\s*([^,]+?)(?:,\s*3\s*=|$)/i);
-      const m3 = resto.match(/3\s*=\s*([^,]+?)(?:,\s*5\s*=|$)/i);
+      const m1 = resto.match(/1\s*=\s*([^,]+?)(?=,\s*3\s*=)/i);
+      const m3 = resto.match(/3\s*=\s*([^,]+?)(?=,\s*5\s*=)/i);
       const m5 = resto.match(/5\s*=\s*(.+?)\.?\s*$/i);
       if (m1) ancla1 = m1[1].trim();
       if (m3) ancla3 = m3[1].trim();
       if (m5) ancla5 = m5[1].trim();
     }
+
+    const chipsHtml = [1,2,3,4,5].map(v => {
+      const cc = CHIP_COLORS[v];
+      const isSel = saved === v;
+      const styleBase = isSel
+        ? `background:${cc.bg};border:2px solid ${cc.border};color:${cc.text};transform:scale(1.08)`
+        : `background:rgb(2 6 23);border:1px solid rgb(51 65 85);color:rgb(100 116 139)`;
+      return `<button
+        class="rating-chip flex-1 py-2.5 rounded-lg text-xs font-black transition"
+        style="${styleBase}"
+        onclick="pick(${currentAx},${qi},${v})"
+        onmouseover="if(${v}!==${saved})this.style.borderColor='${cc.hover}';this.style.color='${cc.text}'"
+        onmouseout="if(${v}!==${saved}){this.style.borderColor='rgb(51 65 85)';this.style.color='rgb(100 116 139)'}"
+        data-ax="${currentAx}" data-qi="${qi}" data-v="${v}">
+        <div style="font-size:14px">${v}</div>
+        <div style="font-size:9px;margin-top:2px;opacity:0.7">${LABELS[v]}</div>
+      </button>`;
+    }).join('');
 
     const div = document.createElement('div');
     div.className = 'bg-slate-800/40 border border-slate-700/40 rounded-xl p-5';
@@ -1009,25 +1067,22 @@ function renderAx() {
       <p class="text-sm font-semibold text-white leading-relaxed mb-1">
         <span class="text-[10px] font-mono text-slate-600 mr-2">${currentAx+1}.${qi+1}</span>${titulo}
       </p>
-      <p class="text-[10px] text-slate-600 mb-3 ml-6">Valore del 1 al 5 — seleccione el nivel que mejor describe la situación actual de su organización.</p>
-      <div class="flex gap-2 mb-3">
-        ${[1,2,3,4,5].map(v => {
-          const c = COLS[v]; const isSel = saved === v;
-          return `<button
-            class="rating-chip flex-1 py-2.5 rounded-lg border text-xs font-black transition
-              ${isSel ? `bg-${c}-500/25 border-${c}-400 text-${c}-300 sel` : `bg-slate-900 border-slate-700 text-slate-500 hover:border-${c}-500/50 hover:text-${c}-400`}"
-            onclick="pick(${currentAx},${qi},${v})"
-            data-ax="${currentAx}" data-qi="${qi}" data-v="${v}">
-            <div class="text-sm">${v}</div>
-            <div class="text-[9px] mt-0.5 opacity-70 leading-tight">${LABELS[v]}</div>
-          </button>`;
-        }).join('')}
-      </div>
+      <p class="text-[10px] text-slate-600 mb-3 ml-6">Valore del 1 al 5 — seleccione el nivel que mejor describe la situación actual.</p>
+      <div class="flex gap-2 mb-3">${chipsHtml}</div>
       ${(ancla1 || ancla3 || ancla5) ? `
-      <div class="grid grid-cols-3 gap-2 ml-0">
-        ${ancla1 ? `<div class="bg-rose-500/5 border border-rose-500/15 rounded-lg p-2"><p class="text-[8px] font-black text-rose-400 mb-0.5">1 · Inexistente</p><p class="text-[9px] text-slate-500 leading-relaxed">${ancla1}</p></div>` : '<div></div>'}
-        ${ancla3 ? `<div class="bg-amber-500/5 border border-amber-500/15 rounded-lg p-2"><p class="text-[8px] font-black text-amber-400 mb-0.5">3 · En Desarrollo</p><p class="text-[9px] text-slate-500 leading-relaxed">${ancla3}</p></div>` : '<div></div>'}
-        ${ancla5 ? `<div class="bg-emerald-500/5 border border-emerald-500/15 rounded-lg p-2"><p class="text-[8px] font-black text-emerald-400 mb-0.5">5 · Referente</p><p class="text-[9px] text-slate-500 leading-relaxed">${ancla5}</p></div>` : '<div></div>'}
+      <div class="grid grid-cols-3 gap-2">
+        <div style="background:rgb(244 63 94/0.05);border:1px solid rgb(244 63 94/0.15)" class="rounded-lg p-2">
+          <p class="text-[8px] font-black mb-0.5" style="color:rgb(251 113 133)">1 · Inexistente</p>
+          <p class="text-[9px] text-slate-500 leading-relaxed">${ancla1}</p>
+        </div>
+        <div style="background:rgb(245 158 11/0.05);border:1px solid rgb(245 158 11/0.15)" class="rounded-lg p-2">
+          <p class="text-[8px] font-black mb-0.5" style="color:rgb(251 191 36)">3 · En Desarrollo</p>
+          <p class="text-[9px] text-slate-500 leading-relaxed">${ancla3}</p>
+        </div>
+        <div style="background:rgb(16 185 129/0.05);border:1px solid rgb(16 185 129/0.15)" class="rounded-lg p-2">
+          <p class="text-[8px] font-black mb-0.5" style="color:rgb(52 211 153)">5 · Referente</p>
+          <p class="text-[9px] text-slate-500 leading-relaxed">${ancla5}</p>
+        </div>
       </div>` : ''}`;
     container.appendChild(div);
   });
@@ -1036,12 +1091,23 @@ function renderAx() {
 
 function pick(ai, qi, v) {
   scores[ai][qi] = v;
-  const COLS = {1:'rose',2:'orange',3:'amber',4:'teal',5:'emerald'};
+  const CHIP_COLORS = {
+    1: { bg:'rgb(244 63 94 / 0.20)',  border:'rgb(251 113 133)', text:'rgb(252 165 165)' },
+    2: { bg:'rgb(249 115 22 / 0.20)', border:'rgb(251 146 60)',  text:'rgb(253 186 116)' },
+    3: { bg:'rgb(245 158 11 / 0.20)', border:'rgb(251 191 36)',  text:'rgb(252 211 77)'  },
+    4: { bg:'rgb(20 184 166 / 0.20)', border:'rgb(45 212 191)',  text:'rgb(94 234 212)'  },
+    5: { bg:'rgb(16 185 129 / 0.20)', border:'rgb(52 211 153)',  text:'rgb(110 231 183)' },
+  };
   document.querySelectorAll(`[data-ax="${ai}"][data-qi="${qi}"]`).forEach(btn => {
-    const bv = parseInt(btn.dataset.v); const c = COLS[bv];
-    btn.className = bv === v
-      ? `rating-chip flex-1 py-2.5 rounded-lg border text-xs font-black transition bg-${c}-500/25 border-${c}-400 text-${c}-300 sel`
-      : `rating-chip flex-1 py-2.5 rounded-lg border text-xs font-black transition bg-slate-900 border-slate-700 text-slate-500 hover:border-${c}-500/50 hover:text-${c}-400`;
+    const bv = parseInt(btn.dataset.v);
+    const cc = CHIP_COLORS[bv];
+    if (bv === v) {
+      btn.style.cssText = `background:${cc.bg};border:2px solid ${cc.border};color:${cc.text};transform:scale(1.08)`;
+      btn.classList.add('sel');
+    } else {
+      btn.style.cssText = `background:rgb(2 6 23);border:1px solid rgb(51 65 85);color:rgb(100 116 139);transform:scale(1)`;
+      btn.classList.remove('sel');
+    }
   });
   checkNext();
 }
@@ -1965,7 +2031,6 @@ function renderPalancaExpandida(p) {
         </button>
       </div>
     </div>`;
-}
 }
 
 function expandirPalanca(id) {
