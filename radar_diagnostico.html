@@ -2021,7 +2021,6 @@ function renderPalancaExpandida(p) {
       </div>
     </div>`;
 }
-}
 
 function expandirPalanca(id) {
   palancaExpandida = id;
@@ -2067,6 +2066,8 @@ function updateImpacto(id, palanca, val) {
   // Re-renderizar solo los botones de impacto del expandido para no perder el foco
   renderIniciativas();
 }
+
+function updatePalancaData(palancaId, campo, indice, val) {
   if (!palancaData[palancaId]) palancaData[palancaId] = { descripcion:'', kpis:['','',''], nota:'', iniciativas:'' };
   if (campo === 'kpis') {
     palancaData[palancaId].kpis[indice] = val;
@@ -2294,14 +2295,6 @@ function removeLastIniciativa() {
   recalcScores();
   updateHorizonteSelects();
   renderHorizonteItems();
-}
-}
-
-function updateImpacto(id, palanca, val) {
-  const ini = iniciativas.find(x=>x.id===id);
-  if (!ini) return;
-  ini.impactos[palanca] = val;
-  recalcScores();
 }
 
 // ── CÁLCULO DE SCORES Y % ────────────────────────────
