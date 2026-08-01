@@ -294,6 +294,9 @@
      PASO 2 · PREGUNTAS POR EJE
 ═══════════════════════════════ -->
 <div id="s-axis" class="hidden fade">
+  <button onclick="show('s-start'); updateDashboard();" class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg mb-4">
+    <i class="fa-solid fa-arrow-left text-[10px]"></i> Dashboard
+  </button>
   <div class="mb-6">
     <div class="flex justify-between items-center mb-2">
       <span id="ax-label" class="text-cyan-400 font-mono text-xs uppercase tracking-widest"></span>
@@ -355,6 +358,10 @@
      PASO 4 · RESULTADOS
 ═══════════════════════════════ -->
 <div id="s-results" class="hidden fade">
+
+  <button onclick="show('s-start'); updateDashboard();" class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg mb-4">
+    <i class="fa-solid fa-arrow-left text-[10px]"></i> Dashboard
+  </button>
 
   <!-- Cabecera -->
   <div class="text-center mb-10">
@@ -439,6 +446,10 @@
      PASO 5 · HOJA DE RUTA DIGITAL
 ═══════════════════════════════ -->
 <div id="s-roadmap" class="hidden fade">
+
+  <button onclick="show('s-start'); updateDashboard();" class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg mb-4">
+    <i class="fa-solid fa-arrow-left text-[10px]"></i> Dashboard
+  </button>
 
   <div class="text-center mb-10">
     <span class="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full mb-5">
@@ -965,17 +976,15 @@ function updateDashboard() {
   if (b1) { b1.textContent = hasDiag ? 'Completado ✓' : 'Pendiente'; b1.className = hasDiag ? 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400' : 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-500'; }
   const t1 = document.getElementById('btn-m1-txt');
   if (t1) t1.textContent = hasDiag ? 'Repetir Diagnóstico' : 'Iniciar Diagnóstico';
-  // M2 desbloqueo
-  if (hasDiag) {
-    const cm2 = document.getElementById('card-m2');
-    const bm2 = document.getElementById('badge-m2');
-    const tm2 = document.getElementById('btn-m2-txt');
-    const d2  = document.getElementById('prog-m2-dot');
-    if (cm2) cm2.classList.remove('opacity-50');
-    if (bm2) { bm2.textContent='Disponible'; bm2.className='text-[9px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400'; }
-    if (tm2) tm2.textContent='Ir a Hoja de Ruta';
-    if (d2) d2.className='w-7 h-7 rounded-full border-2 border-indigo-400 bg-indigo-500/10 flex items-center justify-center mx-auto mb-1 text-[10px] font-black text-indigo-400';
-  }
+  // M2 — siempre disponible desde el login, no requiere M1
+  const cm2 = document.getElementById('card-m2');
+  const bm2 = document.getElementById('badge-m2');
+  const tm2 = document.getElementById('btn-m2-txt');
+  const d2  = document.getElementById('prog-m2-dot');
+  if (cm2) { cm2.classList.remove('opacity-50'); cm2.onclick = goRoadmap; }
+  if (bm2) { bm2.textContent='Disponible'; bm2.className='text-[9px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400'; }
+  if (tm2) tm2.textContent='Ir a Hoja de Ruta';
+  if (d2) d2.className='w-7 h-7 rounded-full border-2 border-indigo-400 bg-indigo-500/10 flex items-center justify-center mx-auto mb-1 text-[10px] font-black text-indigo-400';
   // Acciones rápidas
   const qa = document.getElementById('quick-actions');
   if (qa) qa.classList.toggle('hidden', !hasDiag);
@@ -995,7 +1004,13 @@ function accessModulo2() {
 }
 
 function goBack() { currentAx = AXES.length - 1; show('s-axis'); renderAx(); }
-function restart() { initScores(); currentAx = 0; updateDashboard(); show('s-start'); }
+function restart() {
+  if (!confirm('¿Iniciar un nuevo diagnóstico? Se perderán los datos actuales.')) return;
+  initScores();
+  currentAx = 0;
+  updateDashboard();
+  show('s-start');
+}
 
 // ════════════════════════════════════════
 // RENDERIZADO DE EJE
@@ -1067,7 +1082,7 @@ function renderAx() {
       <p class="text-sm font-semibold text-white leading-relaxed mb-1">
         <span class="text-[10px] font-mono text-slate-600 mr-2">${currentAx+1}.${qi+1}</span>${titulo}
       </p>
-      <p class="text-[10px] text-slate-600 mb-3 ml-6">Valore del 1 al 5 — seleccione el nivel que mejor describe la situación actual.</p>
+      <p class="text-[10px] text-slate-600 mb-3 ml-6">1 = situación más débil · 5 = situación más madura · Los anclajes de referencia están abajo.</p>
       <div class="flex gap-2 mb-3">${chipsHtml}</div>
       ${(ancla1 || ancla3 || ancla5) ? `
       <div class="grid grid-cols-3 gap-2">
