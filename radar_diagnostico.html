@@ -111,6 +111,69 @@
 </div>
 
 <!-- ═══════════════════════════════
+     PASO 0.5 · EMPRESAS
+═══════════════════════════════ -->
+<div id="s-empresas" class="hidden fade">
+  <div class="max-w-4xl mx-auto py-8">
+
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <p class="text-xs text-slate-500 uppercase tracking-widest font-bold mb-1">Gestión de Clientes</p>
+        <h1 class="text-2xl font-black text-white">Sus Empresas</h1>
+        <p class="text-slate-500 text-xs mt-1">Seleccione una empresa para continuar o cree una nueva.</p>
+      </div>
+      <button onclick="doLogout()" class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg">
+        <i class="fa-solid fa-right-from-bracket text-[10px]"></i> Cerrar sesión
+      </button>
+    </div>
+
+    <button onclick="mostrarFormEmpresa()" class="w-full mb-4 border border-dashed border-slate-700 text-slate-400 hover:border-cyan-500/40 hover:text-cyan-400 transition rounded-xl py-3 text-xs font-bold flex items-center justify-center gap-2">
+      <i class="fa-solid fa-plus text-[10px]"></i> Nueva Empresa
+    </button>
+
+    <!-- Formulario inline -->
+    <div id="empresa-form" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-4">
+      <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Nueva Empresa</p>
+      <div class="grid md:grid-cols-2 gap-3 mb-3">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Nombre</label>
+          <input id="emp-nombre" type="text" placeholder="Nombre de la empresa" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Sector</label>
+          <input id="emp-sector" type="text" placeholder="Ej: Cooperativo, Financiero..." class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">NIT</label>
+          <input id="emp-nit" type="text" placeholder="Ej: 900.123.456-7" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Ciudad</label>
+          <input id="emp-ciudad" type="text" placeholder="Ciudad" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Contacto</label>
+          <input id="emp-contacto-nombre" type="text" placeholder="Nombre del contacto" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Email de contacto</label>
+          <input id="emp-contacto-email" type="email" placeholder="correo@empresa.com" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="guardarEmpresa()" class="bg-cyan-500 text-slate-950 font-black px-5 py-2.5 rounded-xl hover:bg-cyan-400 transition text-xs flex items-center gap-2">
+          <i class="fa-solid fa-check text-[10px]"></i> Guardar
+        </button>
+        <button onclick="cancelarFormEmpresa()" class="text-slate-500 hover:text-slate-300 text-xs px-3 py-2.5 transition">Cancelar</button>
+      </div>
+    </div>
+
+    <div id="empresas-grid" class="grid md:grid-cols-2 gap-4"></div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
      DASHBOARD · HOME POST-LOGIN
 ═══════════════════════════════ -->
 <div id="s-start" class="hidden fade">
@@ -121,11 +184,17 @@
       <div>
         <p class="text-xs text-slate-500 uppercase tracking-widest font-bold mb-1">Plataforma de Transformación Digital</p>
         <h1 class="text-2xl font-black text-white">Bienvenido, <span id="start-name" class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400"></span></h1>
+        <p id="start-empresa" class="text-cyan-400 text-xs font-semibold mt-1"></p>
         <p class="text-slate-500 text-xs mt-1">Seleccione el módulo por el que desea comenzar o continuar su proceso.</p>
       </div>
-      <button onclick="doLogout()" class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg">
-        <i class="fa-solid fa-right-from-bracket text-[10px]"></i> Cerrar sesión
-      </button>
+      <div class="flex items-center gap-2">
+        <button onclick="show('s-empresas'); renderEmpresas();" class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg">
+          <i class="fa-solid fa-building text-[10px]"></i> ← Empresas
+        </button>
+        <button onclick="doLogout()" class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg">
+          <i class="fa-solid fa-right-from-bracket text-[10px]"></i> Cerrar sesión
+        </button>
+      </div>
     </div>
 
     <!-- Estado del proceso -->
@@ -681,12 +750,12 @@ const AXES = [
     key:'Estrategia & Gobierno', icon:'fa-chess-king', color:'#22d3ee',
     desc:'¿La transformación digital tiene presupuesto propio y patrocinio explícito de la dirección, o depende de la buena voluntad del área de sistemas?',
     qs:[
-      'Valore del 1 al 5 el nivel de gobierno del presupuesto digital: 1 = el presupuesto de TI cubre todo sin distinción, 3 = hay partidas destinadas a proyectos digitales pero no formalizadas, 5 = presupuesto exclusivo aprobado por la dirección para transformación digital, separado del mantenimiento de TI.',
-      'Valore del 1 al 5 el patrocinio ejecutivo de la transformación digital: 1 = ningún directivo tiene responsabilidad formal sobre lo digital, 3 = hay un líder involucrado pero sin autoridad ni presupuesto asignado, 5 = patrocinador nombrado formalmente con autoridad real para decidir y asignar recursos.',
-      'Valore del 1 al 5 el nivel de formalización de la estrategia digital: 1 = no existe estrategia documentada, 3 = hay objetivos generales definidos pero sin métricas ni horizonte claro, 5 = estrategia documentada con OKRs medibles y horizonte de 1 a 3 años revisado trimestralmente.',
-      'Valore del 1 al 5 la frecuencia de revisión del avance digital en espacios directivos: 1 = el tema no aparece en la agenda directiva, 3 = se revisa anualmente o cuando hay problemas, 5 = revisión formal trimestral con evidencia medible en Consejo o Comité Directivo.',
-      'Valore del 1 al 5 el rigor con que se evalúan las iniciativas tecnológicas antes de aprobarse: 1 = se aprueban por urgencia o tendencia sin análisis de retorno, 3 = se revisa el costo pero no el impacto en el negocio, 5 = toda iniciativa se evalúa con criterios de ROI, palancas de valor y alineación estratégica.',
-      'Valore del 1 al 5 la práctica de retrospectiva estratégica digital: 1 = nunca se ha realizado un análisis formal de lo aprendido ni de los escenarios futuros, 3 = se hace una revisión anual informal, 5 = ejercicio formal anual de retrospectiva (¿qué aprendimos?), análisis del presente (¿dónde estamos?) y prospectiva (¿qué escenarios nos esperan?).'
+      '¿Existe un presupuesto exclusivo y aprobado por la dirección para iniciativas de transformación digital, separado del presupuesto de mantenimiento de TI?',
+      '¿La alta dirección tiene un patrocinador nombrado formalmente para la transformación digital, con autoridad real para tomar decisiones y asignar recursos?',
+      '¿La estrategia digital está documentada con objetivos medibles (OKRs o KPIs) y horizonte de tiempo definido de 1 a 3 años?',
+      '¿El avance de la transformación digital se revisa formalmente en espacios directivos al menos una vez por trimestre, con evidencia medible?',
+      '¿Las iniciativas tecnológicas se evalúan con criterios de ROI y palancas de valor antes de aprobarse, o se aprueban por urgencia o tendencia del mercado?',
+      '¿La organización realiza ejercicios formales de retrospectiva (¿qué aprendimos?), análisis del presente (¿dónde estamos?) y prospectiva (¿qué escenarios nos esperan?) al menos una vez al año?'
     ],
     fb:{
       bajo:{nv:'Inexistente / Incipiente',tx:'No existe gobierno real de la transformación digital. Las decisiones tecnológicas son reactivas y dependen de personas clave en vez de procesos institucionales. Cada iniciativa es un esfuerzo aislado sin respaldo formal.',ac:[
@@ -710,12 +779,12 @@ const AXES = [
     key:'Organización & Colaboración', icon:'fa-users-gear', color:'#818cf8',
     desc:'¿Existen equipos multifuncionales que trabajan sin silos jerárquicos, o cada decisión tecnológica cruza múltiples comités antes de ejecutarse?',
     qs:[
-      'Valore del 1 al 5 el nivel de integración de sus equipos: 1 = silos departamentales sin colaboración, 3 = colaboración ocasional entre áreas, 5 = equipos multifuncionales permanentes con TI, Operaciones, Comercial y Riesgos trabajando juntos.',
-      'Valore del 1 al 5 su modelo de ejecución de proyectos: 1 = proyectos en cascada con entregables a 6+ meses, 3 = metodologías ágiles en algunos proyectos con ciclos mensuales, 5 = Scrum/Kanban con entregas iterativas cada 2 semanas en todos los proyectos estratégicos.',
-      'Valore del 1 al 5 la velocidad de decisión operativa: 1 = toda decisión cruza 5+ niveles jerárquicos, 3 = decisiones menores se toman en 2-3 niveles, 5 = decisiones operativas del proyecto se toman en máximo 2 niveles de aprobación.',
-      'Valore del 1 al 5 la autoridad de gestión de producto: 1 = no existe un responsable de producto, 3 = hay un líder de proyecto pero sin autoridad real sobre el backlog, 5 = Product Owner con autonomía total para priorizar sin pasar por comités de aprobación.',
-      'Valore del 1 al 5 la cultura de reuniones y comunicación: 1 = reuniones sin agenda, sin dueño y sin decisiones documentadas, 3 = algunas reuniones tienen agenda pero no hay métricas de efectividad, 5 = reuniones con agenda previa, decisiones documentadas y comunicación asíncrona para temas no urgentes.',
-      'Valore del 1 al 5 el uso de métricas de productividad de equipo: 1 = no se mide la productividad de los equipos, 3 = se miden tiempos de entrega pero sin usarlos para mejorar el proceso, 5 = cycle time, lead time y velocidad medidos y usados activamente para optimizar la forma de trabajar.'
+      '¿Existen equipos multifuncionales (TI, Operaciones, Comercial, Riesgos) dedicados a ejecutar proyectos de transformación digital sin silos jerárquicos?',
+      '¿Los proyectos tecnológicos se ejecutan con metodologías ágiles (Scrum, Kanban) con entregas iterativas cada 2 a 4 semanas, o bajo proyectos en cascada de muchos meses?',
+      '¿Las decisiones operativas de un proyecto digital pueden tomarse sin cruzar más de 2 niveles de aprobación jerárquica?',
+      '¿Existe un Product Owner o responsable de producto digital con autoridad real para priorizar el backlog sin depender de múltiples comités de aprobación?',
+      '¿Los equipos miden el tiempo efectivo de sus reuniones, eliminan reuniones sin agenda ni decisión, y tienen cultura de comunicación asíncrona para temas no urgentes?',
+      '¿La organización tiene indicadores formales de productividad de sus equipos (velocidad, cycle time, lead time) y los usa para optimizar la forma de trabajar, no para evaluar personas?'
     ],
     fb:{
       bajo:{nv:'Inexistente / Incipiente',tx:'La estructura organizacional es el principal freno. Los silos crean duplicidad, fricción y lentitud. Las reuniones sin propósito drenan la capacidad disponible. Ningún software puede compensar un problema de diseño organizacional.',ac:[
@@ -739,12 +808,12 @@ const AXES = [
     key:'Experiencia del Cliente', icon:'fa-star', color:'#f59e0b',
     desc:'¿La vinculación y los trámites básicos son ágiles y digitales, o todavía dependen de la presencia física y de intervención humana manual?',
     qs:[
-      'Valore del 1 al 5 el nivel de digitalización de la vinculación: 1 = el proceso de afiliación o apertura requiere presencia física obligatoria, 3 = parte del proceso es digital pero requiere firma o verificación presencial, 5 = vinculación 100% digital sin necesidad de ir a una oficina física.',
-      'Valore del 1 al 5 la disponibilidad digital de trámites frecuentes: 1 = los trámites principales solo se resuelven en oficina o por teléfono, 3 = algunos trámites están disponibles digitalmente pero con intervención humana intermedia, 5 = consultas, solicitudes, pagos y certificados se resuelven 100% en canales digitales sin intervención humana.',
-      'Valore del 1 al 5 la sistematicidad con que se mide el sentimiento del cliente: 1 = no se mide la satisfacción del cliente de forma estructurada, 3 = se aplican encuestas ocasionales pero no se usan los resultados para mejorar, 5 = NPS, CSAT y análisis de abandono medidos continuamente y conectados a decisiones de mejora trimestrales.',
-      'Valore del 1 al 5 la velocidad de respuesta en canales digitales: 1 = no hay SLA definido y los tiempos varían de días a semanas, 3 = hay un objetivo de 48 horas pero no se cumple consistentemente, 5 = el 80% de los casos se resuelven en menos de 24 horas con SLA medido y reportado a la dirección.',
-      'Valore del 1 al 5 la consistencia de la experiencia entre canales: 1 = la experiencia varía significativamente entre canal presencial, web, app y telefónico, 3 = hay coherencia parcial pero con brechas notorias en al menos un canal, 5 = experiencia omnicanal consistente — el cliente obtiene el mismo nivel de servicio independientemente del canal que use.',
-      'Valore del 1 al 5 el análisis del ciclo de vida del cliente: 1 = no se mapean los momentos de fricción en la relación con el cliente, 3 = se identifican problemas reactivamente cuando el cliente se queja, 5 = análisis proactivo del ciclo de vida completo con identificación de fricciones y planes de mejora basados en datos.'
+      '¿Un cliente o asociado puede vincularse (abrir cuenta o afiliarse) de forma 100% digital sin necesidad de ir a una oficina física?',
+      '¿Los trámites más frecuentes (consulta de saldo, solicitud de crédito, pagos, certificados) están disponibles en canales digitales sin intervención humana?',
+      '¿La organización mide el sentimiento del cliente de forma sistemática — NPS, CSAT, análisis de conversaciones, señales de abandono — y usa esos datos para mejorar procesos?',
+      '¿El tiempo de respuesta en canales digitales es inferior a 24 horas para el 80% de los casos, con SLA medido y reportado a la dirección?',
+      '¿La experiencia del cliente es consistente entre canales (presencial, web, app, telefónico), o varía significativamente dependiendo del canal que use?',
+      '¿La organización analiza el ciclo de vida completo del cliente identificando los momentos de mayor fricción y actúa sobre ellos con evidencia, no con intuición?'
     ],
     fb:{
       bajo:{nv:'Inexistente / Incipiente',tx:'Sus clientes comparan su experiencia contra las mejores apps del mundo, no contra su competencia directa. Cada fricción es una puerta abierta. No medir el sentimiento del cliente equivale a operar sin timón.',ac:[
@@ -754,7 +823,7 @@ const AXES = [
       ]},
       medio:{nv:'En Desarrollo',tx:'Los canales digitales existen pero la experiencia es inconsistente. Los procesos analógicos en el back-office sabotean la experiencia digital del frente. El sentimiento del cliente se mide pero no se usa para decidir.',ac:[
         {t:'Digitalizar el back-office que frena el frente digital', d:'Identifique qué procesos internos (validaciones, firmas, aprobaciones) generan demoras en la respuesta al cliente. Use automatización o RPA para eliminarlos. El cliente ve la app — pero espera el proceso manual.'},
-        {t:'Conectar el NPS a decisiones de mejora trimestrales', d:'El NPS solo genera valor cuando sus resultados se revisan en sesiones formales y generan decisiones de cambio. Establezca un ciclo trimestral: medir → analizar → decidir → ejecutar.'},
+        {t:'Conectar el NPS a decisiones de mejora trimestrales', d:'El NPS solo genera valor cuando sus resultados se revisan en sesiones formales y generan decisiones de cambio. Establezca un ciclo trimestral: medir — analizar — decidir — ejecutar.'},
         {t:'Implementar análisis de abandono en canales digitales', d:'Mida en qué punto exacto los clientes abandonan un trámite digital. Cada punto de abandono es un defecto de diseño o de proceso que tiene solución técnica concreta.'}
       ]},
       alto:{nv:'Avanzado / Referente',tx:'Su experiencia digital es un diferenciador real. La medición es sistemática y se usa para decidir. El siguiente nivel es la anticipación: resolver necesidades antes de que el cliente las exprese.',ac:[
@@ -768,12 +837,12 @@ const AXES = [
     key:'Tecnología & Plataformas', icon:'fa-microchip', color:'#34d399',
     desc:'¿El core tecnológico está desacoplado y expone APIs, o es una caja cerrada que solo el proveedor original puede modificar?',
     qs:[
-      'Valore del 1 al 5 la apertura de integración de su sistema core: 1 = el core es una caja cerrada que solo el proveedor original puede modificar, 3 = existen integraciones pero requieren desarrollo a medida por el proveedor en cada caso, 5 = el core expone APIs documentadas que permiten integración con nuevas soluciones de forma independiente.',
-      'Valore del 1 al 5 el nivel de adopción de nube en sus sistemas críticos: 1 = toda la infraestructura es local (on-premise) sin elasticidad, 3 = algunos servicios están en nube pero los sistemas críticos siguen siendo locales, 5 = los sistemas críticos operan en nube con elasticidad, disponibilidad 24/7 y recuperación automática.',
-      'Valore del 1 al 5 la existencia y calidad de su hoja de ruta tecnológica: 1 = no existe un plan documentado de modernización tecnológica, 3 = hay una intención de modernizar pero sin hitos, responsables ni presupuesto definidos, 5 = hoja de ruta documentada con fases, responsables, presupuesto y criterios de éxito por etapa.',
-      'Valore del 1 al 5 su capacidad de despliegue sin interrupciones: 1 = cada actualización requiere ventanas de mantenimiento prolongadas con downtime visible para el cliente, 3 = los despliegues son frecuentes pero generan interrupciones menores, 5 = pipelines CI/CD automatizados permiten despliegues sin tiempo de inactividad en sistemas críticos.',
-      'Valore del 1 al 5 el nivel de integración en tiempo real entre sus sistemas: 1 = los sistemas no se comunican y requieren conciliaciones manuales diarias o semanales, 3 = hay integración parcial pero con procesos batch periódicos que generan retrasos, 5 = sistemas integrados en tiempo real sin necesidad de conciliaciones manuales.',
-      'Valore del 1 al 5 la madurez de su política de ciberseguridad tecnológica: 1 = no existe política formal ni artefactos de seguridad documentados, 3 = hay políticas documentadas pero sin aplicación consistente ni artefactos operativos, 5 = política activa con clasificación de activos, gestión de vulnerabilidades, control de accesos, cifrado y DRP con RTO/RPO definidos.'
+      '¿El sistema core (financiero, ERP u operativo) puede integrarse con nuevas soluciones mediante APIs, sin requerir desarrollo exclusivo del proveedor original?',
+      '¿La organización opera servicios en la nube para al menos sus sistemas más críticos, con elasticidad y disponibilidad 24/7?',
+      '¿Existe una hoja de ruta documentada de modernización tecnológica (migración de sistemas legacy, desacoplamiento, adopción cloud) con hitos y responsables definidos?',
+      '¿La organización puede desplegar actualizaciones o nuevas funcionalidades sin tiempos de inactividad prolongados, con pipelines de despliegue automatizados (CI/CD)?',
+      '¿Los sistemas transaccionales y de gestión están integrados en tiempo real, o requieren conciliaciones manuales periódicas para sincronizar información?',
+      '¿La organización tiene una política formal de ciberseguridad tecnológica con artefactos definidos: clasificación de activos, gestión de vulnerabilidades, control de accesos, cifrado de datos y plan de recuperación ante desastres (DRP)?'
     ],
     fb:{
       bajo:{nv:'Inexistente / Incipiente',tx:'Los sistemas legacy son el lastre más costoso de la transformación. Está pagando mantenimiento de tecnología que no genera ventaja competitiva y bloquea cualquier iniciativa de innovación. Sin desacoplamiento, todo lo demás se construye sobre arena.',ac:[
@@ -797,12 +866,12 @@ const AXES = [
     key:'Información & Insights', icon:'fa-database', color:'#a78bfa',
     desc:'¿Los datos están centralizados y gobernados, o dispersos en hojas de cálculo y sistemas que no se comunican entre sí?',
     qs:[
-      'Valore del 1 al 5 la unicidad de sus fuentes de datos críticos: 1 = cada área tiene su propia versión de los datos con definiciones distintas, 3 = hay intentos de consolidación pero persisten múltiples fuentes para los mismos indicadores, 5 = existe una única fuente de verdad para clientes, cartera y transacciones con definiciones compartidas por todas las áreas.',
-      'Valore del 1 al 5 la calidad de los datos disponibles para la dirección: 1 = las decisiones se toman con reportes manuales que tardan días en consolidarse, 3 = hay dashboards pero se actualizan con retrasos o requieren intervención manual, 5 = la dirección accede a dashboards en tiempo real con los KPIs críticos del negocio.',
-      'Valore del 1 al 5 la formalización del gobierno de datos: 1 = no existen roles ni políticas formales de datos, 3 = hay responsables informales pero sin políticas de calidad ni trazabilidad documentadas, 5 = modelo formal con Data Owner, Data Steward, Comité de Datos y políticas de calidad con ciclo de mejora trimestral.',
-      'Valore del 1 al 5 el uso de analítica avanzada en decisiones críticas: 1 = no se usa analítica predictiva, las decisiones son reactivas y basadas en histórico, 3 = se hacen análisis puntuales pero sin modelos predictivos en producción, 5 = modelos predictivos activos para mora temprana, abandono de clientes y demanda de productos.',
-      'Valore del 1 al 5 el cumplimiento normativo en tratamiento de datos personales: 1 = no hay procesos formales de consentimiento ni cumplimiento de normativa de datos personales, 3 = hay políticas documentadas pero con vacíos en consentimientos o trazabilidad, 5 = cumplimiento total con normativa vigente, consentimientos documentados, auditables y actualizados.',
-      'Valore del 1 al 5 la preparación para Open Data y Open Finance: 1 = no se ha evaluado el tema ni existe capacidad técnica para compartir datos por API, 3 = hay conciencia del marco regulatorio pero sin hoja de ruta de implementación, 5 = mecanismos de Open Finance implementados o en proceso formal con doble consentimiento, APIs estandarizadas y política de compartición activa.'
+      '¿Existe una única fuente de verdad para los datos críticos del negocio (clientes, cartera, transacciones), o cada área maneja su propia versión con definiciones distintas?',
+      '¿La alta dirección toma decisiones con base en dashboards actualizados en tiempo real, o depende de reportes manuales consolidados con días de retraso?',
+      '¿Existe un modelo formal de gobierno de datos con roles definidos (Data Owner, Data Steward, Comité de Datos) y políticas de calidad, trazabilidad y ciclo de mejora?',
+      '¿La organización usa analítica predictiva para anticipar comportamientos críticos (mora temprana, abandono de clientes, demanda de productos) con modelos activos en producción?',
+      '¿El tratamiento de datos personales está formalizado conforme a la normativa vigente, con consentimientos documentados y auditables?',
+      '¿La organización ha implementado o está en proceso de implementar mecanismos de Open Data / Open Finance con doble consentimiento, APIs estandarizadas y política de compartición de datos conforme a regulación vigente?'
     ],
     fb:{
       bajo:{nv:'Inexistente / Incipiente',tx:'Tomar decisiones sin datos confiables es competir con los ojos vendados. Sus competidores más ágiles ya saben cosas sobre su mercado que usted descubrirá meses después, cuando el costo de reaccionar sea mucho mayor. Sin gobierno de datos, la IA es una promesa imposible.',ac:[
@@ -826,12 +895,12 @@ const AXES = [
     key:'Crecimiento & Innovación', icon:'fa-lightbulb', color:'#fb923c',
     desc:'¿Se ejecutan pilotos rápidos con aliados externos, o toda idea nueva muere en la fase de análisis y aprobación interminable?',
     qs:[
-      'Valore del 1 al 5 la formalización de su proceso de innovación: 1 = no existe presupuesto ni proceso formal para experimentar, 3 = hay iniciativas de innovación pero sin presupuesto reservado ni criterios de evaluación definidos, 5 = fondo de experimentación del 2-3% del presupuesto con proceso formal de ideación, evaluación y descarte.',
-      'Valore del 1 al 5 la actividad de sus alianzas de innovación con el ecosistema: 1 = no existen alianzas activas con startups, fintechs ni proveedores de tecnología emergente, 3 = hay contactos informales pero sin co-desarrollo ni pilotos concretos en curso, 5 = alianzas formales activas con al menos 3 actores del ecosistema con pilotos medibles en ejecución.',
-      'Valore del 1 al 5 la velocidad de su ciclo de innovación: 1 = desde que se aprueba una idea hasta que hay un piloto pasan más de 6 meses, 3 = el ciclo dura entre 3 y 6 meses con burocracia intermedia, 5 = de idea aprobada a piloto medible en menos de 90 días con criterio de descarte a los 90 días sin tracción.',
-      'Valore del 1 al 5 la consistencia metodológica de su proceso de innovación: 1 = no existe metodología formal, cada proyecto se aborda de forma diferente, 3 = se usa design thinking o lean startup en algunos proyectos pero sin criterios de evaluación estandarizados, 5 = metodología formal aplicada consistentemente con criterios de valor, dificultad y descarte definidos.',
-      'Valore del 1 al 5 el aprendizaje institucional de sus pilotos: 1 = los resultados de los proyectos no se documentan ni comparten, cada nuevo proyecto empieza desde cero, 3 = hay documentación pero no se usa activamente para mejorar iniciativas futuras, 5 = éxitos y fracasos documentados, compartidos y usados como base para el siguiente ciclo de innovación.',
-      'Valore del 1 al 5 el rigor con que se mide el retorno de su inversión en innovación: 1 = no se mide el ROI de las iniciativas de innovación, 3 = se hace seguimiento cualitativo pero sin métricas de retorno por proyecto, 5 = ROI de innovación medido por proyecto con criterio formal de descarte a los 90 días sin tracción.'
+      '¿Existe un presupuesto y proceso formal para experimentar con nuevas iniciativas (pilotos, PMVs), separado del presupuesto operativo regular?',
+      '¿La organización tiene alianzas activas con fintechs, startups o proveedores de tecnología emergente para co-desarrollar o pilotar soluciones concretas?',
+      '¿El tiempo promedio desde que se aprueba una idea de innovación hasta que se lanza un piloto medible es inferior a 90 días?',
+      '¿Existe una metodología de innovación formal (design thinking, lean startup, jobs to be done) que los equipos aplican de forma consistente con criterios de evaluación definidos?',
+      '¿Los resultados de los pilotos — éxitos y fracasos — se documentan, comparten con el equipo y se usan para mejorar iniciativas futuras, o cada proyecto empieza desde cero?',
+      '¿La organización mide el retorno de sus inversiones en innovación (ROI de innovación) por proyecto y descarta iniciativas que no muestran tracción en 90 días?'
     ],
     fb:{
       bajo:{nv:'Inexistente / Incipiente',tx:'Sin innovación estructurada, el crecimiento depende de factores externos no controlables. Las organizaciones que no innovan no se quedan quietas: retroceden frente a quienes sí lo hacen. Toda idea nueva muere en el proceso de aprobación antes de ver la luz.',ac:[
@@ -855,12 +924,12 @@ const AXES = [
     key:'Seguridad & Privacidad', icon:'fa-shield-halved', color:'#f43f5e',
     desc:'¿Existe un Sistema de Gestión de Seguridad de la Información activo con simulacros reales, o la ciberseguridad es una carpeta de políticas que nadie revisa?',
     qs:[
-      'Valore del 1 al 5 la madurez de su Sistema de Gestión de Seguridad de la Información (SGSI): 1 = no existe política formal de seguridad, 3 = hay políticas documentadas pero desactualizadas o sin aplicación consistente, 5 = SGSI formalmente implementado con políticas vigentes revisadas en el último año y auditorías periódicas.',
-      'Valore del 1 al 5 la preparación real ante incidentes de ciberseguridad: 1 = nunca se ha realizado un simulacro de incidente, 3 = se han hecho ejercicios técnicos pero sin involucrar a la dirección, 5 = simulacros formales de ransomware, phishing o pérdida de datos realizados al menos una vez al año con el equipo directivo involucrado.',
-      'Valore del 1 al 5 la capacidad de monitoreo de amenazas: 1 = no existe monitoreo activo de accesos ni amenazas a sistemas críticos, 3 = hay alertas básicas pero sin monitoreo continuo ni tiempos de respuesta definidos, 5 = monitoreo 24/7 con alertas automáticas, tiempos de respuesta definidos y equipo de respuesta activo.',
-      'Valore del 1 al 5 la integración de seguridad en su ciclo de desarrollo: 1 = la seguridad se revisa después del desarrollo o no se revisa, 3 = hay revisiones manuales de seguridad pero se omiten frecuentemente por urgencia, 5 = controles de seguridad validados en cada despliegue (DevSecOps) como parte de la Definición de Terminado de cada Sprint.',
-      'Valore del 1 al 5 el gobierno de seguridad con proveedores tecnológicos: 1 = los contratos con proveedores no incluyen cláusulas de seguridad ni protocolos de incidentes, 3 = algunos contratos tienen cláusulas básicas pero sin derecho de auditoría ni blindaje explícito de datos, 5 = todos los contratos incluyen cumplimiento de políticas, derecho de auditoría, protocolo de respuesta y blindaje de datos en tránsito y reposo.',
-      'Valore del 1 al 5 la operación de sus artefactos formales de ciberseguridad: 1 = no existen artefactos formales operativos, 3 = algunos artefactos están documentados pero no se mantienen actualizados, 5 = clasificación de activos, matriz de riesgos, control de accesos por privilegio mínimo, política de cifrado y DRP con RTO/RPO definidos — todos activos y revisados.'
+      '¿Existe un Sistema de Gestión de Seguridad de la Información (SGSI) formalmente implementado, con políticas vigentes revisadas en el último año?',
+      '¿La organización realiza simulacros de incidentes de ciberseguridad (ransomware, phishing, pérdida de datos) al menos una vez al año, con el equipo directivo involucrado?',
+      '¿Existe monitoreo continuo 24/7 de amenazas y accesos no autorizados a sistemas críticos, con alertas automáticas y tiempos de respuesta definidos?',
+      '¿Los controles de seguridad se validan en cada despliegue de software nuevo (DevSecOps), o la revisión de seguridad es un paso posterior que frecuentemente se omite por urgencia?',
+      '¿Los contratos con proveedores tecnológicos incluyen cláusulas de seguridad, derecho de auditoría, protocolo de respuesta ante incidentes con terceros y blindaje de datos del cliente?',
+      '¿La organización tiene artefactos formales de ciberseguridad en operación: clasificación de activos, matriz de riesgos tecnológicos, control de accesos por privilegio mínimo, política de cifrado y plan de recuperación ante desastres (DRP) con RTO y RPO definidos?'
     ],
     fb:{
       bajo:{nv:'Inexistente / Incipiente',tx:'Un incidente de ciberseguridad en este nivel puede ser irreversible: pérdida de datos de clientes, sanciones regulatorias, daño reputacional permanente y en muchos casos cierre de operaciones. El costo de no invertir en seguridad siempre supera el de invertir.',ac:[
@@ -884,12 +953,12 @@ const AXES = [
     key:'Operación & Ecosistemas', icon:'fa-network-wired', color:'#2dd4bf',
     desc:'¿Los procesos de recaudo y pagos están automatizados en tiempo real, o requieren intervención manual diaria y conciliación periódica?',
     qs:[
-      'Valore del 1 al 5 el nivel de automatización de sus procesos de recaudo y conciliación: 1 = recaudo y conciliaciones se hacen manualmente con intervención diaria, 3 = hay automatización parcial pero con procesos batch periódicos que requieren revisión manual, 5 = recaudo, conciliación y pagos 100% automatizados en tiempo real sin intervención humana rutinaria.',
-      'Valore del 1 al 5 su integración a esquemas de pago digital interoperable: 1 = no está integrado a ningún esquema de pago digital (PSE, Transfiya, QR, ACH), 3 = tiene una integración activa pero sin hoja de ruta para ampliar canales, 5 = integrado a múltiples esquemas de pago digital interoperables con hoja de ruta de expansión definida.',
-      'Valore del 1 al 5 la madurez de su arquitectura de APIs para el ecosistema: 1 = no existe arquitectura de APIs, cada integración requiere desarrollo a medida por cada socio, 3 = hay algunas APIs pero sin documentación ni estándares definidos, 5 = arquitectura de APIs documentada que permite conectarse con fintechs, burós, aseguradoras y gobierno sin desarrollos a medida.',
-      'Valore del 1 al 5 la visibilidad operativa de sus integraciones externas: 1 = las fallas en integraciones se detectan cuando el cliente reporta el problema, 3 = hay alertas básicas pero sin protocolos de contingencia definidos, 5 = monitoreo en tiempo real de todas las integraciones con alertas automáticas y protocolos de contingencia activados.',
-      'Valore del 1 al 5 la preparación formal para Open Finance / Open Banking: 1 = el tema no ha sido evaluado formalmente, 3 = hay conciencia del marco regulatorio pero sin hoja de ruta de cumplimiento, 5 = evaluación formal con hoja de ruta de cumplimiento por fases y cronograma alineado a los plazos regulatorios vigentes.',
-      'Valore del 1 al 5 la visibilidad de indicadores del ecosistema en la dirección: 1 = los indicadores de integraciones y transacciones digitales solo los ve el equipo de TI, 3 = se reportan esporádicamente cuando hay incidentes, 5 = disponibilidad de integraciones, tiempos de conciliación y tasa de errores reportados en el tablero directivo con la misma frecuencia que los indicadores financieros.'
+      '¿Los procesos de recaudo, conciliación y pagos están automatizados en tiempo real, sin requerir intervención manual diaria o semanal?',
+      '¿La organización está integrada (o en proceso formal de integración) a esquemas de pagos digitales interoperables (PSE, Transfiya, QR, ACH u equivalentes)?',
+      '¿Existe una arquitectura de APIs documentada que permita conectarse con socios del ecosistema (fintechs, burós de crédito, aseguradoras, gobierno) sin desarrollos a medida para cada integración?',
+      '¿La organización tiene visibilidad en tiempo real del estado operativo de sus integraciones externas, con alertas automáticas ante fallas y protocolos de contingencia activados?',
+      '¿La organización ha evaluado formalmente su preparación para Open Finance / Open Banking y tiene una hoja de ruta de cumplimiento para los plazos regulatorios vigentes?',
+      '¿Los indicadores operativos del ecosistema (disponibilidad de integraciones, tiempos de conciliación, tasa de errores en transacciones digitales) se reportan a la dirección, no solo al equipo de TI?'
     ],
     fb:{
       bajo:{nv:'Inexistente / Incipiente',tx:'Una organización completamente cerrada en la era de los ecosistemas está construyendo todo desde cero mientras otros se benefician de la red. Los procesos manuales de recaudo y conciliación son un cuello de botella que escala mal y genera errores costosos.',ac:[
@@ -915,6 +984,8 @@ const AXES = [
 // ESTADO
 // ════════════════════════════════════════
 let userData = {};
+let empresas = JSON.parse(localStorage.getItem('ag_empresas') || '[]');
+function saveEmpresas() { localStorage.setItem('ag_empresas', JSON.stringify(empresas)); }
 let currentAx = 0;
 let scores = []; // scores[i][j]
 
@@ -928,7 +999,7 @@ function initScores() {
 // NAVEGACIÓN
 // ════════════════════════════════════════
 function show(id) {
-  ['s-login','s-start','s-axis','s-confirm','s-results','s-roadmap'].forEach(s => {
+  ['s-login','s-empresas','s-start','s-axis','s-confirm','s-results','s-roadmap'].forEach(s => {
     const el = document.getElementById(s);
     el.classList.add('hidden');
     el.classList.remove('fade');
@@ -954,14 +1025,79 @@ function doLogin() {
   document.getElementById('start-name').textContent = u;
   initScores();
   updateDashboard();
-  show('s-start');
+  show('s-empresas');
+  renderEmpresas();
 }
 
 function doLogout() {
   userData = {}; initScores();
   iniciativas = []; horizonteMap = {h1:[],h2:[],h3:[]};
   window._result = null;
+  window._empresaActual = null;
   show('s-login');
+}
+
+// ════════════════════════════════════════
+// EMPRESAS (M0)
+// ════════════════════════════════════════
+function renderEmpresas() {
+  const grid = document.getElementById('empresas-grid');
+  if (empresas.length === 0) {
+    grid.innerHTML = '<p class="text-xs text-slate-600 italic col-span-2 text-center py-8">No hay empresas registradas. Use "+ Nueva Empresa" para comenzar.</p>';
+    return;
+  }
+  grid.innerHTML = empresas.map(e => `
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 bg-slate-800 border border-slate-700 rounded-xl flex items-center justify-center flex-shrink-0">
+          <i class="fa-solid fa-building text-slate-400"></i>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-white">${e.nombre}</h3>
+          <p class="text-[10px] text-slate-500">${e.sector || 'Sector no definido'}${e.ciudad ? ' · '+e.ciudad : ''}</p>
+        </div>
+      </div>
+      ${e.contacto_nombre ? `<p class="text-[10px] text-slate-500 mb-1"><i class="fa-solid fa-user text-[9px] mr-1"></i>${e.contacto_nombre}</p>` : ''}
+      ${e.contacto_email ? `<p class="text-[10px] text-slate-500 mb-3"><i class="fa-solid fa-envelope text-[9px] mr-1"></i>${e.contacto_email}</p>` : ''}
+      <button onclick="abrirEmpresa('${e.id}')" class="w-full bg-slate-800 text-white font-black py-2.5 rounded-xl hover:bg-slate-700 transition text-xs flex items-center justify-center gap-2">
+        Abrir <i class="fa-solid fa-arrow-right text-[10px]"></i>
+      </button>
+    </div>`).join('');
+}
+
+function mostrarFormEmpresa() {
+  document.getElementById('empresa-form').classList.remove('hidden');
+}
+
+function cancelarFormEmpresa() {
+  document.getElementById('empresa-form').classList.add('hidden');
+  ['emp-nombre','emp-sector','emp-nit','emp-ciudad','emp-contacto-nombre','emp-contacto-email'].forEach(id => document.getElementById(id).value = '');
+}
+
+function guardarEmpresa() {
+  const nombre = document.getElementById('emp-nombre').value.trim();
+  if (!nombre) { document.getElementById('emp-nombre').focus(); return; }
+  empresas.push({
+    id: 'emp-' + Date.now(),
+    nombre,
+    sector: document.getElementById('emp-sector').value.trim(),
+    nit: document.getElementById('emp-nit').value.trim(),
+    ciudad: document.getElementById('emp-ciudad').value.trim(),
+    contacto_nombre: document.getElementById('emp-contacto-nombre').value.trim(),
+    contacto_email: document.getElementById('emp-contacto-email').value.trim(),
+    estado: 'activa',
+    proyectos: []
+  });
+  saveEmpresas();
+  cancelarFormEmpresa();
+  renderEmpresas();
+}
+
+function abrirEmpresa(id) {
+  window._empresaActual = empresas.find(e => e.id === id);
+  document.getElementById('start-empresa').textContent = window._empresaActual ? window._empresaActual.nombre : '';
+  show('s-start');
+  updateDashboard();
 }
 
 function updateDashboard() {
@@ -1028,77 +1164,43 @@ function renderAx() {
   document.getElementById('btn-prev').style.visibility = currentAx === 0 ? 'hidden' : 'visible';
 
   const LABELS = {1:'Inexistente',2:'Incipiente',3:'En Desarrollo',4:'Avanzado',5:'Referente'};
-  // Colores por valor — usando style inline para evitar dependencia de Tailwind CDN en JS dinámico
   const CHIP_COLORS = {
-    1: { bg:'rgb(244 63 94 / 0.20)',  border:'rgb(251 113 133)', text:'rgb(252 165 165)', hover:'#f43f5e' },
-    2: { bg:'rgb(249 115 22 / 0.20)', border:'rgb(251 146 60)',  text:'rgb(253 186 116)', hover:'#f97316' },
-    3: { bg:'rgb(245 158 11 / 0.20)', border:'rgb(251 191 36)',  text:'rgb(252 211 77)',  hover:'#f59e0b' },
-    4: { bg:'rgb(20 184 166 / 0.20)', border:'rgb(45 212 191)',  text:'rgb(94 234 212)',  hover:'#14b8a6' },
-    5: { bg:'rgb(16 185 129 / 0.20)', border:'rgb(52 211 153)',  text:'rgb(110 231 183)', hover:'#10b981' },
+    1:{bg:'rgb(244 63 94/0.20)', border:'rgb(251 113 133)',text:'rgb(252 165 165)'},
+    2:{bg:'rgb(249 115 22/0.20)',border:'rgb(251 146 60)', text:'rgb(253 186 116)'},
+    3:{bg:'rgb(245 158 11/0.20)',border:'rgb(251 191 36)', text:'rgb(252 211 77)'},
+    4:{bg:'rgb(20 184 166/0.20)',border:'rgb(45 212 191)', text:'rgb(94 234 212)'},
+    5:{bg:'rgb(16 185 129/0.20)',border:'rgb(52 211 153)', text:'rgb(110 231 183)'},
   };
 
   const container = document.getElementById('ax-qs');
   container.innerHTML = '';
-
   ax.qs.forEach((q, qi) => {
     const saved = scores[currentAx][qi];
-
-    // Parsear: extraer título limpio y anclajes 1, 3, 5
-    let titulo = q;
-    let ancla1 = '', ancla3 = '', ancla5 = '';
-    const colonIdx = q.indexOf(':');
-    if (colonIdx !== -1) {
-      titulo = q.substring(0, colonIdx).replace(/^Valore del 1 al 5\s*/i, '').trim();
-      const resto = q.substring(colonIdx + 1);
-      const m1 = resto.match(/1\s*=\s*([^,]+?)(?=,\s*3\s*=)/i);
-      const m3 = resto.match(/3\s*=\s*([^,]+?)(?=,\s*5\s*=)/i);
-      const m5 = resto.match(/5\s*=\s*(.+?)\.?\s*$/i);
-      if (m1) ancla1 = m1[1].trim();
-      if (m3) ancla3 = m3[1].trim();
-      if (m5) ancla5 = m5[1].trim();
-    }
-
     const chipsHtml = [1,2,3,4,5].map(v => {
       const cc = CHIP_COLORS[v];
       const isSel = saved === v;
-      const styleBase = isSel
+      const st = isSel
         ? `background:${cc.bg};border:2px solid ${cc.border};color:${cc.text};transform:scale(1.08)`
         : `background:rgb(2 6 23);border:1px solid rgb(51 65 85);color:rgb(100 116 139)`;
       return `<button
         class="rating-chip flex-1 py-2.5 rounded-lg text-xs font-black transition"
-        style="${styleBase}"
-        onclick="pick(${currentAx},${qi},${v})"
-        onmouseover="if(${v}!==${saved})this.style.borderColor='${cc.hover}';this.style.color='${cc.text}'"
+        style="${st}"
+        onmouseover="if(${v}!==${saved}){this.style.borderColor='${cc.border}';this.style.color='${cc.text}'}"
         onmouseout="if(${v}!==${saved}){this.style.borderColor='rgb(51 65 85)';this.style.color='rgb(100 116 139)'}"
+        onclick="pick(${currentAx},${qi},${v})"
         data-ax="${currentAx}" data-qi="${qi}" data-v="${v}">
         <div style="font-size:14px">${v}</div>
         <div style="font-size:9px;margin-top:2px;opacity:0.7">${LABELS[v]}</div>
       </button>`;
     }).join('');
-
     const div = document.createElement('div');
     div.className = 'bg-slate-800/40 border border-slate-700/40 rounded-xl p-5';
     div.innerHTML = `
       <p class="text-sm font-semibold text-white leading-relaxed mb-1">
-        <span class="text-[10px] font-mono text-slate-600 mr-2">${currentAx+1}.${qi+1}</span>${titulo}
+        <span class="text-[10px] font-mono text-slate-600 mr-2">${currentAx+1}.${qi+1}</span>${q}
       </p>
-      <p class="text-[10px] text-slate-600 mb-3 ml-6">1 = situación más débil · 5 = situación más madura · Los anclajes de referencia están abajo.</p>
-      <div class="flex gap-2 mb-3">${chipsHtml}</div>
-      ${(ancla1 || ancla3 || ancla5) ? `
-      <div class="grid grid-cols-3 gap-2">
-        <div style="background:rgb(244 63 94/0.05);border:1px solid rgb(244 63 94/0.15)" class="rounded-lg p-2">
-          <p class="text-[8px] font-black mb-0.5" style="color:rgb(251 113 133)">1 · Inexistente</p>
-          <p class="text-[9px] text-slate-500 leading-relaxed">${ancla1}</p>
-        </div>
-        <div style="background:rgb(245 158 11/0.05);border:1px solid rgb(245 158 11/0.15)" class="rounded-lg p-2">
-          <p class="text-[8px] font-black mb-0.5" style="color:rgb(251 191 36)">3 · En Desarrollo</p>
-          <p class="text-[9px] text-slate-500 leading-relaxed">${ancla3}</p>
-        </div>
-        <div style="background:rgb(16 185 129/0.05);border:1px solid rgb(16 185 129/0.15)" class="rounded-lg p-2">
-          <p class="text-[8px] font-black mb-0.5" style="color:rgb(52 211 153)">5 · Referente</p>
-          <p class="text-[9px] text-slate-500 leading-relaxed">${ancla5}</p>
-        </div>
-      </div>` : ''}`;
+      <p class="text-[10px] text-slate-600 mb-3 ml-6">Seleccione: 1 = situación más débil · 5 = situación más madura</p>
+      <div class="flex gap-2">${chipsHtml}</div>`;
     container.appendChild(div);
   });
   checkNext();
@@ -1107,11 +1209,11 @@ function renderAx() {
 function pick(ai, qi, v) {
   scores[ai][qi] = v;
   const CHIP_COLORS = {
-    1: { bg:'rgb(244 63 94 / 0.20)',  border:'rgb(251 113 133)', text:'rgb(252 165 165)' },
-    2: { bg:'rgb(249 115 22 / 0.20)', border:'rgb(251 146 60)',  text:'rgb(253 186 116)' },
-    3: { bg:'rgb(245 158 11 / 0.20)', border:'rgb(251 191 36)',  text:'rgb(252 211 77)'  },
-    4: { bg:'rgb(20 184 166 / 0.20)', border:'rgb(45 212 191)',  text:'rgb(94 234 212)'  },
-    5: { bg:'rgb(16 185 129 / 0.20)', border:'rgb(52 211 153)',  text:'rgb(110 231 183)' },
+    1:{bg:'rgb(244 63 94/0.20)', border:'rgb(251 113 133)',text:'rgb(252 165 165)'},
+    2:{bg:'rgb(249 115 22/0.20)',border:'rgb(251 146 60)', text:'rgb(253 186 116)'},
+    3:{bg:'rgb(245 158 11/0.20)',border:'rgb(251 191 36)', text:'rgb(252 211 77)'},
+    4:{bg:'rgb(20 184 166/0.20)',border:'rgb(45 212 191)', text:'rgb(94 234 212)'},
+    5:{bg:'rgb(16 185 129/0.20)',border:'rgb(52 211 153)', text:'rgb(110 231 183)'},
   };
   document.querySelectorAll(`[data-ax="${ai}"][data-qi="${qi}"]`).forEach(btn => {
     const bv = parseInt(btn.dataset.v);
