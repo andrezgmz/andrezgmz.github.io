@@ -734,6 +734,36 @@
 
 <script>
 // ════════════════════════════════════════
+// SUPABASE
+// ════════════════════════════════════════
+const SUPABASE_URL  = 'https://djgqohrwjxymmguefljs.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqZ3FvaHJ3anh5bW1ndWVmbGpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU1OTI3NDcsImV4cCI6MjEwMTE2ODc0N30.EoloyAKUp7eVQGXSjjojSRqjKJZupWv8jrOGEpVMKSM';
+
+async function sbFetch(endpoint, options = {}) {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, {
+      headers: {
+        'apikey': SUPABASE_ANON,
+        'Authorization': `Bearer ${SUPABASE_ANON}`,
+        'Content-Type': 'application/json',
+        'Prefer': options.prefer || 'return=representation',
+        ...options.headers
+      },
+      method: options.method || 'GET',
+      body: options.body || undefined
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || res.statusText);
+    }
+    return res.status === 204 ? null : res.json();
+  } catch (e) {
+    console.warn('Supabase error:', e.message);
+    return null;
+  }
+}
+
+// ════════════════════════════════════════
 // CREDENCIALES
 // ════════════════════════════════════════
 const CREDS = [
@@ -1040,8 +1070,19 @@ function doLogout() {
 // ════════════════════════════════════════
 // EMPRESAS (M0)
 // ════════════════════════════════════════
-function renderEmpresas() {
+async function renderEmpresas() {
   const grid = document.getElementById('empresas-grid');
+  if (!grid) return;
+  grid.innerHTML = '<p class="text-xs text-slate-600 italic col-span-2 text-center py-8">Cargando empresas...</p>';
+
+  const remota = await sbFetch('empresas?order=nombre&estado=eq.activa');
+  if (remota) {
+    empresas = remota;
+    localStorage.setItem('ag_empresas', JSON.stringify(empresas));
+  } else {
+    empresas = JSON.parse(localStorage.getItem('ag_empresas') || '[]');
+  }
+
   if (empresas.length === 0) {
     grid.innerHTML = '<p class="text-xs text-slate-600 italic col-span-2 text-center py-8">No hay empresas registradas. Use "+ Nueva Empresa" para comenzar.</p>';
     return;
@@ -1074,28 +1115,47 @@ function cancelarFormEmpresa() {
   ['emp-nombre','emp-sector','emp-nit','emp-ciudad','emp-contacto-nombre','emp-contacto-email'].forEach(id => document.getElementById(id).value = '');
 }
 
-function guardarEmpresa() {
+async function guardarEmpresa() {
   const nombre = document.getElementById('emp-nombre').value.trim();
   if (!nombre) { document.getElementById('emp-nombre').focus(); return; }
-  empresas.push({
-    id: 'emp-' + Date.now(),
+  const datos = {
     nombre,
-    sector: document.getElementById('emp-sector').value.trim(),
-    nit: document.getElementById('emp-nit').value.trim(),
-    ciudad: document.getElementById('emp-ciudad').value.trim(),
-    contacto_nombre: document.getElementById('emp-contacto-nombre').value.trim(),
-    contacto_email: document.getElementById('emp-contacto-email').value.trim(),
-    estado: 'activa',
-    proyectos: []
-  });
+    sector: document.getElementById('emp-sector').value.trim() || null,
+    nit: document.getElementById('emp-nit').value.trim() || null,
+    ciudad: document.getElementById('emp-ciudad').value.trim() || null,
+    contacto_nombre: document.getElementById('emp-contacto-nombre').value.trim() || null,
+    contacto_email: document.getElementById('emp-contacto-email').value.trim() || null,
+    estado: 'activa'
+  };
+
+  const result = await sbFetch('empresas', { method: 'POST', body: JSON.stringify(datos) });
+  if (result && result[0]) {
+    empresas.push(result[0]);
+  } else {
+    empresas.push({ ...datos, id: 'emp-' + Date.now(), proyectos: [] });
+  }
   saveEmpresas();
   cancelarFormEmpresa();
   renderEmpresas();
 }
 
-function abrirEmpresa(id) {
+async function abrirEmpresa(id) {
   window._empresaActual = empresas.find(e => e.id === id);
   document.getElementById('start-empresa').textContent = window._empresaActual ? window._empresaActual.nombre : '';
+
+  const proyectos = await sbFetch(`proyectos_td?empresa_id=eq.${id}&estado=eq.en_curso&order=created_at.desc&limit=1`);
+  if (proyectos && proyectos[0]) {
+    window._proyectoActual = proyectos[0];
+  } else if (proyectos) {
+    const nuevo = await sbFetch('proyectos_td', {
+      method: 'POST',
+      body: JSON.stringify({ empresa_id: id, nombre: `Plan TD ${new Date().getFullYear()}`, estado: 'en_curso' })
+    });
+    window._proyectoActual = nuevo ? nuevo[0] : null;
+  } else {
+    window._proyectoActual = null;
+  }
+
   show('s-start');
   updateDashboard();
 }
@@ -1233,7 +1293,28 @@ function checkNext() {
   document.getElementById('btn-next').disabled = scores[currentAx].some(s => s === 0);
 }
 
-function nextAx() {
+async function nextAx() {
+  if (window._proyectoActual) {
+    const payload = {
+      proyecto_id: window._proyectoActual.id,
+      empresa_id: window._empresaActual ? window._empresaActual.id : null,
+      fecha: new Date().toISOString().split('T')[0],
+      scores_json: scores,
+      nivel_global: null,
+      nivel_texto: 'En progreso',
+      resumen: 'Diagnóstico en curso'
+    };
+    if (!window._diagnosticoActualId) {
+      const res = await sbFetch('diagnosticos', { method: 'POST', body: JSON.stringify(payload) });
+      if (res && res[0]) window._diagnosticoActualId = res[0].id;
+    } else {
+      await sbFetch(`diagnosticos?id=eq.${window._diagnosticoActualId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ scores_json: scores })
+      });
+    }
+  }
+
   if (currentAx < AXES.length - 1) { currentAx++; show('s-axis'); renderAx(); }
   else { showConfirm(); }
 }
@@ -1304,6 +1385,15 @@ function genResults() {
   sendToScript(avgs, global, level, summary);
   updateDashboard(); // desbloquear módulo 2 en el dashboard
   show('s-results');
+
+  // Guardar diagnóstico final en Supabase
+  if (window._proyectoActual && window._diagnosticoActualId) {
+    sbFetch(`diagnosticos?id=eq.${window._diagnosticoActualId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ scores_json: scores, nivel_global: global, nivel_texto: level, resumen: summary })
+    });
+    window._diagnosticoActualId = null;
+  }
 }
 
 // ─── Barras ───
@@ -1716,7 +1806,7 @@ function downloadPDF() {
       fb.ac.forEach((a, ai) => {
         chk(14);
         doc.setFontSize(7); doc.setFont('helvetica','bold'); setCol('#22d3ee');
-        doc.text(`→ ${a.t}`, M, y); y += 3.8;
+        doc.text(`• ${a.t}`, M, y); y += 3.8;
         doc.setFont('helvetica','normal'); setCol('#94a3b8'); doc.setFontSize(6.5);
         const dLines = doc.splitTextToSize(a.d, CW - 4);
         dLines.slice(0,3).forEach(ln => { doc.text(ln, M + 3, y); y += 3.5; });
@@ -1730,7 +1820,7 @@ function downloadPDF() {
         setDraw('#f59e0b'); doc.setLineWidth(0.4); doc.roundedRect(M, y, CW, nota.length > 100 ? 20 : 14, 2, 2, 'S');
         y += 4;
         doc.setFontSize(6.5); doc.setFont('helvetica','bold'); setCol('#f59e0b');
-        doc.text('📝  NOTA DEL EVALUADOR', M + 3, y); y += 4;
+        doc.text('NOTA DEL EVALUADOR', M + 3, y); y += 4;
         doc.setFont('helvetica','normal'); setCol('#e2e8f0'); doc.setFontSize(7);
         const nLines = doc.splitTextToSize(nota, CW - 6);
         nLines.forEach(ln => { doc.text(ln, M + 3, y); y += 3.8; });
@@ -1883,6 +1973,7 @@ const PALANCAS = [
 // Estado global del módulo
 let norteHoy = null;
 let norteEstrella = null;
+let norteExpandida = null;
 let palancasPesos = { ingresos:20, inclusion:15, experiencia:25, eficiencia:20, datos:10, reputacion:10 };
 let iniciativas = [];
 let norteGrid = JSON.parse(JSON.stringify(NORTE_CUADRANTES)); // copia editable
@@ -1921,9 +2012,29 @@ function renderNorteGrid() {
   norteGrid.forEach((c, i) => {
     const isHoy      = norteHoy === c.id;
     const isEstrella = norteEstrella === c.id;
+    const isExp      = norteExpandida === c.id;
     const borderCls  = isEstrella ? 'border-indigo-400 bg-indigo-500/10'
                      : isHoy      ? 'border-cyan-400 bg-cyan-500/10'
                      : 'border-slate-700 bg-slate-800 hover:border-slate-600';
+
+    if (isExp) {
+      grid.innerHTML += `
+        <div class="relative rounded-xl border-2 ${borderCls} p-2.5 transition" style="min-height:96px">
+          <input type="text" value="${c.nombre}" onchange="editCuadrante(${i},'nombre',this.value)"
+            class="w-full bg-transparent text-[10px] font-bold mb-1.5 focus:outline-none focus:border-b focus:border-slate-500 cursor-text"
+            style="color:${c.color}">
+          <textarea onchange="editCuadrante(${i},'desc',this.value)" rows="3"
+            class="w-full bg-slate-900/60 border border-slate-700 rounded-lg p-1.5 text-[9px] text-slate-300 leading-relaxed resize-none focus:outline-none focus:ring-1 focus:ring-slate-500 mb-2">${c.desc}</textarea>
+          <div class="flex items-center gap-1.5">
+            <button onclick="setNorteHoy('${c.id}')"
+              class="flex-1 text-[9px] font-bold py-1.5 rounded-lg transition ${isHoy ? 'bg-cyan-500/30 text-cyan-300' : 'bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20'}">☁ Hoy</button>
+            <button onclick="setNorteEstrella('${c.id}')"
+              class="flex-1 text-[9px] font-bold py-1.5 rounded-lg transition ${isEstrella ? 'bg-indigo-500/30 text-indigo-300' : 'bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20'}">★ Norte</button>
+            <button onclick="cerrarCuadrante()" class="text-[9px] text-slate-500 hover:text-slate-300 px-2 py-1.5 transition">Cerrar</button>
+          </div>
+        </div>`;
+      return;
+    }
 
     const iconoOverlay = isHoy
       ? `<div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:10">
@@ -1942,7 +2053,7 @@ function renderNorteGrid() {
       : '';
 
     grid.innerHTML += `
-      <div class="relative rounded-xl border-2 ${borderCls} p-2.5 transition group" style="min-height:96px">
+      <div class="relative rounded-xl border-2 ${borderCls} p-2.5 transition group cursor-pointer" style="min-height:96px" onclick="expandirCuadrante('${c.id}')">
         ${iconoOverlay}
         <input type="text" value="${c.nombre}" onchange="editCuadrante(${i},'nombre',this.value)"
           onclick="event.stopPropagation()"
@@ -1950,13 +2061,23 @@ function renderNorteGrid() {
           style="color:${c.color}">
         <p class="text-[9px] text-slate-500 leading-relaxed line-clamp-3 relative z-20">${c.desc}</p>
         <div class="absolute bottom-1.5 right-1.5 flex gap-1 opacity-0 group-hover:opacity-100 transition z-20">
-          <button onclick="setNorteHoy('${c.id}')" title="Marcar como posición actual"
+          <button onclick="event.stopPropagation();setNorteHoy('${c.id}')" title="Marcar como posición actual"
             class="w-6 h-6 rounded bg-cyan-500/20 text-cyan-400 text-[9px] font-bold hover:bg-cyan-500/40 flex items-center justify-center">☁</button>
-          <button onclick="setNorteEstrella('${c.id}')" title="Marcar como Estrella del Norte"
+          <button onclick="event.stopPropagation();setNorteEstrella('${c.id}')" title="Marcar como Estrella del Norte"
             class="w-6 h-6 rounded bg-indigo-500/20 text-indigo-400 text-[9px] font-bold hover:bg-indigo-500/40 flex items-center justify-center">★</button>
         </div>
       </div>`;
   });
+}
+
+function expandirCuadrante(id) {
+  norteExpandida = id;
+  renderNorteGrid();
+}
+
+function cerrarCuadrante() {
+  norteExpandida = null;
+  renderNorteGrid();
 }
 
 function editCuadrante(i, campo, val) {
@@ -2071,7 +2192,7 @@ function renderPalancaExpandida(p) {
       <label class="block text-[9px] text-slate-500 mb-1">${kpisBase[i]}</label>
       <input type="text" value="${data.kpis[i]||''}" placeholder="Meta o valor actual..."
         onchange="updatePalancaData('${p.id}','kpis',${i},this.value)"
-        class="w-full p-2 bg-slate-700 border border-slate-600 rounded-lg text-[10px] text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        class="w-full p-2 bg-slate-700 border border-slate-600 rounded-lg text-[10px] text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-cyan-500">
     </div>`).join('');
 
   return `
@@ -2111,7 +2232,7 @@ function renderPalancaExpandida(p) {
         </label>
         <textarea rows="3" placeholder="Ej: El crecimiento de ingresos digitales es clave para sostener la transformación sin aumentar la base de costos fijos..."
           onchange="updatePalancaData('${p.id}','descripcion',null,this.value)"
-          class="w-full p-2.5 bg-slate-700 border border-slate-600 rounded-xl text-[10px] text-white placeholder-slate-600 focus:outline-none focus:ring-1 resize-none"
+          class="w-full p-2.5 bg-slate-700 border border-slate-600 rounded-xl text-[10px] text-white placeholder-slate-400 focus:outline-none focus:ring-1 resize-none"
           style="--tw-ring-color:${p.color}">${data.descripcion}</textarea>
       </div>
 
@@ -2129,7 +2250,7 @@ function renderPalancaExpandida(p) {
           </label>
           <input type="text" value="${data.nota}" placeholder="Observación clave sobre esta palanca para el informe ejecutivo..."
             onchange="updatePalancaData('${p.id}','nota',null,this.value)"
-            class="w-full p-2.5 bg-slate-700 border border-slate-600 rounded-xl text-[10px] text-white placeholder-slate-600 focus:outline-none focus:ring-1">
+            class="w-full p-2.5 bg-slate-700 border border-slate-600 rounded-xl text-[10px] text-white placeholder-slate-400 focus:outline-none focus:ring-1">
         </div>
         <button onclick="eliminarPalanca('${p.id}')"
           class="text-xs border border-rose-500/30 text-rose-400 px-4 py-2.5 rounded-xl hover:bg-rose-500/10 transition flex items-center gap-1.5 flex-shrink-0 mb-px">
@@ -2495,7 +2616,7 @@ function updateHorizonteSelects() {
     const sel = document.querySelector(`select[onchange*="assignToHorizonte"][onchange*="'${h}'"]`);
     if (!sel) return;
     sel.innerHTML = `<option value="">+ Asignar iniciativa a ${h.toUpperCase()}...</option>`;
-    iniciativas.forEach(ini => {
+    iniciativas.filter(ini => !ini.horizonte).forEach(ini => {
       const opt = document.createElement('option');
       opt.value = ini.id;
       opt.textContent = ini.nombre || '(sin nombre)';
