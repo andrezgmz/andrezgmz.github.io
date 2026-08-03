@@ -282,27 +282,51 @@
         </button>
       </div>
 
+      <!-- Módulo 3: Tablero OKR -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 hover:border-amber-500/30 transition group cursor-pointer" onclick="show('s-okr');renderOKR()">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center"
+              style="background:rgb(245 158 11/0.10);border:1px solid rgb(245 158 11/0.20)">
+              <i class="fa-solid fa-bullseye text-sm" style="color:rgb(251 191 36)"></i>
+            </div>
+            <div>
+              <p class="text-[9px] font-black uppercase tracking-wider"
+                 style="color:rgb(251 191 36)">Módulo 3</p>
+              <h3 class="text-xs font-bold text-white">Tablero OKR</h3>
+            </div>
+          </div>
+          <span id="badge-m3" class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-500">
+            Disponible
+          </span>
+        </div>
+        <p class="text-[10px] text-slate-400 leading-relaxed mb-3">
+          Defina Objetivos y Resultados Clave por iniciativa. Mida el avance con semáforos automáticos y calcule el cumplimiento de su plan de TD.
+        </p>
+        <div class="grid grid-cols-3 gap-1 mb-3">
+          <div class="bg-slate-800 rounded-lg p-1.5 text-center">
+            <i class="fa-solid fa-flag text-[9px] block mb-0.5" style="color:rgb(251 191 36)"></i>
+            <p class="text-[8px] text-slate-600">Objetivos</p>
+          </div>
+          <div class="bg-slate-800 rounded-lg p-1.5 text-center">
+            <i class="fa-solid fa-chart-line text-[9px] block mb-0.5" style="color:rgb(251 191 36)"></i>
+            <p class="text-[8px] text-slate-600">KRs</p>
+          </div>
+          <div class="bg-slate-800 rounded-lg p-1.5 text-center">
+            <i class="fa-solid fa-traffic-light text-[9px] block mb-0.5" style="color:rgb(251 191 36)"></i>
+            <p class="text-[8px] text-slate-600">Semáforo</p>
+          </div>
+        </div>
+        <button class="w-full font-black py-2 rounded-xl text-[10px] flex items-center justify-center gap-2 transition"
+          style="background:rgb(245 158 11/0.15);border:1px solid rgb(245 158 11/0.30);color:rgb(251 191 36)">
+          <i class="fa-solid fa-arrow-right text-[9px]"></i> Ir al Tablero OKR
+        </button>
+      </div>
+
     </div>
 
     <!-- Módulos próximos (grayed) -->
     <div class="grid md:grid-cols-3 gap-4">
-
-      <!-- Módulo 3: OKRs -->
-      <div class="bg-slate-900/50 border border-slate-800/50 rounded-2xl p-4 opacity-40">
-        <div class="flex items-center gap-3 mb-3">
-          <div class="w-9 h-9 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center">
-            <i class="fa-solid fa-bullseye text-amber-400 text-sm"></i>
-          </div>
-          <div>
-            <p class="text-[9px] font-black text-amber-400 uppercase tracking-wider">Módulo 3</p>
-            <h3 class="text-xs font-bold text-white">Tablero OKR</h3>
-          </div>
-        </div>
-        <p class="text-[10px] text-slate-500 leading-relaxed mb-3">Defina objetivos y resultados clave por horizonte. Mida el avance de cada iniciativa con indicadores de cumplimiento.</p>
-        <div class="w-full bg-slate-800 text-slate-600 font-bold py-2 rounded-xl text-[10px] text-center flex items-center justify-center gap-1.5">
-          <i class="fa-solid fa-clock text-[9px]"></i> Próximamente
-        </div>
-      </div>
 
       <!-- Módulo 4: Sprint Board -->
       <div class="bg-slate-900/50 border border-slate-800/50 rounded-2xl p-4 opacity-40">
@@ -508,6 +532,100 @@
         <i class="fa-solid fa-rotate-left"></i> Nuevo Diagnóstico
       </button>
     </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     MÓDULO 3 · TABLERO OKR
+═══════════════════════════════ -->
+<div id="s-okr" class="hidden fade">
+  <div class="max-w-4xl mx-auto py-8">
+
+    <!-- Cabecera -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <div class="flex items-center gap-3 mb-2">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+            style="background:rgb(245 158 11/0.15);border:1px solid rgb(245 158 11/0.25)">
+            <i class="fa-solid fa-bullseye" style="color:rgb(251 191 36)"></i>
+          </div>
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-widest"
+               style="color:rgb(251 191 36)">Módulo 3 · Cap. 7 — De la Estrategia a la Acción</p>
+            <h2 class="text-2xl font-black text-white">Tablero OKR</h2>
+          </div>
+        </div>
+        <p class="text-slate-400 text-xs leading-relaxed max-w-2xl">
+          Por cada iniciativa de su hoja de ruta, defina un Objetivo claro y hasta
+          3 Resultados Clave medibles. El sistema calcula el cumplimiento y activa
+          el semáforo automáticamente.
+        </p>
+      </div>
+      <button onclick="show('s-start')"
+        class="text-xs text-slate-600 hover:text-slate-400 transition
+               flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg flex-shrink-0">
+        <i class="fa-solid fa-arrow-left text-[10px]"></i> Dashboard
+      </button>
+    </div>
+
+    <!-- Resumen de cumplimiento global -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6">
+      <div class="grid grid-cols-4 gap-4">
+        <div class="text-center">
+          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">OKRs definidos</p>
+          <p id="okr-total" class="text-2xl font-black text-white">0</p>
+        </div>
+        <div class="text-center border-l border-slate-800">
+          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cumplimiento promedio</p>
+          <p id="okr-avg" class="text-2xl font-black text-white">—</p>
+        </div>
+        <div class="text-center border-l border-slate-800">
+          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">En verde ≥70%</p>
+          <p id="okr-verde" class="text-2xl font-black" style="color:rgb(52 211 153)">0</p>
+        </div>
+        <div class="text-center border-l border-slate-800">
+          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">En rojo &lt;40%</p>
+          <p id="okr-rojo" class="text-2xl font-black" style="color:rgb(244 63 94)">0</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtro por horizonte -->
+    <div class="flex gap-2 mb-5">
+      <button onclick="filtrarOKR('todos')" id="okr-f-todos"
+        class="okr-filtro text-[10px] font-bold px-3 py-1.5 rounded-lg border transition"
+        style="background:rgb(245 158 11/0.15);border-color:rgb(245 158 11/0.40);color:rgb(251 191 36)">
+        Todos
+      </button>
+      <button onclick="filtrarOKR('h1')" id="okr-f-h1"
+        class="okr-filtro text-[10px] font-bold px-3 py-1.5 rounded-lg border transition"
+        style="background:rgb(30 41 59);border-color:rgb(51 65 85);color:rgb(100 116 139)">
+        H1 · Meses 1-6
+      </button>
+      <button onclick="filtrarOKR('h2')" id="okr-f-h2"
+        class="okr-filtro text-[10px] font-bold px-3 py-1.5 rounded-lg border transition"
+        style="background:rgb(30 41 59);border-color:rgb(51 65 85);color:rgb(100 116 139)">
+        H2 · Meses 6-18
+      </button>
+      <button onclick="filtrarOKR('h3')" id="okr-f-h3"
+        class="okr-filtro text-[10px] font-bold px-3 py-1.5 rounded-lg border transition"
+        style="background:rgb(30 41 59);border-color:rgb(51 65 85);color:rgb(100 116 139)">
+        H3 · Mes 18+
+      </button>
+    </div>
+
+    <!-- Contenedor de OKRs -->
+    <div id="okr-lista" class="space-y-4"></div>
+
+    <!-- Botón agregar OKR manual -->
+    <div class="mt-6 flex justify-center">
+      <button onclick="agregarOKRManual()"
+        class="text-xs font-bold px-5 py-2.5 rounded-xl border transition flex items-center gap-2"
+        style="background:rgb(245 158 11/0.10);border-color:rgb(245 158 11/0.25);color:rgb(251 191 36)">
+        <i class="fa-solid fa-plus text-[10px]"></i> Agregar OKR adicional
+      </button>
+    </div>
+
   </div>
 </div>
 
@@ -1029,7 +1147,7 @@ function initScores() {
 // NAVEGACIÓN
 // ════════════════════════════════════════
 function show(id) {
-  ['s-login','s-empresas','s-start','s-axis','s-confirm','s-results','s-roadmap'].forEach(s => {
+  ['s-login','s-empresas','s-start','s-axis','s-confirm','s-results','s-roadmap','s-okr'].forEach(s => {
     const el = document.getElementById(s);
     el.classList.add('hidden');
     el.classList.remove('fade');
@@ -1898,6 +2016,102 @@ function downloadPDF() {
       return 12 + introLines.length * 3.5 + h.axes.length * 8 + 10;
     })) + 12;
 
+    // ── HOJA DE RUTA DIGITAL · DETALLE (solo si el usuario completó el M2) ──
+    if (iniciativas && iniciativas.length > 0) {
+      chk(50); NP();
+      setFill('#0f172a'); doc.rect(0, 0, 210, 297, 'F');
+      doc.setFontSize(10); doc.setFont('helvetica','bold'); setCol('#818cf8');
+      doc.text('HOJA DE RUTA DIGITAL · DETALLE', M, y); y += 2;
+      setDraw('#1e293b'); doc.setLineWidth(0.3); doc.line(M, y, M+CW, y); y += 8;
+
+      // Norte Digital
+      const cHoy = norteGrid.find(c => c.id === norteHoy);
+      const cEstrella = norteGrid.find(c => c.id === norteEstrella);
+      const vision = (document.getElementById('rd-vision') && document.getElementById('rd-vision').value || '').trim();
+      doc.setFontSize(8); doc.setFont('helvetica','bold'); setCol('#818cf8');
+      doc.text('NORTE DIGITAL', M, y); y += 5;
+      doc.setFontSize(7.5); doc.setFont('helvetica','normal'); setCol('#e2e8f0');
+      doc.text(`Punto de partida: ${cHoy ? cHoy.nombre : 'No definido'}`, M, y); y += 4.2;
+      doc.text(`Estrella del Norte (3 años): ${cEstrella ? cEstrella.nombre : 'No definido'}`, M, y); y += 4.2;
+      if (vision) {
+        const visLines = doc.splitTextToSize(`Visión: ${vision}`, CW - 4);
+        visLines.forEach(ln => { chk(4); doc.text(ln, M, y); y += 4; });
+      }
+      y += 4;
+
+      // Palancas de Valor
+      chk(20);
+      doc.setFontSize(8); doc.setFont('helvetica','bold'); setCol('#818cf8');
+      doc.text('PALANCAS DE VALOR — PESO ESTRATÉGICO', M, y); y += 5;
+      PALANCAS.forEach(p => {
+        chk(8);
+        const peso = palancasPesos[p.id] || 0;
+        const pdata = palancaData[p.id];
+        doc.setFontSize(7); doc.setFont('helvetica','bold'); setCol('#cbd5e1');
+        doc.text(p.label, M, y);
+        setCol('#f1f5f9');
+        doc.text(`${peso} pts`, M + CW - 15, y);
+        setFill('#1e293b'); doc.rect(M, y+1.5, CW, 1.5, 'F');
+        setFill('#818cf8'); doc.rect(M, y+1.5, CW*(peso/100), 1.5, 'F');
+        y += 5.5;
+        if (pdata && pdata.nota) {
+          doc.setFontSize(6.5); doc.setFont('helvetica','italic'); setCol('#94a3b8');
+          const notaLines = doc.splitTextToSize(pdata.nota, CW - 4);
+          notaLines.slice(0,2).forEach(ln => { doc.text(ln, M + 3, y); y += 3.5; });
+        }
+      });
+      y += 4;
+
+      // Iniciativas priorizadas
+      chk(20);
+      doc.setFontSize(8); doc.setFont('helvetica','bold'); setCol('#818cf8');
+      doc.text('INICIATIVAS PRIORIZADAS', M, y); y += 5;
+      const sortedInis = [...iniciativas].sort((a,b) => (b.pct||0) - (a.pct||0));
+      sortedInis.forEach((ini, idx) => {
+        chk(10);
+        const hCol = ini.horizonte==='h1'?'#f43f5e':ini.horizonte==='h2'?'#f59e0b':ini.horizonte==='h3'?'#34d399':'#64748b';
+        doc.setFontSize(7); doc.setFont('helvetica','bold'); setCol('#e2e8f0');
+        const nombreBase = ini.nombre || '(sin nombre)';
+        const nombreCorto = nombreBase.length > 60 ? (nombreBase.substring(0,58) + '…') : nombreBase;
+        doc.text(`${idx+1}. ${nombreCorto}`, M, y);
+        setCol(hCol);
+        doc.text(ini.horizonte ? ini.horizonte.toUpperCase() : '—', M + CW - 22, y);
+        setCol('#22d3ee');
+        doc.text(`${(ini.pct||0).toFixed(1)}%`, M + CW - 10, y);
+        y += 4.2;
+        if (ini.desc) {
+          doc.setFontSize(6.5); doc.setFont('helvetica','normal'); setCol('#94a3b8');
+          const descLines = doc.splitTextToSize(ini.desc, CW - 6);
+          descLines.slice(0,2).forEach(ln => { doc.text(ln, M + 3, y); y += 3.3; });
+        }
+        y += 1.5;
+      });
+      y += 3;
+
+      // Distribución real por horizonte
+      chk(24);
+      doc.setFontSize(8); doc.setFont('helvetica','bold'); setCol('#818cf8');
+      doc.text('DISTRIBUCIÓN POR HORIZONTE', M, y); y += 7;
+      const hDefs = [
+        { h:'h1', label:'H1 · Meses 1-6',  color:'#f43f5e' },
+        { h:'h2', label:'H2 · Meses 6-18', color:'#f59e0b' },
+        { h:'h3', label:'H3 · Mes 18+',    color:'#34d399' }
+      ];
+      const hColW2 = CW / 3;
+      hDefs.forEach((hd, hi) => {
+        const totalH = horizonteMap[hd.h].reduce((acc, id) => {
+          const ini = iniciativas.find(x => x.id === id);
+          return acc + (ini ? (ini.pct||0) : 0);
+        }, 0);
+        const bx = M + hi * hColW2;
+        doc.setFontSize(7); doc.setFont('helvetica','bold'); setCol(hd.color);
+        doc.text(hd.label, bx, y);
+        doc.setFontSize(11);
+        doc.text(`${totalH.toFixed(1)}%`, bx, y + 6);
+      });
+      y += 14;
+    }
+
     // ── PIE DE PÁGINA en todas las páginas ──────────────
     const totalPages = doc.getNumberOfPages();
     for (let p = 1; p <= totalPages; p++) {
@@ -2681,7 +2895,272 @@ function renderEsfuerzoHorizontes() {
   });
 }
 
+// ════════════════════════════════════════
+// MÓDULO 3 · TABLERO OKR
+// ════════════════════════════════════════
 
+let okrData = {}; // { iniciativa_id: { objetivo, krs: [{descripcion, baseline, meta, actual}] } }
+let okrFiltroActual = 'todos';
+
+function renderOKR() {
+  cargarOKRGuardados();
+  // Obtener iniciativas desde el M2
+  const fuente = iniciativas && iniciativas.length > 0
+    ? iniciativas
+    : JSON.parse(localStorage.getItem('ag_iniciativas') || '[]');
+
+  if (fuente.length === 0) {
+    document.getElementById('okr-lista').innerHTML = `
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center">
+        <i class="fa-solid fa-map text-slate-700 text-3xl mb-3 block"></i>
+        <p class="text-sm font-bold text-slate-400 mb-1">No hay iniciativas definidas</p>
+        <p class="text-xs text-slate-600 mb-4">Complete primero el Módulo 2 — Hoja de Ruta Digital para definir sus iniciativas.</p>
+        <button onclick="show('s-roadmap')"
+          class="text-xs font-bold px-4 py-2 rounded-xl border"
+          style="background:rgb(99 102 241/0.15);border-color:rgb(99 102 241/0.30);color:rgb(129 140 248)">
+          Ir a Hoja de Ruta →
+        </button>
+      </div>`;
+    actualizarResumenOKR([]);
+    return;
+  }
+
+  const filtradas = okrFiltroActual === 'todos'
+    ? fuente
+    : fuente.filter(i => i.horizonte === okrFiltroActual);
+
+  document.getElementById('okr-lista').innerHTML = filtradas.map(ini =>
+    renderOKRCard(ini)
+  ).join('');
+
+  actualizarResumenOKR(fuente);
+}
+
+function renderOKRCard(ini) {
+  const id = ini.id;
+  if (!okrData[id]) {
+    okrData[id] = {
+      objetivo: '',
+      krs: [
+        { descripcion: '', baseline: '', meta: '', actual: '' },
+        { descripcion: '', baseline: '', meta: '', actual: '' },
+        { descripcion: '', baseline: '', meta: '', actual: '' }
+      ]
+    };
+  }
+  const okr = okrData[id];
+  const cumplimiento = calcularCumplimientoOKR(okr);
+  const { color, label, bg, border } = semaforoOKR(cumplimiento);
+  const hColor = ini.horizonte === 'h1' ? 'rgb(244 63 94)'
+               : ini.horizonte === 'h2' ? 'rgb(245 158 11)'
+               : ini.horizonte === 'h3' ? 'rgb(52 211 153)'
+               : 'rgb(100 116 139)';
+  const hLabel = ini.horizonte ? ini.horizonte.toUpperCase() : '—';
+
+  const krsHtml = okr.krs.map((kr, ki) => `
+    <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-3">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-[9px] font-black text-slate-500 w-5">KR${ki+1}</span>
+        <input type="text" value="${kr.descripcion}"
+          placeholder="Resultado clave medible — ej: Reducir tiempo de onboarding de 5 días a 1 día"
+          onchange="updateKR('${id}',${ki},'descripcion',this.value)"
+          class="flex-1 bg-transparent border-b border-slate-700 text-[10px] text-white
+                 placeholder-slate-500 focus:outline-none focus:border-amber-500/50 pb-0.5">
+      </div>
+      <div class="grid grid-cols-3 gap-2">
+        <div>
+          <label class="block text-[8px] text-slate-600 mb-1">Línea base actual</label>
+          <input type="text" value="${kr.baseline}"
+            placeholder="Ej: 5 días"
+            onchange="updateKR('${id}',${ki},'baseline',this.value)"
+            class="w-full p-1.5 bg-slate-800 border border-slate-700 rounded-lg text-[9px]
+                   text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/50">
+        </div>
+        <div>
+          <label class="block text-[8px] text-slate-600 mb-1">Meta</label>
+          <input type="text" value="${kr.meta}"
+            placeholder="Ej: 1 día"
+            onchange="updateKR('${id}',${ki},'meta',this.value)"
+            class="w-full p-1.5 bg-slate-800 border border-slate-700 rounded-lg text-[9px]
+                   text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/50">
+        </div>
+        <div>
+          <label class="block text-[8px] text-slate-600 mb-1">Valor actual</label>
+          <input type="number" value="${kr.actual}" min="0" max="100"
+            placeholder="0-100%"
+            onchange="updateKR('${id}',${ki},'actual',+this.value)"
+            oninput="updateKR('${id}',${ki},'actual',+this.value)"
+            class="w-full p-1.5 bg-slate-800 border border-slate-700 rounded-lg text-[9px]
+                   text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/50">
+        </div>
+      </div>
+    </div>`).join('');
+
+  return `
+    <div id="okr-card-${id}" class="bg-slate-900 border border-slate-800 rounded-2xl p-5"
+         style="border-left:3px solid ${color}">
+      <!-- Encabezado -->
+      <div class="flex items-start justify-between mb-4">
+        <div class="flex-1 min-w-0 pr-4">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-[8px] font-bold px-1.5 py-0.5 rounded"
+              style="background:${hColor}20;color:${hColor}">${hLabel}</span>
+            <span class="text-[9px] text-slate-500">${ini.nombre || 'Iniciativa sin nombre'}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-flag text-[10px]" style="color:rgb(251 191 36)"></i>
+            <input type="text" value="${okr.objetivo}"
+              placeholder="Defina el objetivo de esta iniciativa — ¿qué quiere lograr?"
+              onchange="updateObjetivo('${id}',this.value)"
+              class="flex-1 bg-transparent text-sm font-bold text-white placeholder-slate-600
+                     focus:outline-none border-b border-transparent focus:border-amber-500/50 pb-0.5">
+          </div>
+        </div>
+        <!-- Semáforo -->
+        <div class="flex-shrink-0 text-center">
+          <div id="okr-circle-${id}" class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-1"
+            style="background:${bg};border:2px solid ${border}">
+            <span id="okr-pct-${id}" class="text-base font-black" style="color:${color}">
+              ${cumplimiento > 0 ? cumplimiento + '%' : '—'}
+            </span>
+          </div>
+          <p id="okr-label-${id}" class="text-[8px] font-bold" style="color:${color}">${label}</p>
+        </div>
+      </div>
+
+      <!-- KRs -->
+      <div class="space-y-2">${krsHtml}</div>
+
+      <!-- Barra de progreso global del OKR -->
+      <div id="okr-progress-wrap-${id}" class="mt-4 pt-4 border-t border-slate-800" style="${cumplimiento > 0 ? '' : 'display:none'}">
+        <div class="flex justify-between items-center mb-1">
+          <span class="text-[9px] text-slate-500">Cumplimiento del OKR</span>
+          <span id="okr-progress-pct-${id}" class="text-[9px] font-black" style="color:${color}">${cumplimiento}%</span>
+        </div>
+        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+          <div id="okr-progress-bar-${id}" class="h-full rounded-full transition-all duration-700"
+            style="width:${cumplimiento}%;background:${color}"></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function updateObjetivo(iniId, val) {
+  if (!okrData[iniId]) okrData[iniId] = { objetivo:'', krs:[{},{},{}] };
+  okrData[iniId].objetivo = val;
+  localStorage.setItem('ag_okr', JSON.stringify(okrData));
+  actualizarResumenOKR(iniciativas);
+}
+
+function updateKR(iniId, ki, campo, val) {
+  if (!okrData[iniId]) okrData[iniId] = { objetivo:'', krs:[{},{},{}] };
+  okrData[iniId].krs[ki][campo] = val;
+
+  // Actualizar el semáforo de esta tarjeta en vivo, sin re-renderizar todo (evita perder el foco)
+  const cumplimiento = calcularCumplimientoOKR(okrData[iniId]);
+  const { color, label, bg, border } = semaforoOKR(cumplimiento);
+
+  const card    = document.getElementById(`okr-card-${iniId}`);
+  const circle  = document.getElementById(`okr-circle-${iniId}`);
+  const pctEl   = document.getElementById(`okr-pct-${iniId}`);
+  const labelEl = document.getElementById(`okr-label-${iniId}`);
+  const wrapEl  = document.getElementById(`okr-progress-wrap-${iniId}`);
+  const progPct = document.getElementById(`okr-progress-pct-${iniId}`);
+  const barEl   = document.getElementById(`okr-progress-bar-${iniId}`);
+
+  if (card)    card.style.borderLeft = `3px solid ${color}`;
+  if (circle)  circle.style.cssText  = `width:56px;height:56px;border-radius:9999px;display:flex;align-items:center;justify-content:center;margin:0 auto 4px;background:${bg};border:2px solid ${border}`;
+  if (pctEl)   { pctEl.textContent = cumplimiento > 0 ? cumplimiento + '%' : '—'; pctEl.style.color = color; }
+  if (labelEl) { labelEl.textContent = label; labelEl.style.color = color; }
+  if (wrapEl)  wrapEl.style.display = cumplimiento > 0 ? '' : 'none';
+  if (progPct) { progPct.textContent = cumplimiento + '%'; progPct.style.color = color; }
+  if (barEl)   { barEl.style.width = cumplimiento + '%'; barEl.style.background = color; }
+
+  localStorage.setItem('ag_okr', JSON.stringify(okrData));
+  actualizarResumenOKR(iniciativas && iniciativas.length > 0
+    ? iniciativas
+    : JSON.parse(localStorage.getItem('ag_iniciativas') || '[]'));
+}
+
+function calcularCumplimientoOKR(okr) {
+  if (!okr || !okr.krs) return 0;
+  const krsConValor = okr.krs.filter(kr => kr.actual !== '' && kr.actual !== undefined && kr.actual !== null);
+  if (krsConValor.length === 0) return 0;
+  const suma = krsConValor.reduce((acc, kr) => acc + Math.min(100, Math.max(0, +kr.actual || 0)), 0);
+  return Math.round(suma / krsConValor.length);
+}
+
+function semaforoOKR(pct) {
+  if (pct === 0 || pct === '') return {
+    color:'rgb(100 116 139)', label:'Sin datos',
+    bg:'rgb(100 116 139/0.10)', border:'rgb(100 116 139/0.30)'
+  };
+  if (pct >= 70) return {
+    color:'rgb(52 211 153)', label:'En meta',
+    bg:'rgb(52 211 153/0.10)', border:'rgb(52 211 153/0.30)'
+  };
+  if (pct >= 40) return {
+    color:'rgb(251 191 36)', label:'En riesgo',
+    bg:'rgb(245 158 11/0.10)', border:'rgb(245 158 11/0.30)'
+  };
+  return {
+    color:'rgb(244 63 94)', label:'Crítico',
+    bg:'rgb(244 63 94/0.10)', border:'rgb(244 63 94/0.30)'
+  };
+}
+
+function actualizarResumenOKR(fuente) {
+  if (!fuente) return;
+  const ids = fuente.map(i => i.id);
+  const conDatos = ids.filter(id => okrData[id] && calcularCumplimientoOKR(okrData[id]) > 0);
+  const total = ids.length;
+  const avg = conDatos.length > 0
+    ? Math.round(conDatos.reduce((a, id) => a + calcularCumplimientoOKR(okrData[id]), 0) / conDatos.length)
+    : 0;
+  const verdes = conDatos.filter(id => calcularCumplimientoOKR(okrData[id]) >= 70).length;
+  const rojos  = conDatos.filter(id => calcularCumplimientoOKR(okrData[id]) < 40).length;
+
+  const t = document.getElementById('okr-total');
+  const a = document.getElementById('okr-avg');
+  const v = document.getElementById('okr-verde');
+  const r = document.getElementById('okr-rojo');
+  if (t) t.textContent = total;
+  if (a) a.textContent = conDatos.length > 0 ? avg + '%' : '—';
+  if (v) v.textContent = verdes;
+  if (r) r.textContent = rojos;
+}
+
+function filtrarOKR(horizonte) {
+  okrFiltroActual = horizonte;
+  ['todos','h1','h2','h3'].forEach(h => {
+    const btn = document.getElementById(`okr-f-${h}`);
+    if (!btn) return;
+    if (h === horizonte) {
+      btn.style.cssText = 'background:rgb(245 158 11/0.15);border-color:rgb(245 158 11/0.40);color:rgb(251 191 36)';
+    } else {
+      btn.style.cssText = 'background:rgb(30 41 59);border-color:rgb(51 65 85);color:rgb(100 116 139)';
+    }
+  });
+  renderOKR();
+}
+
+function agregarOKRManual() {
+  const id = 'manual-' + Date.now();
+  if (!iniciativas) iniciativas = [];
+  iniciativas.push({ id, nombre: 'Nueva iniciativa', desc: '', eje: '', impactos: {}, dificultad: 2, horizonte: null, score: 0, pct: 0 });
+  okrData[id] = { objetivo: '', krs: [
+    { descripcion:'', baseline:'', meta:'', actual:'' },
+    { descripcion:'', baseline:'', meta:'', actual:'' },
+    { descripcion:'', baseline:'', meta:'', actual:'' }
+  ] };
+  renderOKR();
+}
+
+// Cargar OKRs guardados al abrir el módulo
+function cargarOKRGuardados() {
+  const saved = localStorage.getItem('ag_okr');
+  if (saved) { try { okrData = JSON.parse(saved); } catch(e) {} }
+}
 
 // ─── Envío al Google Script ───
 function sendToScript(avgs, global, level, summary) {
