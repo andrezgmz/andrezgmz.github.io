@@ -701,6 +701,18 @@
           class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
       </div>
     </div>
+
+    <div class="flex items-center justify-between gap-3 mt-4 pt-4 border-t border-slate-800 ml-9">
+      <span id="norte-estado" class="text-[10px] font-bold text-slate-600"></span>
+      <div class="flex gap-2">
+        <button id="btn-editar-norte" onclick="editarNorteGuardado()" class="hidden text-xs font-bold px-4 py-2 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-pen text-[10px]"></i> Editar cambios guardados
+        </button>
+        <button id="btn-guardar-norte" onclick="guardarNorteSeccion()" class="text-xs font-bold px-4 py-2 rounded-xl bg-indigo-500 text-white hover:bg-indigo-400 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-floppy-disk text-[10px]"></i> Guardar cambios
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- ── PASO 2: PALANCAS DE VALOR ─────────────────── -->
@@ -716,9 +728,20 @@
       <p class="text-xs text-slate-500 leading-relaxed">Este peso define el ranking de sus iniciativas: una iniciativa que impacta fuerte en "Ingresos" valdrá más si usted asignó 40 puntos a esa palanca que si le asignó 10. <strong class="text-slate-400">No hay respuesta correcta — depende de la prioridad de su organización hoy.</strong></p>
     </div>
     <div id="palancas-grid" class="space-y-3"></div>
-    <div class="flex justify-between items-center mt-4 pt-4 border-t border-slate-800">
+    <div class="flex flex-wrap justify-between items-center gap-3 mt-4 pt-4 border-t border-slate-800">
       <span class="text-xs text-slate-500">Total asignado — debe sumar exactamente 100:</span>
       <span id="palancas-total" class="text-sm font-black text-white">0 / 100 puntos</span>
+    </div>
+    <div class="flex items-center justify-between gap-3 mt-3">
+      <span id="palancas-estado" class="text-[10px] font-bold text-slate-600"></span>
+      <div class="flex gap-2">
+        <button id="btn-editar-palancas" onclick="editarPalancasGuardadas()" class="hidden text-xs font-bold px-4 py-2 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-pen text-[10px]"></i> Editar cambios guardados
+        </button>
+        <button id="btn-guardar-palancas" onclick="guardarPalancasSeccion()" class="text-xs font-bold px-4 py-2 rounded-xl bg-cyan-500 text-slate-950 hover:bg-cyan-400 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-floppy-disk text-[10px]"></i> Guardar cambios
+        </button>
+      </div>
     </div>
   </div>
 
@@ -731,7 +754,7 @@
         </div>
         <h3 class="text-base font-bold text-white">Paso 3 · Iniciativas</h3>
       </div>
-      <div class="flex gap-2">
+      <div id="ini-acciones-edicion" class="flex gap-2">
         <button onclick="addIniciativa()" class="text-xs bg-slate-800 border border-slate-700 text-slate-300 px-3 py-1.5 rounded-lg hover:bg-slate-700 transition flex items-center gap-1.5">
           <i class="fa-solid fa-plus text-[10px]"></i> Agregar
         </button>
@@ -754,6 +777,18 @@
         <p class="text-[10px] text-slate-600">El % indica cuánto peso representa cada iniciativa sobre el total de la hoja de ruta</p>
       </div>
       <div id="ranking-list" class="space-y-1.5"></div>
+    </div>
+
+    <div class="flex items-center justify-between gap-3 mt-4 pt-4 border-t border-slate-800">
+      <span id="ini-estado" class="text-[10px] font-bold text-slate-600"></span>
+      <div class="flex gap-2">
+        <button id="btn-editar-ini" onclick="editarIniciativasGuardadas()" class="hidden text-xs font-bold px-4 py-2 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-pen text-[10px]"></i> Editar cambios guardados
+        </button>
+        <button id="btn-guardar-ini" onclick="guardarIniciativasSeccion()" class="text-xs font-bold px-4 py-2 rounded-xl bg-amber-500 text-slate-950 hover:bg-amber-400 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-floppy-disk text-[10px]"></i> Guardar cambios
+        </button>
+      </div>
     </div>
   </div>
 
@@ -834,13 +869,17 @@
   <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
     <div>
       <p class="text-sm font-bold text-white">Hoja de ruta construida</p>
-      <p class="text-xs text-slate-500 mt-0.5">Descargue el informe completo con diagnóstico y hoja de ruta</p>
+      <p class="text-xs text-slate-500 mt-0.5">Guarde para continuar con la definición de OKR, o descargue el informe</p>
     </div>
-    <div class="flex gap-3 flex-shrink-0">
+    <div class="flex gap-3 flex-shrink-0 flex-wrap justify-center">
+      <button onclick="finalizarHojaDeRuta()" class="font-black px-5 py-3 rounded-xl transition text-sm flex items-center gap-2"
+        style="background:rgb(251 191 36);color:rgb(15 23 42)">
+        <i class="fa-solid fa-floppy-disk"></i> Guardar y Definir OKR
+      </button>
       <button onclick="downloadPDF()" class="bg-cyan-500 text-slate-950 font-black px-5 py-3 rounded-xl hover:bg-cyan-400 transition text-sm flex items-center gap-2">
         <i class="fa-solid fa-file-pdf"></i> Descargar PDF Completo
       </button>
-      <button onclick="show('s-results')" class="border border-slate-700 text-slate-400 font-semibold px-5 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition text-sm flex items-center gap-2">
+      <button onclick="verDiagnosticoGuardado()" class="border border-slate-700 text-slate-400 font-semibold px-5 py-3 rounded-xl hover:bg-slate-800 hover:text-white transition text-sm flex items-center gap-2">
         <i class="fa-solid fa-arrow-left"></i> Ver Diagnóstico
       </button>
     </div>
@@ -1508,11 +1547,15 @@ function genResults() {
   updateDashboard(); // desbloquear módulo 2 en el dashboard
   show('s-results');
 
-  // Guardar diagnóstico final en Supabase
+  // Guardar diagnóstico final en Supabase — scores_json incluye scores crudos y
+  // los promedios por eje (axAvgs), ya que no hay columna dedicada para estos últimos
   if (window._proyectoActual && window._diagnosticoActualId) {
     sbFetch(`diagnosticos?id=eq.${window._diagnosticoActualId}`, {
       method: 'PATCH',
-      body: JSON.stringify({ scores_json: scores, nivel_global: global, nivel_texto: level, resumen: summary })
+      body: JSON.stringify({
+        scores_json: { scores, axAvgs: avgs },
+        nivel_global: global, nivel_texto: level, resumen: summary
+      })
     });
     window._diagnosticoActualId = null;
   }
@@ -1543,7 +1586,7 @@ function guardarDiagnostico() {
           sbFetch(`diagnosticos?id=eq.${rows[0].id}`, {
             method: 'PATCH',
             body: JSON.stringify({
-              scores_json: scores, notas_json: axisNotes,
+              scores_json: { scores, axAvgs: window._result.axAvgs }, notas_json: axisNotes,
               nivel_global: window._result.globalAvg, nivel_texto: window._result.level,
               resumen: window._result.summary
             })
@@ -2270,6 +2313,7 @@ const PALANCAS = [
 let norteHoy = null;
 let norteEstrella = null;
 let norteExpandida = null;
+let norteEditando = true; // false = "Guardado", cuadrantes bloqueados hasta presionar Editar
 let palancasPesos = { ingresos:20, inclusion:15, experiencia:25, eficiencia:20, datos:10, reputacion:10 };
 let iniciativas = [];
 let norteGrid = JSON.parse(JSON.stringify(NORTE_CUADRANTES)); // copia editable
@@ -2277,7 +2321,55 @@ let horizonteMap = { h1:[], h2:[], h3:[] };
 
 // ── Ir al módulo ──────────────────────────────────────
 function goRoadmap() {
-  // Pre-cargar iniciativas ordenadas por ejes más débiles
+  // Cargar Norte Digital guardado de una sesión anterior — bloqueado hasta "Editar"
+  const savedNorte = localStorage.getItem('ag_norte');
+  if (savedNorte) {
+    try {
+      const d = JSON.parse(savedNorte);
+      if (d.norteHoy !== undefined) norteHoy = d.norteHoy;
+      if (d.norteEstrella !== undefined) norteEstrella = d.norteEstrella;
+      if (d.norteGrid) norteGrid = d.norteGrid;
+      const visionEl = document.getElementById('rd-vision');
+      if (visionEl && d.vision) visionEl.value = d.vision;
+      const hoyC = norteGrid.find(c => c.id === norteHoy);
+      const estrellaC = norteGrid.find(c => c.id === norteEstrella);
+      const hoyTxt = document.getElementById('rd-hoy-txt');
+      const metaTxt = document.getElementById('rd-meta-txt');
+      if (hoyTxt && hoyC) hoyTxt.value = hoyC.nombre;
+      if (metaTxt && estrellaC) metaTxt.value = estrellaC.nombre;
+      norteEditando = false;
+    } catch (e) {}
+  }
+
+  // Cargar palancas guardadas de una sesión anterior — quedan bloqueadas (solo lectura)
+  // hasta que el usuario presione "Editar cambios guardados"
+  const savedPalancas = localStorage.getItem('ag_palancas');
+  if (savedPalancas) {
+    try {
+      const d = JSON.parse(savedPalancas);
+      if (d.palancasPesos) palancasPesos = d.palancasPesos;
+      if (d.palancaData) palancaData = d.palancaData;
+      palancasEditando = false;
+    } catch (e) {}
+  }
+
+  // Cargar iniciativas y horizontes guardados de una sesión anterior — bloqueadas hasta "Editar"
+  if (iniciativas.length === 0) {
+    const savedIniciativas = localStorage.getItem('ag_iniciativas');
+    const savedHorizontes = localStorage.getItem('ag_horizontes');
+    if (savedIniciativas) {
+      try {
+        const d = JSON.parse(savedIniciativas);
+        if (Array.isArray(d) && d.length > 0) {
+          iniciativas = d;
+          if (savedHorizontes) { try { horizonteMap = JSON.parse(savedHorizontes); } catch (e) {} }
+          iniciativasEditando = false;
+        }
+      } catch (e) {}
+    }
+  }
+
+  // Pre-cargar iniciativas ordenadas por ejes más débiles (solo si no había nada guardado)
   if (iniciativas.length === 0) {
     const { axAvgs } = window._result || {};
     let order = INICIATIVAS_BASE.map((ini,i) => ({ ini, score: axAvgs ? axAvgs[i < 8 ? i : 7] : Math.random() }));
@@ -2301,10 +2393,71 @@ function goRoadmap() {
   show('s-roadmap');
 }
 
+// Cierra el M2: guarda todo (palancas, iniciativas, horizontes, norte digital) en
+// localStorage + Supabase (si hay proyecto activo) y pasa al M3 — Tablero OKR.
+function finalizarHojaDeRuta() {
+  const visionEl = document.getElementById('rd-vision');
+  const vision = visionEl ? visionEl.value : '';
+  localStorage.setItem('ag_norte', JSON.stringify({ norteHoy, norteEstrella, vision, norteGrid }));
+  norteExpandida = null;
+  norteEditando = false;
+
+  localStorage.setItem('ag_palancas', JSON.stringify({ palancasPesos, palancaData }));
+  palancaExpandida = null;
+  palancasEditando = false;
+
+  localStorage.setItem('ag_iniciativas', JSON.stringify(iniciativas));
+  localStorage.setItem('ag_horizontes', JSON.stringify(horizonteMap));
+  iniciativaExpandida = null;
+  iniciativasEditando = false;
+
+  if (window._proyectoActual) {
+    const payload = JSON.stringify({
+      proyecto_id: window._proyectoActual.id,
+      norte_hoy: norteHoy, norte_estrella: norteEstrella, vision,
+      palancas_json: { palancasPesos, palancaData },
+      iniciativas_json: iniciativas,
+      horizontes_json: horizonteMap
+    });
+    if (!window._hojaRutaActualId) {
+      sbFetch('hoja_ruta', { method: 'POST', body: payload }).then(res => {
+        if (res && res[0]) window._hojaRutaActualId = res[0].id;
+      });
+    } else {
+      sbFetch(`hoja_ruta?id=eq.${window._hojaRutaActualId}`, { method: 'PATCH', body: payload });
+    }
+  }
+
+  updateDashboard();
+  show('s-okr');
+  renderOKR();
+}
+
 // ── NORTE DIGITAL 3×3 ────────────────────────────────
 function renderNorteGrid() {
   const grid = document.getElementById('norte-grid');
   grid.innerHTML = '';
+
+  if (!norteEditando) {
+    // Bloqueado tras "Guardar cambios" — solo lectura hasta presionar Editar
+    norteGrid.forEach(c => {
+      const isHoy      = norteHoy === c.id;
+      const isEstrella = norteEstrella === c.id;
+      const borderCls  = isEstrella ? 'border-indigo-400 bg-indigo-500/10'
+                       : isHoy      ? 'border-cyan-400 bg-cyan-500/10'
+                       : 'border-slate-700 bg-slate-800';
+      grid.innerHTML += `
+        <div class="relative rounded-xl border-2 ${borderCls} p-2.5 opacity-90" style="min-height:96px">
+          ${isHoy ? '<span class="absolute top-1.5 left-1.5 text-[8px] font-black text-cyan-400 bg-slate-900/80 px-1.5 py-0.5 rounded">☁ Hoy</span>' : ''}
+          ${isEstrella ? '<span class="absolute top-1.5 right-1.5 text-[8px] font-black text-indigo-400 bg-slate-900/80 px-1.5 py-0.5 rounded">★ Norte</span>' : ''}
+          <p class="text-[10px] font-bold mb-1 mt-4" style="color:${c.color}">${c.nombre}</p>
+          <p class="text-[9px] text-slate-500 leading-relaxed line-clamp-3">${c.desc}</p>
+        </div>`;
+    });
+    actualizarEstadoGuardadoNorte();
+    return;
+  }
+
   norteGrid.forEach((c, i) => {
     const isHoy      = norteHoy === c.id;
     const isEstrella = norteEstrella === c.id;
@@ -2364,6 +2517,54 @@ function renderNorteGrid() {
         </div>
       </div>`;
   });
+  actualizarEstadoGuardadoNorte();
+}
+
+function actualizarEstadoGuardadoNorte() {
+  const estado = document.getElementById('norte-estado');
+  const btnGuardar = document.getElementById('btn-guardar-norte');
+  const btnEditar = document.getElementById('btn-editar-norte');
+  const vision = document.getElementById('rd-vision');
+  if (!estado || !btnGuardar || !btnEditar) return;
+  if (norteEditando) {
+    estado.textContent = '';
+    btnGuardar.classList.remove('hidden');
+    btnEditar.classList.add('hidden');
+    if (vision) vision.disabled = false;
+  } else {
+    estado.innerHTML = '<i class="fa-solid fa-check text-emerald-400 mr-1"></i>Cambios guardados';
+    btnGuardar.classList.add('hidden');
+    btnEditar.classList.remove('hidden');
+    if (vision) vision.disabled = true;
+  }
+}
+
+// Guarda Norte Digital (hoy, estrella, visión) en localStorage y, si hay proyecto
+// activo, intenta además Supabase — misma regla que Palancas y el Diagnóstico.
+function guardarNorteSeccion() {
+  const visionEl = document.getElementById('rd-vision');
+  const vision = visionEl ? visionEl.value : '';
+  localStorage.setItem('ag_norte', JSON.stringify({ norteHoy, norteEstrella, vision, norteGrid }));
+
+  if (window._proyectoActual) {
+    const payload = JSON.stringify({ proyecto_id: window._proyectoActual.id, norte_hoy: norteHoy, norte_estrella: norteEstrella, vision });
+    if (!window._hojaRutaActualId) {
+      sbFetch('hoja_ruta', { method: 'POST', body: payload }).then(res => {
+        if (res && res[0]) window._hojaRutaActualId = res[0].id;
+      });
+    } else {
+      sbFetch(`hoja_ruta?id=eq.${window._hojaRutaActualId}`, { method: 'PATCH', body: payload });
+    }
+  }
+
+  norteExpandida = null;
+  norteEditando = false;
+  renderNorteGrid();
+}
+
+function editarNorteGuardado() {
+  norteEditando = true;
+  renderNorteGrid();
 }
 
 function expandirCuadrante(id) {
@@ -2397,6 +2598,7 @@ function setNorteEstrella(id) {
 // Estado de expansión por palanca
 let palancaExpandida = null;
 let palancaData = {}; // datos detallados por palanca
+let palancasEditando = true; // false = "Guardado", tarjetas bloqueadas hasta presionar Editar
 
 const PALANCA_KPI = {
   ingresos:    ['Crecimiento de ingresos digitales (%)', 'Ingresos por nuevos productos digitales ($)', 'Tasa de conversión digital (%)'],
@@ -2420,25 +2622,36 @@ function renderPalancas() {
   const grid = document.getElementById('palancas-grid');
   grid.innerHTML = '';
 
+  if (!palancasEditando) {
+    // Bloqueado tras "Guardar cambios" — solo lectura hasta presionar Editar
+    grid.innerHTML = `<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+      ${PALANCAS.map(p => renderPalancaResumen(p, false)).join('')}
+    </div>`;
+    actualizarEstadoGuardadoPalancas();
+    updateTotalPalancas();
+    return;
+  }
+
   if (palancaExpandida) {
     // Vista con una palanca expandida
     PALANCAS.forEach(p => {
       if (p.id === palancaExpandida) {
         grid.innerHTML += renderPalancaExpandida(p);
       } else {
-        grid.innerHTML += renderPalancaResumen(p);
+        grid.innerHTML += renderPalancaResumen(p, true);
       }
     });
   } else {
     // Vista con todas en resumen
     grid.innerHTML = `<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-      ${PALANCAS.map(p => renderPalancaResumen(p)).join('')}
+      ${PALANCAS.map(p => renderPalancaResumen(p, true)).join('')}
     </div>`;
   }
+  actualizarEstadoGuardadoPalancas();
   updateTotalPalancas();
 }
 
-function renderPalancaResumen(p) {
+function renderPalancaResumen(p, clickable) {
   const v    = palancasPesos[p.id] || 0;
   const data = palancaData[p.id]   || {};
   const kpi1 = (data.kpis && data.kpis[0]) ? data.kpis[0] : PALANCA_KPI[p.id][0];
@@ -2449,9 +2662,9 @@ function renderPalancaResumen(p) {
   const guardada = desc || nota || ini || (data.kpis && data.kpis.some(k => k));
 
   return `
-    <div onclick="expandirPalanca('${p.id}')"
-      class="bg-slate-800 border ${guardada ? 'border-slate-600' : 'border-slate-700'} rounded-xl p-3 cursor-pointer hover:border-slate-500 transition group relative"
-      title="Haga clic para editar esta palanca">
+    <div ${clickable ? `onclick="expandirPalanca('${p.id}')"` : ''}
+      class="bg-slate-800 border ${guardada ? 'border-slate-600' : 'border-slate-700'} rounded-xl p-3 transition group relative ${clickable ? 'cursor-pointer hover:border-slate-500' : 'opacity-90'}"
+      ${clickable ? 'title="Haga clic para editar esta palanca"' : ''}>
       <!-- Encabezado -->
       <div class="flex items-center justify-between mb-2">
         <div class="flex items-center gap-2">
@@ -2472,7 +2685,7 @@ function renderPalancaResumen(p) {
       <!-- Badge guardado -->
       ${guardada ? `<div class="absolute top-2 right-2"><span class="text-[7px] font-black px-1 py-0.5 rounded" style="background:${p.color}20;color:${p.color}">✓ Guardado</span></div>` : ''}
       <!-- Ícono expand en hover cuando no está guardado -->
-      ${!guardada ? `<div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition">
+      ${!guardada && clickable ? `<div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition">
         <i class="fa-solid fa-pen text-[9px] text-slate-500"></i>
       </div>` : ''}
     </div>`;
@@ -2695,14 +2908,69 @@ function updateTotalPalancas() {
   el.className = `text-sm font-black ${total===100?'text-emerald-400':total>100?'text-rose-400':'text-white'}`;
 }
 
+function actualizarEstadoGuardadoPalancas() {
+  const estado = document.getElementById('palancas-estado');
+  const btnGuardar = document.getElementById('btn-guardar-palancas');
+  const btnEditar = document.getElementById('btn-editar-palancas');
+  if (!estado || !btnGuardar || !btnEditar) return;
+  if (palancasEditando) {
+    estado.textContent = '';
+    btnGuardar.classList.remove('hidden');
+    btnEditar.classList.add('hidden');
+  } else {
+    estado.innerHTML = '<i class="fa-solid fa-check text-emerald-400 mr-1"></i>Cambios guardados';
+    btnGuardar.classList.add('hidden');
+    btnEditar.classList.remove('hidden');
+  }
+}
+
+// Guarda palancasPesos + palancaData en localStorage (respaldo siempre disponible)
+// e intenta ademas Supabase si hay un proyecto activo — misma regla del M1.
+function guardarPalancasSeccion() {
+  localStorage.setItem('ag_palancas', JSON.stringify({ palancasPesos, palancaData }));
+
+  if (window._proyectoActual) {
+    const payload = JSON.stringify({ proyecto_id: window._proyectoActual.id, palancas_json: { palancasPesos, palancaData } });
+    if (!window._hojaRutaActualId) {
+      sbFetch('hoja_ruta', { method: 'POST', body: payload }).then(res => {
+        if (res && res[0]) window._hojaRutaActualId = res[0].id;
+      });
+    } else {
+      sbFetch(`hoja_ruta?id=eq.${window._hojaRutaActualId}`, { method: 'PATCH', body: payload });
+    }
+  }
+
+  palancaExpandida = null;
+  palancasEditando = false;
+  renderPalancas();
+}
+
+function editarPalancasGuardadas() {
+  palancasEditando = true;
+  renderPalancas();
+}
+
 // ── INICIATIVAS — patrón expandible igual que palancas ──
 let iniciativaExpandida = null;
+let iniciativasEditando = true; // false = "Guardado", tarjetas bloqueadas hasta presionar Editar
 
 function renderIniciativas() {
   const grid = document.getElementById('ini-grid');
+  const acciones = document.getElementById('ini-acciones-edicion');
   grid.innerHTML = '';
+
+  if (acciones) acciones.classList.toggle('hidden', !iniciativasEditando);
+
   if (iniciativas.length === 0) {
     grid.innerHTML = '<p class="text-xs text-slate-600 italic col-span-3 text-center py-6">No hay iniciativas. Use "+ Agregar" para comenzar.</p>';
+    actualizarEstadoGuardadoIniciativas();
+    return;
+  }
+
+  if (!iniciativasEditando) {
+    // Bloqueado tras "Guardar cambios" — solo lectura hasta presionar Editar
+    grid.innerHTML = iniciativas.map(ini => renderIniResumen(ini, false)).join('');
+    actualizarEstadoGuardadoIniciativas();
     return;
   }
 
@@ -2712,16 +2980,60 @@ function renderIniciativas() {
       if (ini.id === iniciativaExpandida) {
         grid.innerHTML += renderIniExpandida(ini);
       } else {
-        grid.innerHTML += renderIniResumen(ini);
+        grid.innerHTML += renderIniResumen(ini, true);
       }
     });
   } else {
     // Todas en resumen
-    grid.innerHTML = iniciativas.map(ini => renderIniResumen(ini)).join('');
+    grid.innerHTML = iniciativas.map(ini => renderIniResumen(ini, true)).join('');
+  }
+  actualizarEstadoGuardadoIniciativas();
+}
+
+function actualizarEstadoGuardadoIniciativas() {
+  const estado = document.getElementById('ini-estado');
+  const btnGuardar = document.getElementById('btn-guardar-ini');
+  const btnEditar = document.getElementById('btn-editar-ini');
+  if (!estado || !btnGuardar || !btnEditar) return;
+  if (iniciativasEditando) {
+    estado.textContent = '';
+    btnGuardar.classList.remove('hidden');
+    btnEditar.classList.add('hidden');
+  } else {
+    estado.innerHTML = '<i class="fa-solid fa-check text-emerald-400 mr-1"></i>Cambios guardados';
+    btnGuardar.classList.add('hidden');
+    btnEditar.classList.remove('hidden');
   }
 }
 
-function renderIniResumen(ini) {
+// Guarda iniciativas + horizontes en localStorage y, si hay proyecto activo,
+// intenta además Supabase — misma regla que Norte Digital, Palancas y el Diagnóstico.
+function guardarIniciativasSeccion() {
+  localStorage.setItem('ag_iniciativas', JSON.stringify(iniciativas));
+  localStorage.setItem('ag_horizontes', JSON.stringify(horizonteMap));
+
+  if (window._proyectoActual) {
+    const payload = JSON.stringify({ proyecto_id: window._proyectoActual.id, iniciativas_json: iniciativas, horizontes_json: horizonteMap });
+    if (!window._hojaRutaActualId) {
+      sbFetch('hoja_ruta', { method: 'POST', body: payload }).then(res => {
+        if (res && res[0]) window._hojaRutaActualId = res[0].id;
+      });
+    } else {
+      sbFetch(`hoja_ruta?id=eq.${window._hojaRutaActualId}`, { method: 'PATCH', body: payload });
+    }
+  }
+
+  iniciativaExpandida = null;
+  iniciativasEditando = false;
+  renderIniciativas();
+}
+
+function editarIniciativasGuardadas() {
+  iniciativasEditando = true;
+  renderIniciativas();
+}
+
+function renderIniResumen(ini, clickable) {
   const guardada = ini.desc || ini.horizonte || Object.values(ini.impactos).some(v => v > 0);
   const hColor   = ini.horizonte === 'h1' ? '#f43f5e' : ini.horizonte === 'h2' ? '#f59e0b' : ini.horizonte === 'h3' ? '#10b981' : '#475569';
   const hLabel   = ini.horizonte ? ini.horizonte.toUpperCase() : 'Sin horiz.';
@@ -2733,14 +3045,14 @@ function renderIniResumen(ini) {
   }, null);
 
   return `
-    <div onclick="expandirIniciativa('${ini.id}')"
-      class="bg-slate-800 border ${guardada ? 'border-slate-600' : 'border-slate-700'} rounded-xl p-4 cursor-pointer hover:border-slate-500 hover:bg-slate-800/70 transition group relative flex flex-col h-full"
-      title="Haga clic para trabajar esta iniciativa">
+    <div ${clickable ? `onclick="expandirIniciativa('${ini.id}')"` : ''}
+      class="bg-slate-800 border ${guardada ? 'border-slate-600' : 'border-slate-700'} rounded-xl p-4 transition group relative flex flex-col h-full ${clickable ? 'cursor-pointer hover:border-slate-500 hover:bg-slate-800/70' : 'opacity-90'}"
+      ${clickable ? 'title="Haga clic para trabajar esta iniciativa"' : ''}>
       <!-- Badge guardado / editar -->
       <div class="absolute top-3 right-3">
         ${guardada
           ? `<span class="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"><i class="fa-solid fa-check text-[7px]"></i></span>`
-          : `<i class="fa-solid fa-pen text-[9px] text-slate-600 opacity-0 group-hover:opacity-100 transition"></i>`}
+          : (clickable ? `<i class="fa-solid fa-pen text-[9px] text-slate-600 opacity-0 group-hover:opacity-100 transition"></i>` : '')}
       </div>
       <!-- Encabezado -->
       <div class="pr-7 mb-2">
@@ -3323,12 +3635,14 @@ function updateObjetivo(iniId, val) {
   if (!okrData[iniId] || !okrData[iniId].resultadosClave) okrData[iniId] = nuevoOKR();
   okrData[iniId].objetivo = val;
   localStorage.setItem('ag_okr', JSON.stringify(okrData));
+  guardarOKRSupabase(iniId);
 }
 
 function updateRC(iniId, ri, campo, val) {
   if (!okrData[iniId] || !okrData[iniId].resultadosClave) okrData[iniId] = nuevoOKR();
   okrData[iniId].resultadosClave[ri][campo] = val;
   localStorage.setItem('ag_okr', JSON.stringify(okrData));
+  guardarOKRSupabase(iniId);
 }
 
 function updateKPI(iniId, ri, ki, campo, val) {
@@ -3336,12 +3650,14 @@ function updateKPI(iniId, ri, ki, campo, val) {
   okrData[iniId].resultadosClave[ri].kpis[ki][campo] = val;
   refrescarSemaforoOKR(iniId, ri);
   localStorage.setItem('ag_okr', JSON.stringify(okrData));
+  guardarOKRSupabase(iniId);
 }
 
 function updateKRI(iniId, ri, campo, val) {
   if (!okrData[iniId] || !okrData[iniId].resultadosClave) okrData[iniId] = nuevoOKR();
   okrData[iniId].resultadosClave[ri].kri[campo] = val;
   localStorage.setItem('ag_okr', JSON.stringify(okrData));
+  guardarOKRSupabase(iniId);
   renderOKR(); // el umbral excedido necesita recalcularse y mostrar/ocultar la alerta
 }
 
@@ -3349,7 +3665,56 @@ function toggleKRI(iniId, ri) {
   if (!okrData[iniId] || !okrData[iniId].resultadosClave) okrData[iniId] = nuevoOKR();
   okrData[iniId].resultadosClave[ri].kriActivo = !okrData[iniId].resultadosClave[ri].kriActivo;
   localStorage.setItem('ag_okr', JSON.stringify(okrData));
+  guardarOKRSupabase(iniId);
   renderOKR();
+}
+
+// Mapeo aproximado del modelo actual (Objetivo -> 1-2 Resultados Clave -> 2 KPIs + KRI
+// opcional) a la tabla `okrs` ya creada en Supabase con columnas kr1/kr2/kr3
+// (descripcion/baseline/meta/actual). No hay columna para el KRI, así que si algún
+// Resultado Clave tiene KRI activo, se reporta en el slot kr3 (que el modelo nuevo no usa).
+// Nota: la tabla no tiene una restricción UNIQUE(proyecto_id, iniciativa_nombre), así que
+// "resolution=merge-duplicates" no hace upsert real todavía — cada guardado inserta una
+// fila nueva hasta que se agregue esa restricción en Supabase.
+let _okrSaveTimers = {};
+function guardarOKRSupabase(iniId) {
+  if (!window._proyectoActual) return;
+  clearTimeout(_okrSaveTimers[iniId]);
+  _okrSaveTimers[iniId] = setTimeout(() => {
+    const okr = okrData[iniId];
+    if (!okr) return;
+    const ini = iniciativas.find(i => i.id === iniId) || {};
+    const rc1 = okr.resultadosClave[0] || null;
+    const rc2 = okr.resultadosClave[1] || null;
+    const kriRC = okr.resultadosClave.find(rc => rc.kriActivo);
+
+    const payload = {
+      proyecto_id: window._proyectoActual.id,
+      iniciativa_nombre: ini.nombre || iniId,
+      horizonte: ini.horizonte || null,
+      objetivo: okr.objetivo || '',
+      kr1_descripcion: rc1 ? rc1.descripcion : '',
+      kr1_baseline: rc1 ? `KPI1: ${rc1.kpis[0].nombre || '—'} · KPI2: ${rc1.kpis[1].nombre || '—'}` : '',
+      kr1_meta: rc1 ? rc1.meta : '',
+      kr1_actual: rc1 ? calcularCumplimientoRC(rc1) : 0,
+      kr2_descripcion: rc2 ? rc2.descripcion : '',
+      kr2_baseline: rc2 ? `KPI1: ${rc2.kpis[0].nombre || '—'} · KPI2: ${rc2.kpis[1].nombre || '—'}` : '',
+      kr2_meta: rc2 ? rc2.meta : '',
+      kr2_actual: rc2 ? calcularCumplimientoRC(rc2) : 0,
+      kr3_descripcion: kriRC ? `KRI (guardrail): ${kriRC.kri.nombre || ''}` : '',
+      kr3_baseline: kriRC ? (kriRC.kri.formula || '') : '',
+      kr3_meta: kriRC ? `Umbral máximo: ${kriRC.kri.umbral}` : '',
+      kr3_actual: kriRC ? (+kriRC.kri.valor || 0) : 0,
+      cumplimiento: calcularCumplimientoOKR(okr),
+      updated_at: new Date().toISOString()
+    };
+
+    sbFetch(`okrs?proyecto_id=eq.${window._proyectoActual.id}&iniciativa_nombre=eq.${encodeURIComponent(payload.iniciativa_nombre)}`, {
+      method: 'POST',
+      headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify(payload)
+    }).catch(e => console.warn('OKR save:', e));
+  }, 600); // pequeño debounce para no disparar una llamada por cada tecla
 }
 
 function agregarResultadoClave(iniId) {
