@@ -232,7 +232,7 @@
     <div class="grid md:grid-cols-2 gap-4 mb-4">
 
       <!-- Módulo 1: Diagnóstico -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-cyan-500/30 transition group cursor-pointer" onclick="goStart()">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-cyan-500/30 transition group">
         <div class="flex items-start justify-between mb-4">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-cyan-500/10 border border-cyan-500/20 rounded-xl flex items-center justify-center">
@@ -252,13 +252,11 @@
           <div class="bg-slate-800 rounded-lg p-1.5 text-center"><i class="fa-solid fa-star text-amber-400 text-[9px] block mb-0.5"></i><p class="text-[8px] text-slate-600">Experiencia</p></div>
           <div class="bg-slate-800 rounded-lg p-1.5 text-center"><i class="fa-solid fa-microchip text-emerald-400 text-[9px] block mb-0.5"></i><p class="text-[8px] text-slate-600">Tecnología</p></div>
         </div>
-        <button class="w-full bg-cyan-500 text-slate-950 font-black py-2.5 rounded-xl hover:bg-cyan-400 transition text-xs flex items-center justify-center gap-2 group-hover:shadow-lg group-hover:shadow-cyan-500/10">
-          <i class="fa-solid fa-play text-[10px]"></i> <span id="btn-m1-txt">Iniciar Diagnóstico</span>
-        </button>
+        <div id="m1-acciones"></div>
       </div>
 
       <!-- Módulo 2: Hoja de Ruta -->
-      <div id="card-m2" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-indigo-500/30 transition group cursor-pointer opacity-50" onclick="accessModulo2()">
+      <div id="card-m2" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-indigo-500/30 transition group">
         <div class="flex items-start justify-between mb-4">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-indigo-500/10 border border-indigo-500/20 rounded-xl flex items-center justify-center">
@@ -269,7 +267,7 @@
               <h3 class="text-sm font-bold text-white">Hoja de Ruta Digital</h3>
             </div>
           </div>
-          <span id="badge-m2" class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-500">Requiere M1</span>
+          <span id="badge-m2" class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-500">Disponible</span>
         </div>
         <p class="text-xs text-slate-400 leading-relaxed mb-4">Defina su Norte Digital (Matriz 3×3 Accenture), pondere sus palancas estratégicas, priorice 9 iniciativas y distribúyalas en 3 horizontes con % de esfuerzo calculado.</p>
         <div class="grid grid-cols-3 gap-1 mb-4">
@@ -277,13 +275,11 @@
           <div class="bg-slate-800 rounded-lg p-1.5 text-center"><i class="fa-solid fa-sliders text-cyan-400 text-[9px] block mb-0.5"></i><p class="text-[8px] text-slate-600">Palancas</p></div>
           <div class="bg-slate-800 rounded-lg p-1.5 text-center"><i class="fa-solid fa-road text-emerald-400 text-[9px] block mb-0.5"></i><p class="text-[8px] text-slate-600">Horizontes</p></div>
         </div>
-        <button id="btn-m2" class="w-full bg-indigo-600 text-white font-black py-2.5 rounded-xl hover:bg-indigo-500 transition text-xs flex items-center justify-center gap-2">
-          <i class="fa-solid fa-lock text-[10px]"></i> <span id="btn-m2-txt">Disponible tras el Diagnóstico</span>
-        </button>
+        <div id="m2-acciones"></div>
       </div>
 
       <!-- Módulo 3: Tablero OKR -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 hover:border-amber-500/30 transition group cursor-pointer" onclick="show('s-okr');renderOKR()">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 hover:border-amber-500/30 transition group">
         <div class="flex items-start justify-between mb-3">
           <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-xl flex items-center justify-center"
@@ -317,10 +313,7 @@
             <p class="text-[8px] text-slate-600">Semáforo</p>
           </div>
         </div>
-        <button class="w-full font-black py-2 rounded-xl text-[10px] flex items-center justify-center gap-2 transition"
-          style="background:rgb(245 158 11/0.15);border:1px solid rgb(245 158 11/0.30);color:rgb(251 191 36)">
-          <i class="fa-solid fa-arrow-right text-[9px]"></i> Ir al Tablero OKR
-        </button>
+        <div id="m3-acciones"></div>
       </div>
 
     </div>
@@ -328,38 +321,80 @@
     <!-- Módulos próximos (grayed) -->
     <div class="grid md:grid-cols-3 gap-4">
 
-      <!-- Módulo 4: Sprint Board -->
-      <div class="bg-slate-900/50 border border-slate-800/50 rounded-2xl p-4 opacity-40">
-        <div class="flex items-center gap-3 mb-3">
-          <div class="w-9 h-9 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center">
-            <i class="fa-solid fa-table-columns text-emerald-400 text-sm"></i>
+      <!-- Módulo 4: Avances del Plan -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 hover:border-emerald-500/30 transition group cursor-pointer" onclick="show('s-avances');renderAvances()">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center"
+              style="background:rgb(52 211 153/0.10);border:1px solid rgb(52 211 153/0.20)">
+              <i class="fa-solid fa-chart-line text-sm" style="color:rgb(52 211 153)"></i>
+            </div>
+            <div>
+              <p class="text-[9px] font-black uppercase tracking-wider" style="color:rgb(52 211 153)">Módulo 4</p>
+              <h3 class="text-xs font-bold text-white">Avances del Plan</h3>
+            </div>
           </div>
-          <div>
-            <p class="text-[9px] font-black text-emerald-400 uppercase tracking-wider">Módulo 4</p>
-            <h3 class="text-xs font-bold text-white">Sprint Board</h3>
+          <span id="badge-m4" class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-500">Disponible</span>
+        </div>
+        <p class="text-[10px] text-slate-400 leading-relaxed mb-3">
+          Reporte el avance de cada iniciativa, registre hitos y consulte el historial de progreso de su plan de TD.
+        </p>
+        <div class="grid grid-cols-3 gap-1 mb-3">
+          <div class="bg-slate-800 rounded-lg p-1.5 text-center">
+            <i class="fa-solid fa-file-signature text-[9px] block mb-0.5" style="color:rgb(52 211 153)"></i>
+            <p class="text-[8px] text-slate-600">Reportar</p>
+          </div>
+          <div class="bg-slate-800 rounded-lg p-1.5 text-center">
+            <i class="fa-solid fa-clock-rotate-left text-[9px] block mb-0.5" style="color:rgb(52 211 153)"></i>
+            <p class="text-[8px] text-slate-600">Historial</p>
+          </div>
+          <div class="bg-slate-800 rounded-lg p-1.5 text-center">
+            <i class="fa-solid fa-traffic-light text-[9px] block mb-0.5" style="color:rgb(52 211 153)"></i>
+            <p class="text-[8px] text-slate-600">Semáforo</p>
           </div>
         </div>
-        <p class="text-[10px] text-slate-500 leading-relaxed mb-3">Kanban ágil por célula de trabajo. Backlog, En progreso, Hecho. Ciclos de Sprint con retrospectiva integrada.</p>
-        <div class="w-full bg-slate-800 text-slate-600 font-bold py-2 rounded-xl text-[10px] text-center flex items-center justify-center gap-1.5">
-          <i class="fa-solid fa-clock text-[9px]"></i> Próximamente
-        </div>
+        <button class="w-full font-black py-2 rounded-xl text-[10px] flex items-center justify-center gap-2 transition"
+          style="background:rgb(52 211 153/0.15);border:1px solid rgb(52 211 153/0.30);color:rgb(52 211 153)">
+          <i class="fa-solid fa-arrow-right text-[9px]"></i> Ir al Módulo de Avances
+        </button>
       </div>
 
-      <!-- Módulo 5: Tablero Consejo -->
-      <div class="bg-slate-900/50 border border-slate-800/50 rounded-2xl p-4 opacity-40">
-        <div class="flex items-center gap-3 mb-3">
-          <div class="w-9 h-9 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-center justify-center">
-            <i class="fa-solid fa-chart-line text-rose-400 text-sm"></i>
+      <!-- Módulo 5: Dashboard de Seguimiento -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 hover:border-rose-500/30 transition group cursor-pointer" onclick="show('s-seguimiento');renderSeguimiento()">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center"
+              style="background:rgb(244 63 94/0.10);border:1px solid rgb(244 63 94/0.20)">
+              <i class="fa-solid fa-gauge-high text-sm" style="color:rgb(244 63 94)"></i>
+            </div>
+            <div>
+              <p class="text-[9px] font-black uppercase tracking-wider" style="color:rgb(244 63 94)">Módulo 5</p>
+              <h3 class="text-xs font-bold text-white">Dashboard de Seguimiento</h3>
+            </div>
           </div>
-          <div>
-            <p class="text-[9px] font-black text-rose-400 uppercase tracking-wider">Módulo 5</p>
-            <h3 class="text-xs font-bold text-white">Tablero del Consejo</h3>
+          <span id="badge-m5" class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-500">Disponible</span>
+        </div>
+        <p class="text-[10px] text-slate-400 leading-relaxed mb-3">
+          Vista ejecutiva del plan de TD: avance global, iniciativas por horizonte, semáforo por palanca y evolución del diagnóstico.
+        </p>
+        <div class="grid grid-cols-3 gap-1 mb-3">
+          <div class="bg-slate-800 rounded-lg p-1.5 text-center">
+            <i class="fa-solid fa-chart-pie text-[9px] block mb-0.5" style="color:rgb(244 63 94)"></i>
+            <p class="text-[8px] text-slate-600">Resumen</p>
+          </div>
+          <div class="bg-slate-800 rounded-lg p-1.5 text-center">
+            <i class="fa-solid fa-road text-[9px] block mb-0.5" style="color:rgb(244 63 94)"></i>
+            <p class="text-[8px] text-slate-600">Horizontes</p>
+          </div>
+          <div class="bg-slate-800 rounded-lg p-1.5 text-center">
+            <i class="fa-solid fa-traffic-light text-[9px] block mb-0.5" style="color:rgb(244 63 94)"></i>
+            <p class="text-[8px] text-slate-600">Semáforo</p>
           </div>
         </div>
-        <p class="text-[10px] text-slate-500 leading-relaxed mb-3">Balanced Scorecard digital con KPIs para la Junta Directiva. Perspectivas financiera, cliente, procesos y aprendizaje.</p>
-        <div class="w-full bg-slate-800 text-slate-600 font-bold py-2 rounded-xl text-[10px] text-center flex items-center justify-center gap-1.5">
-          <i class="fa-solid fa-clock text-[9px]"></i> Próximamente
-        </div>
+        <button class="w-full font-black py-2 rounded-xl text-[10px] flex items-center justify-center gap-2 transition"
+          style="background:rgb(244 63 94/0.15);border:1px solid rgb(244 63 94/0.30);color:rgb(244 63 94)">
+          <i class="fa-solid fa-arrow-right text-[9px]"></i> Ir al Dashboard
+        </button>
       </div>
 
     </div>
@@ -873,8 +908,8 @@
     </div>
     <div class="flex gap-3 flex-shrink-0 flex-wrap justify-center">
       <button onclick="finalizarHojaDeRuta()" class="font-black px-5 py-3 rounded-xl transition text-sm flex items-center gap-2"
-        style="background:rgb(251 191 36);color:rgb(15 23 42)">
-        <i class="fa-solid fa-floppy-disk"></i> Guardar y Definir OKR
+        style="background:rgb(129 140 248);color:rgb(255 255 255)">
+        <i class="fa-solid fa-bullseye"></i> Definir OKRs por Iniciativa →
       </button>
       <button onclick="downloadPDF()" class="bg-cyan-500 text-slate-950 font-black px-5 py-3 rounded-xl hover:bg-cyan-400 transition text-sm flex items-center gap-2">
         <i class="fa-solid fa-file-pdf"></i> Descargar PDF Completo
@@ -885,6 +920,191 @@
     </div>
   </div>
 
+</div>
+
+<!-- ═══════════════════════════════
+     MÓDULO 4 · AVANCES DEL PLAN
+═══════════════════════════════ -->
+<div id="s-avances" class="hidden fade">
+  <div class="max-w-4xl mx-auto py-8">
+
+    <!-- Cabecera -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <div class="flex items-center gap-3 mb-2">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+            style="background:rgb(52 211 153/0.15);border:1px solid rgb(52 211 153/0.25)">
+            <i class="fa-solid fa-chart-line" style="color:rgb(52 211 153)"></i>
+          </div>
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-widest" style="color:rgb(52 211 153)">Módulo 4 · Ejecución</p>
+            <h2 class="text-2xl font-black text-white">Avances del Plan</h2>
+          </div>
+        </div>
+        <p class="text-slate-400 text-xs leading-relaxed max-w-2xl">
+          Reporte el porcentaje de avance y el estado de cada iniciativa de su hoja de ruta. Cada reporte queda guardado y disponible aunque recargue la página.
+        </p>
+      </div>
+      <button onclick="show('s-start')"
+        class="text-xs text-slate-600 hover:text-slate-400 transition
+               flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg flex-shrink-0">
+        <i class="fa-solid fa-arrow-left text-[10px]"></i> Dashboard
+      </button>
+    </div>
+
+    <!-- Resumen -->
+    <div class="grid grid-cols-4 gap-3 mb-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+        <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Total iniciativas</p>
+        <p id="av-total" class="text-2xl font-black text-white">0</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+        <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Completadas</p>
+        <p id="av-completadas" class="text-2xl font-black" style="color:rgb(52 211 153)">0</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+        <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">En curso</p>
+        <p id="av-encurso" class="text-2xl font-black" style="color:rgb(251 191 36)">0</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+        <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Pendientes</p>
+        <p id="av-pendientes" class="text-2xl font-black text-slate-500">0</p>
+      </div>
+    </div>
+
+    <!-- Lista de iniciativas -->
+    <div id="avances-lista" class="space-y-4"></div>
+
+    <!-- Estado vacío -->
+    <div id="avances-vacio" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-10 text-center">
+      <i class="fa-solid fa-clipboard-list text-2xl text-slate-700 mb-3"></i>
+      <p class="text-sm font-bold text-slate-400 mb-1">Aún no tiene iniciativas en su hoja de ruta</p>
+      <p class="text-xs text-slate-600 mb-4">Construya primero su Hoja de Ruta Digital en el Módulo 2.</p>
+      <button onclick="show('s-start')"
+        class="text-xs font-bold px-4 py-2 rounded-lg border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 transition">
+        Volver al Dashboard
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     MÓDULO 5 · DASHBOARD DE SEGUIMIENTO
+═══════════════════════════════ -->
+<div id="s-seguimiento" class="hidden fade">
+  <div class="max-w-4xl mx-auto py-8">
+
+    <!-- Cabecera -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <div class="flex items-center gap-3 mb-2">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+            style="background:rgb(244 63 94/0.15);border:1px solid rgb(244 63 94/0.25)">
+            <i class="fa-solid fa-gauge-high" style="color:rgb(244 63 94)"></i>
+          </div>
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-widest" style="color:rgb(244 63 94)">Módulo 5 · Vista Ejecutiva</p>
+            <h2 class="text-2xl font-black text-white">Dashboard de Seguimiento</h2>
+          </div>
+        </div>
+        <p class="text-slate-400 text-xs leading-relaxed max-w-2xl">
+          Vista consolidada del plan de transformación digital: madurez, avance por horizonte y palanca, semáforo de iniciativas y evolución del diagnóstico.
+        </p>
+      </div>
+      <button onclick="show('s-start')"
+        class="text-xs text-slate-600 hover:text-slate-400 transition
+               flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg flex-shrink-0">
+        <i class="fa-solid fa-arrow-left text-[10px]"></i> Dashboard
+      </button>
+    </div>
+
+    <div id="seg-contenido">
+      <!-- 1) Resumen ejecutivo -->
+      <div class="grid grid-cols-4 gap-3 mb-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Madurez Digital</p>
+          <p id="seg-madurez" class="text-2xl font-black text-cyan-400">—</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">Avance del plan</p>
+          <p id="seg-avance-plan" class="text-2xl font-black text-white">0%</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">En verde ≥70%</p>
+          <p id="seg-verde" class="text-2xl font-black" style="color:rgb(52 211 153)">0</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">En riesgo &lt;40%</p>
+          <p id="seg-riesgo" class="text-2xl font-black" style="color:rgb(244 63 94)">0</p>
+        </div>
+      </div>
+
+      <!-- 2) Avance por horizonte -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6">
+        <p class="text-xs font-bold text-white mb-4">Avance por Horizonte</p>
+        <div class="space-y-4">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[10px] font-bold" style="color:rgb(244 63 94)">H1 · Explorar (meses 1-6)</span>
+              <span id="seg-h-h1-lbl" class="text-[10px] font-bold text-slate-400">0%</span>
+            </div>
+            <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+              <div id="seg-h-h1-bar" class="h-2 rounded-full" style="width:0%;background:rgb(244 63 94)"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[10px] font-bold" style="color:rgb(251 191 36)">H2 · Escalar (meses 6-18)</span>
+              <span id="seg-h-h2-lbl" class="text-[10px] font-bold text-slate-400">0%</span>
+            </div>
+            <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+              <div id="seg-h-h2-bar" class="h-2 rounded-full" style="width:0%;background:rgb(251 191 36)"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[10px] font-bold" style="color:rgb(52 211 153)">H3 · Liderar (mes 18+)</span>
+              <span id="seg-h-h3-lbl" class="text-[10px] font-bold text-slate-400">0%</span>
+            </div>
+            <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+              <div id="seg-h-h3-bar" class="h-2 rounded-full" style="width:0%;background:rgb(52 211 153)"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3) Avance por palanca -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6">
+        <p class="text-xs font-bold text-white mb-4">Avance por Palanca de Valor</p>
+        <div id="seg-palancas"></div>
+      </div>
+
+      <!-- 4) Lista de iniciativas con semáforo -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6">
+        <p class="text-xs font-bold text-white mb-3">Iniciativas · Semáforo de Avance</p>
+        <div id="seg-tabla"></div>
+      </div>
+
+      <!-- 5) Evolución del diagnóstico -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+        <p class="text-xs font-bold text-white mb-3">Evolución del Diagnóstico</p>
+        <div id="seg-evolucion"></div>
+      </div>
+    </div>
+
+    <!-- Estado vacío -->
+    <div id="seg-vacio" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-10 text-center">
+      <i class="fa-solid fa-gauge-high text-2xl text-slate-700 mb-3"></i>
+      <p class="text-sm font-bold text-slate-400 mb-1">Aún no hay datos suficientes para el seguimiento</p>
+      <p class="text-xs text-slate-600 mb-4">Construya su Hoja de Ruta Digital en el Módulo 2 para activar este panel.</p>
+      <button onclick="show('s-start')"
+        class="text-xs font-bold px-4 py-2 rounded-lg border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 transition">
+        Volver al Dashboard
+      </button>
+    </div>
+
+  </div>
 </div>
 
 </main>
@@ -1189,7 +1409,7 @@ function initScores() {
 // NAVEGACIÓN
 // ════════════════════════════════════════
 function show(id) {
-  ['s-login','s-empresas','s-start','s-axis','s-confirm','s-results','s-roadmap','s-okr'].forEach(s => {
+  ['s-login','s-empresas','s-start','s-axis','s-confirm','s-results','s-roadmap','s-okr','s-avances','s-seguimiento'].forEach(s => {
     const el = document.getElementById(s);
     el.classList.add('hidden');
     el.classList.remove('fade');
@@ -1320,6 +1540,32 @@ async function abrirEmpresa(id) {
   updateDashboard();
 }
 
+// Pinta el patrón de 3 botones (Consultar/Editar/Nuevo) o 1 botón (Iniciar) según
+// haya o no datos guardados para ese módulo. Todo con style="" inline — sin clases
+// Tailwind dinámicas.
+function renderAccionesModulo(containerId, hasData, colorRgb, fns) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const bg15 = colorRgb.replace(')', '/0.15)');
+  const border30 = colorRgb.replace(')', '/0.30)');
+  if (!hasData) {
+    el.innerHTML = `<button onclick="${fns.iniciar}" class="w-full font-black py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 transition"
+      style="background:${colorRgb};color:rgb(2 6 23)">
+      <i class="fa-solid fa-play text-[10px]"></i> ${fns.labelIniciar}
+    </button>`;
+    return;
+  }
+  el.innerHTML = `
+    <div class="grid grid-cols-3 gap-1.5">
+      <button onclick="${fns.consultar}" class="py-2 rounded-lg text-[10px] font-bold transition"
+        style="background:rgb(30 41 59);border:1px solid rgb(51 65 85);color:rgb(203 213 225)">Consultar</button>
+      <button onclick="${fns.editar}" class="py-2 rounded-lg text-[10px] font-bold transition"
+        style="background:${bg15};border:1px solid ${border30};color:${colorRgb}">Editar</button>
+      <button onclick="${fns.nuevo}" class="py-2 rounded-lg text-[10px] font-bold transition"
+        style="background:transparent;border:1px solid rgb(244 63 94/0.40);color:rgb(244 63 94)">Nuevo</button>
+    </div>`;
+}
+
 function updateDashboard() {
   const hasDiag = !!(window._result && window._result.globalAvg) || !!localStorage.getItem('ag_diagnostico');
   // Dot M1
@@ -1330,20 +1576,81 @@ function updateDashboard() {
   // Badge M1
   const b1 = document.getElementById('badge-m1');
   if (b1) { b1.textContent = hasDiag ? 'Completado ✓' : 'Pendiente'; b1.className = hasDiag ? 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400' : 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-500'; }
-  const t1 = document.getElementById('btn-m1-txt');
-  if (t1) t1.textContent = hasDiag ? 'Repetir Diagnóstico' : 'Iniciar Diagnóstico';
+  renderAccionesModulo('m1-acciones', hasDiag, 'rgb(34 211 238)', {
+    consultar: 'verDiagnosticoGuardado()',
+    editar: 'goStart()',
+    nuevo: 'restart()', // restart() ya pide confirmación internamente
+    iniciar: 'goStart()',
+    labelIniciar: 'Iniciar Diagnóstico'
+  });
+
   // M2 — siempre disponible desde el login, no requiere M1
-  const cm2 = document.getElementById('card-m2');
   const bm2 = document.getElementById('badge-m2');
-  const tm2 = document.getElementById('btn-m2-txt');
   const d2  = document.getElementById('prog-m2-dot');
-  if (cm2) { cm2.classList.remove('opacity-50'); cm2.onclick = goRoadmap; }
+  const hasRuta = hasHojaRutaGuardada();
   if (bm2) { bm2.textContent='Disponible'; bm2.className='text-[9px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400'; }
-  if (tm2) tm2.textContent='Ir a Hoja de Ruta';
-  if (d2) d2.className='w-7 h-7 rounded-full border-2 border-indigo-400 bg-indigo-500/10 flex items-center justify-center mx-auto mb-1 text-[10px] font-black text-indigo-400';
+  if (d2) d2.className = hasRuta
+    ? 'w-7 h-7 rounded-full border-2 border-indigo-400 bg-indigo-500/20 flex items-center justify-center mx-auto mb-1 text-[10px] font-black text-indigo-400'
+    : 'w-7 h-7 rounded-full border-2 border-indigo-400 bg-indigo-500/10 flex items-center justify-center mx-auto mb-1 text-[10px] font-black text-indigo-400';
+  renderAccionesModulo('m2-acciones', hasRuta, 'rgb(129 140 248)', {
+    consultar: 'consultarHojaRuta()',
+    editar: 'editarHojaRuta()',
+    nuevo: 'nuevaHojaRuta()',
+    iniciar: 'goRoadmap()',
+    labelIniciar: 'Iniciar Hoja de Ruta'
+  });
+
+  // M3 — OKR
+  const hasOKR = !!localStorage.getItem('ag_okr');
+  renderAccionesModulo('m3-acciones', hasOKR, 'rgb(251 191 36)', {
+    consultar: "show('s-okr');renderOKR()",
+    editar: "show('s-okr');renderOKR()",
+    nuevo: 'nuevoOKRGlobal()',
+    iniciar: "show('s-okr');renderOKR()",
+    labelIniciar: 'Ir al Tablero OKR'
+  });
+
   // Acciones rápidas
   const qa = document.getElementById('quick-actions');
   if (qa) qa.classList.toggle('hidden', !hasDiag);
+}
+
+function hasHojaRutaGuardada() {
+  return !!(localStorage.getItem('ag_norte') || localStorage.getItem('ag_palancas') || localStorage.getItem('ag_iniciativas'));
+}
+
+function consultarHojaRuta() { goRoadmap(); }
+
+function editarHojaRuta() {
+  goRoadmap();
+  norteEditando = true; palancasEditando = true; iniciativasEditando = true;
+  renderNorteGrid(); renderPalancas(); renderIniciativas();
+}
+
+function nuevaHojaRuta() {
+  if (!confirm('¿Iniciar una hoja de ruta nueva? Se perderán los datos guardados de Norte Digital, Palancas e Iniciativas.')) return;
+  localStorage.removeItem('ag_norte');
+  localStorage.removeItem('ag_palancas');
+  localStorage.removeItem('ag_iniciativas');
+  localStorage.removeItem('ag_horizontes');
+  norteHoy = null; norteEstrella = null; norteExpandida = null;
+  norteGrid = JSON.parse(JSON.stringify(NORTE_CUADRANTES));
+  palancasPesos = { ingresos:20, inclusion:15, experiencia:25, eficiencia:20, datos:10, reputacion:10 };
+  palancaData = {}; palancaExpandida = null;
+  iniciativas = []; iniciativaExpandida = null; horizonteMap = { h1:[], h2:[], h3:[] };
+  norteEditando = true; palancasEditando = true; iniciativasEditando = true;
+  window._hojaRutaActualId = null;
+  goRoadmap();
+  updateDashboard();
+}
+
+function nuevoOKRGlobal() {
+  if (!confirm('¿Iniciar OKRs nuevos? Se perderán los datos guardados actuales.')) return;
+  localStorage.removeItem('ag_okr');
+  okrData = {};
+  show('s-okr');
+  renderOKR();
+  updateDashboard();
 }
 
 // Módulo 1 — lanza el cuestionario
@@ -3039,6 +3346,8 @@ function renderIniResumen(ini, clickable) {
   const hLabel   = ini.horizonte ? ini.horizonte.toUpperCase() : 'Sin horiz.';
   const dColor   = ini.dificultad === 1 ? '#10b981' : ini.dificultad === 2 ? '#f59e0b' : '#f43f5e';
   const dLabel   = ini.dificultad === 1 ? 'Baja' : ini.dificultad === 2 ? 'Media' : 'Alta';
+  const iColor   = ini.pct >= 15 ? '#34d399' : ini.pct >= 8 ? '#f59e0b' : ini.pct > 0 ? '#64748b' : '#334155';
+  const iLabel   = ini.pct >= 15 ? 'Impacto Alto' : ini.pct >= 8 ? 'Impacto Medio' : ini.pct > 0 ? 'Impacto Bajo' : 'Sin puntuar';
   const topImpacto = PALANCAS.reduce((best, p) => {
     const v = ini.impactos[p.id] || 0;
     return v > (ini.impactos[best?.id] || 0) ? p : best;
@@ -3066,6 +3375,7 @@ function renderIniResumen(ini, clickable) {
       <!-- Fila de datos -->
       <div class="mt-auto pt-3 border-t border-slate-700/60 flex flex-wrap items-center gap-1.5">
         <span class="text-[8px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap" style="background:${hColor}20;color:${hColor}">${hLabel}</span>
+        <span class="text-[8px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap" style="background:${iColor}20;color:${iColor}">${iLabel}</span>
         <span class="text-[8px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap" style="background:${dColor}20;color:${dColor}">Dif: ${dLabel}</span>
         ${topImpacto && (ini.impactos[topImpacto.id]||0) > 0
           ? `<span class="text-[8px] text-slate-500 flex items-center gap-1 ml-auto truncate max-w-[90px]" title="Mayor impacto en ${topImpacto.label}">
@@ -3091,6 +3401,13 @@ function renderIniExpandida(ini) {
         : 'background:rgb(30 41 59);border:1px solid rgb(51 65 85);color:rgb(100 116 139)'}">
       <i class="fa-solid ${p.icon} text-[8px]"></i>${p.label}
     </button>`;
+  }).join('');
+  const chipsResumenHtml = PALANCAS.filter(p => (ini.impactos[p.id]||0) > 0).map(p => {
+    const nivel = ['','Bajo','Medio','Alto'][ini.impactos[p.id]] || 'Bajo';
+    return `<span class="px-2.5 py-1 rounded-full text-[9px] font-bold flex items-center gap-1.5"
+      style="background:${p.color}15;border:1px solid ${p.color}40;color:${p.color}">
+      <i class="fa-solid ${p.icon} text-[8px]"></i>${p.label} · ${nivel}
+    </span>`;
   }).join('');
   const impHtml = PALANCAS.filter(p => ini.palancasRelacionadas.includes(p.id)).map(p => {
     const v = ini.impactos[p.id] || 0;
@@ -3142,6 +3459,13 @@ function renderIniExpandida(ini) {
           onchange="updateIniField('${ini.id}','desc',this.value)"
           class="w-full p-2.5 bg-slate-700 border border-slate-600 rounded-xl text-[10px] text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-500 resize-none">${ini.desc}</textarea>
       </div>
+
+      <!-- Palancas relacionadas (resumen de solo lectura) -->
+      ${chipsResumenHtml ? `
+      <div class="mb-4">
+        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Palancas relacionadas</label>
+        <div class="flex flex-wrap gap-2">${chipsResumenHtml}</div>
+      </div>` : ''}
 
       <!-- Relación con palancas de valor -->
       <div class="mb-4">
@@ -3864,6 +4188,286 @@ function sendToScript(avgs, global, level, summary) {
   fetch('https://script.google.com/macros/s/AKfycbxoEeXu9LjLpTe1UYXqJiDYFv6kiaGcp5FoiE88hykhWagFB4NCN7K0j--HN3esmTLAZQ/exec', {
     method:'POST', body:payload, mode:'no-cors'
   }).catch(()=>{});
+}
+
+// ════════════════════════════════════════
+// MÓDULO 4 · AVANCES DEL PLAN
+// ════════════════════════════════════════
+let avancesData = {}; // { [ini.id]: { pct, estado, nota, updated_at, rowId } }
+
+function setTxt(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+
+async function renderAvances() {
+  iniciativas = JSON.parse(localStorage.getItem('ag_iniciativas') || '[]');
+  const lista = document.getElementById('avances-lista');
+  const vacio = document.getElementById('avances-vacio');
+  if (!iniciativas.length) {
+    lista.innerHTML = '';
+    vacio.classList.remove('hidden');
+    actualizarResumenAvances();
+    return;
+  }
+  vacio.classList.add('hidden');
+
+  // Respaldo local siempre disponible + mejor esfuerzo contra Supabase
+  avancesData = JSON.parse(localStorage.getItem('ag_avances') || '{}');
+  if (window._hojaRutaActualId) {
+    const remotos = await sbFetch(`iniciativas_avance?hoja_ruta_id=eq.${window._hojaRutaActualId}`);
+    if (remotos) {
+      remotos.forEach(r => {
+        const ini = iniciativas.find(i => i.nombre === r.iniciativa_nombre);
+        if (ini) {
+          avancesData[ini.id] = {
+            pct: r.pct_avance || 0, estado: r.estado || 'pendiente',
+            nota: r.ultimo_reporte || '', updated_at: r.updated_at, rowId: r.id
+          };
+        }
+      });
+      localStorage.setItem('ag_avances', JSON.stringify(avancesData));
+    }
+  }
+
+  lista.innerHTML = iniciativas.map(ini => renderAvanceRow(ini)).join('');
+  actualizarResumenAvances();
+}
+
+function renderAvanceRow(ini) {
+  const safeId = ini.id;
+  const a = avancesData[safeId] || {};
+  const pct = a.pct || 0;
+  const estado = a.estado || 'pendiente';
+  const nota = a.nota || '';
+  const hColor = ini.horizonte === 'h1' ? '#f43f5e' : ini.horizonte === 'h2' ? '#f59e0b' : ini.horizonte === 'h3' ? '#10b981' : '#475569';
+  const hLabel = ini.horizonte ? ini.horizonte.toUpperCase() : 'Sin horiz.';
+  const semColor = pct >= 70 ? '#34d399' : pct >= 40 ? '#f59e0b' : '#f43f5e';
+  const ultimoTxt = a.updated_at ? `Último reporte: ${new Date(a.updated_at).toLocaleDateString('es-CO')}` : 'Sin reportes aún';
+
+  return `
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+      <div class="flex items-start justify-between gap-3 mb-3 flex-wrap">
+        <div class="flex-1 min-w-[200px]">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-[8px] font-bold px-1.5 py-0.5 rounded-full" style="background:${hColor}20;color:${hColor}">${hLabel}</span>
+            <span id="av-semaforo-${safeId}" class="w-2 h-2 rounded-full flex-shrink-0" style="background:${semColor}"></span>
+          </div>
+          <p class="text-sm font-bold text-white">${ini.nombre || 'Sin nombre'}</p>
+        </div>
+        <p id="av-pct-label-${safeId}" class="text-xl font-black flex-shrink-0" style="color:${semColor}">${pct}%</p>
+      </div>
+      <div class="w-full bg-slate-800 rounded-full h-2 mb-4 overflow-hidden">
+        <div id="av-bar-${safeId}" class="h-2 rounded-full transition-all" style="width:${pct}%;background:${semColor}"></div>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-3 mb-3">
+        <div>
+          <label class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1">% de avance</label>
+          <input type="number" min="0" max="100" id="av-input-${safeId}" value="${pct}"
+            oninput="previsualizarAvance('${safeId}', this.value)"
+            class="w-full p-2 bg-slate-800 border border-slate-700 rounded-lg text-white text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500">
+        </div>
+        <div>
+          <label class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Estado</label>
+          <select id="av-estado-${safeId}" class="w-full p-2 bg-slate-800 border border-slate-700 rounded-lg text-white text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500">
+            <option value="pendiente" ${estado==='pendiente'?'selected':''}>Pendiente</option>
+            <option value="en_curso" ${estado==='en_curso'?'selected':''}>En curso</option>
+            <option value="completado" ${estado==='completado'?'selected':''}>Completado</option>
+            <option value="pausado" ${estado==='pausado'?'selected':''}>Pausado</option>
+          </select>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Nota del reporte</label>
+        <textarea id="av-nota-${safeId}" rows="2" placeholder="¿Qué avanzó, qué bloqueos hay?"
+          class="w-full p-2 bg-slate-800 border border-slate-700 rounded-lg text-white text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none">${nota}</textarea>
+      </div>
+      <div class="flex items-center justify-between gap-2 flex-wrap">
+        <p id="av-saved-${safeId}" class="text-[10px] text-slate-600">${ultimoTxt}</p>
+        <button onclick="guardarReporte('${safeId}')" class="text-xs font-black px-4 py-2 rounded-lg transition flex items-center gap-2"
+          style="background:rgb(52 211 153/0.15);border:1px solid rgb(52 211 153/0.30);color:rgb(52 211 153)">
+          <i class="fa-solid fa-floppy-disk text-[10px]"></i> Guardar reporte
+        </button>
+      </div>
+    </div>`;
+}
+
+function previsualizarAvance(safeId, val) {
+  let pct = parseInt(val, 10);
+  if (isNaN(pct)) pct = 0;
+  pct = Math.max(0, Math.min(100, pct));
+  const semColor = pct >= 70 ? '#34d399' : pct >= 40 ? '#f59e0b' : '#f43f5e';
+  const bar = document.getElementById(`av-bar-${safeId}`);
+  const label = document.getElementById(`av-pct-label-${safeId}`);
+  const dot = document.getElementById(`av-semaforo-${safeId}`);
+  if (bar) { bar.style.width = pct + '%'; bar.style.background = semColor; }
+  if (label) { label.style.color = semColor; label.textContent = pct + '%'; }
+  if (dot) dot.style.background = semColor;
+}
+
+async function guardarReporte(safeId) {
+  const ini = iniciativas.find(i => i.id === safeId);
+  if (!ini) return;
+  const inputEl  = document.getElementById(`av-input-${safeId}`);
+  const estadoEl = document.getElementById(`av-estado-${safeId}`);
+  const notaEl   = document.getElementById(`av-nota-${safeId}`);
+  let pct = parseInt(inputEl.value, 10);
+  if (isNaN(pct)) pct = 0;
+  pct = Math.max(0, Math.min(100, pct));
+  const estado = estadoEl.value;
+  const nota = notaEl.value;
+  const nowIso = new Date().toISOString();
+
+  avancesData[safeId] = { ...(avancesData[safeId]||{}), pct, estado, nota, updated_at: nowIso };
+  localStorage.setItem('ag_avances', JSON.stringify(avancesData));
+
+  if (window._hojaRutaActualId) {
+    const payload = JSON.stringify({
+      hoja_ruta_id: window._hojaRutaActualId,
+      iniciativa_nombre: ini.nombre,
+      horizonte: ini.horizonte || null,
+      pct_avance: pct, estado, ultimo_reporte: nota, updated_at: nowIso
+    });
+    const rowId = avancesData[safeId].rowId;
+    if (rowId) {
+      sbFetch(`iniciativas_avance?id=eq.${rowId}`, { method: 'PATCH', body: payload });
+    } else {
+      const existentes = await sbFetch(`iniciativas_avance?hoja_ruta_id=eq.${window._hojaRutaActualId}&iniciativa_nombre=eq.${encodeURIComponent(ini.nombre)}`);
+      if (existentes && existentes[0]) {
+        avancesData[safeId].rowId = existentes[0].id;
+        localStorage.setItem('ag_avances', JSON.stringify(avancesData));
+        sbFetch(`iniciativas_avance?id=eq.${existentes[0].id}`, { method: 'PATCH', body: payload });
+      } else {
+        sbFetch('iniciativas_avance', { method: 'POST', body: payload }).then(res => {
+          if (res && res[0]) {
+            avancesData[safeId].rowId = res[0].id;
+            localStorage.setItem('ag_avances', JSON.stringify(avancesData));
+          }
+        });
+      }
+    }
+  }
+
+  const savedEl = document.getElementById(`av-saved-${safeId}`);
+  if (savedEl) savedEl.textContent = `Último reporte: ${new Date(nowIso).toLocaleDateString('es-CO')}`;
+  previsualizarAvance(safeId, pct);
+  actualizarResumenAvances();
+}
+
+function actualizarResumenAvances() {
+  const total = iniciativas.length;
+  let completadas = 0, enCurso = 0, pendientes = 0;
+  iniciativas.forEach(ini => {
+    const estado = (avancesData[ini.id] && avancesData[ini.id].estado) || 'pendiente';
+    if (estado === 'completado') completadas++;
+    else if (estado === 'en_curso') enCurso++;
+    else pendientes++;
+  });
+  setTxt('av-total', total);
+  setTxt('av-completadas', completadas);
+  setTxt('av-encurso', enCurso);
+  setTxt('av-pendientes', pendientes);
+}
+
+// ════════════════════════════════════════
+// MÓDULO 5 · DASHBOARD DE SEGUIMIENTO
+// ════════════════════════════════════════
+async function renderSeguimiento() {
+  iniciativas = JSON.parse(localStorage.getItem('ag_iniciativas') || '[]');
+  const contenido = document.getElementById('seg-contenido');
+  const vacio = document.getElementById('seg-vacio');
+  if (!iniciativas.length) {
+    contenido.classList.add('hidden');
+    vacio.classList.remove('hidden');
+    return;
+  }
+  contenido.classList.remove('hidden');
+  vacio.classList.add('hidden');
+
+  // Avances: respaldo local + mejor esfuerzo contra Supabase
+  avancesData = JSON.parse(localStorage.getItem('ag_avances') || '{}');
+  if (window._hojaRutaActualId) {
+    const remotos = await sbFetch(`iniciativas_avance?hoja_ruta_id=eq.${window._hojaRutaActualId}`);
+    if (remotos) {
+      remotos.forEach(r => {
+        const ini = iniciativas.find(i => i.nombre === r.iniciativa_nombre);
+        if (ini) avancesData[ini.id] = { pct: r.pct_avance||0, estado: r.estado||'pendiente', nota: r.ultimo_reporte||'', updated_at: r.updated_at };
+      });
+    }
+  }
+
+  // 1) Resumen ejecutivo
+  let diag = (window._result && window._result.globalAvg) ? window._result : null;
+  if (!diag) {
+    const saved = localStorage.getItem('ag_diagnostico');
+    if (saved) { try { diag = JSON.parse(saved).result; } catch(e) { diag = null; } }
+  }
+  const pcts = iniciativas.map(ini => (avancesData[ini.id] && avancesData[ini.id].pct) || 0);
+  const avancePlan = pcts.length ? pcts.reduce((a,b)=>a+b,0)/pcts.length : 0;
+  const enVerde  = pcts.filter(p => p >= 70).length;
+  const enRiesgo = pcts.filter(p => p < 40).length;
+  setTxt('seg-madurez', diag ? `${diag.globalAvg}/5.0` : '—');
+  setTxt('seg-avance-plan', avancePlan.toFixed(0) + '%');
+  setTxt('seg-verde', enVerde);
+  setTxt('seg-riesgo', enRiesgo);
+
+  // 2) Avance por horizonte
+  ['h1','h2','h3'].forEach(h => {
+    const inisH = iniciativas.filter(i => i.horizonte === h);
+    const avgH = inisH.length ? inisH.reduce((s,i) => s + ((avancesData[i.id]&&avancesData[i.id].pct)||0), 0) / inisH.length : 0;
+    const bar = document.getElementById(`seg-h-${h}-bar`);
+    const lbl = document.getElementById(`seg-h-${h}-lbl`);
+    if (bar) bar.style.width = avgH.toFixed(0) + '%';
+    if (lbl) lbl.textContent = inisH.length ? avgH.toFixed(0) + '%' : 'Sin iniciativas';
+  });
+
+  // 3) Avance por palanca
+  const palWrap = document.getElementById('seg-palancas');
+  palWrap.innerHTML = PALANCAS.map(p => {
+    const inisP = iniciativas.filter(i => (i.impactos[p.id]||0) > 0);
+    const avgP = inisP.length ? inisP.reduce((s,i) => s + ((avancesData[i.id]&&avancesData[i.id].pct)||0), 0) / inisP.length : 0;
+    return `<div class="mb-3">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-[10px] font-bold text-slate-400 flex items-center gap-1.5">
+          <i class="fa-solid ${p.icon} text-[9px]" style="color:${p.color}"></i>${p.label}
+        </span>
+        <span class="text-[10px] font-bold" style="color:${p.color}">${inisP.length ? avgP.toFixed(0)+'%' : '—'}</span>
+      </div>
+      <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+        <div class="h-1.5 rounded-full" style="width:${avgP}%;background:${p.color}"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // 4) Lista de iniciativas con semáforo
+  const tabla = document.getElementById('seg-tabla');
+  tabla.innerHTML = iniciativas.map(ini => {
+    const pct = (avancesData[ini.id] && avancesData[ini.id].pct) || 0;
+    const semColor = pct >= 70 ? '#34d399' : pct >= 40 ? '#f59e0b' : '#f43f5e';
+    const hColor = ini.horizonte === 'h1' ? '#f43f5e' : ini.horizonte === 'h2' ? '#f59e0b' : ini.horizonte === 'h3' ? '#10b981' : '#475569';
+    const hLabel = ini.horizonte ? ini.horizonte.toUpperCase() : '—';
+    return `<div class="flex items-center gap-3 py-2 border-b border-slate-800 last:border-0">
+      <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background:${semColor}"></span>
+      <span class="text-xs text-white flex-1 truncate">${ini.nombre || 'Sin nombre'}</span>
+      <span class="text-[8px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0" style="background:${hColor}20;color:${hColor}">${hLabel}</span>
+      <span class="text-xs font-black w-12 text-right flex-shrink-0" style="color:${semColor}">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  // 5) Evolución del diagnóstico — requiere >1 diagnóstico guardado para el mismo proyecto
+  const evoWrap = document.getElementById('seg-evolucion');
+  if (window._proyectoActual) {
+    const historial = await sbFetch(`diagnosticos?proyecto_id=eq.${window._proyectoActual.id}&order=created_at.asc`);
+    if (historial && historial.length > 1) {
+      evoWrap.innerHTML = historial.map(d => `
+        <div class="flex items-center justify-between py-2 border-b border-slate-800 last:border-0">
+          <span class="text-[10px] text-slate-500">${d.created_at ? new Date(d.created_at).toLocaleDateString('es-CO') : '—'}</span>
+          <span class="text-xs font-bold text-white">${d.nivel_texto || '—'}</span>
+          <span class="text-sm font-black text-cyan-400">${d.nivel_global != null ? d.nivel_global : '—'}/5.0</span>
+        </div>`).join('');
+    } else {
+      evoWrap.innerHTML = `<p class="text-xs text-slate-600 text-center py-4">Aún no hay suficientes diagnósticos guardados para comparar la evolución (se requieren al menos 2).</p>`;
+    }
+  } else {
+    evoWrap.innerHTML = `<p class="text-xs text-slate-600 text-center py-4">Seleccione una empresa/proyecto para ver la evolución del diagnóstico.</p>`;
+  }
 }
 </script>
 </body>
