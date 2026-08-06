@@ -3669,13 +3669,9 @@ function toggleKRI(iniId, ri) {
   renderOKR();
 }
 
-// Mapeo aproximado del modelo actual (Objetivo -> 1-2 Resultados Clave -> 2 KPIs + KRI
-// opcional) a la tabla `okrs` ya creada en Supabase con columnas kr1/kr2/kr3
-// (descripcion/baseline/meta/actual). No hay columna para el KRI, así que si algún
-// Resultado Clave tiene KRI activo, se reporta en el slot kr3 (que el modelo nuevo no usa).
-// Nota: la tabla no tiene una restricción UNIQUE(proyecto_id, iniciativa_nombre), así que
-// "resolution=merge-duplicates" no hace upsert real todavía — cada guardado inserta una
-// fila nueva hasta que se agregue esa restricción en Supabase.
+// Guarda el OKR completo en `okrs_v2`: resultados_clave_json guarda el array
+// resultadosClave tal cual (descripcion, meta, kpis[2], kriActivo, kri) — sin
+// comprimir ni perder datos, a diferencia del mapeo anterior a kr1/kr2/kr3.
 let _okrSaveTimers = {};
 function guardarOKRSupabase(iniId) {
   if (!window._proyectoActual) return;
@@ -3684,32 +3680,18 @@ function guardarOKRSupabase(iniId) {
     const okr = okrData[iniId];
     if (!okr) return;
     const ini = iniciativas.find(i => i.id === iniId) || {};
-    const rc1 = okr.resultadosClave[0] || null;
-    const rc2 = okr.resultadosClave[1] || null;
-    const kriRC = okr.resultadosClave.find(rc => rc.kriActivo);
 
     const payload = {
       proyecto_id: window._proyectoActual.id,
       iniciativa_nombre: ini.nombre || iniId,
       horizonte: ini.horizonte || null,
       objetivo: okr.objetivo || '',
-      kr1_descripcion: rc1 ? rc1.descripcion : '',
-      kr1_baseline: rc1 ? `KPI1: ${rc1.kpis[0].nombre || '—'} · KPI2: ${rc1.kpis[1].nombre || '—'}` : '',
-      kr1_meta: rc1 ? rc1.meta : '',
-      kr1_actual: rc1 ? calcularCumplimientoRC(rc1) : 0,
-      kr2_descripcion: rc2 ? rc2.descripcion : '',
-      kr2_baseline: rc2 ? `KPI1: ${rc2.kpis[0].nombre || '—'} · KPI2: ${rc2.kpis[1].nombre || '—'}` : '',
-      kr2_meta: rc2 ? rc2.meta : '',
-      kr2_actual: rc2 ? calcularCumplimientoRC(rc2) : 0,
-      kr3_descripcion: kriRC ? `KRI (guardrail): ${kriRC.kri.nombre || ''}` : '',
-      kr3_baseline: kriRC ? (kriRC.kri.formula || '') : '',
-      kr3_meta: kriRC ? `Umbral máximo: ${kriRC.kri.umbral}` : '',
-      kr3_actual: kriRC ? (+kriRC.kri.valor || 0) : 0,
+      resultados_clave_json: okr.resultadosClave,
       cumplimiento: calcularCumplimientoOKR(okr),
       updated_at: new Date().toISOString()
     };
 
-    sbFetch(`okrs?proyecto_id=eq.${window._proyectoActual.id}&iniciativa_nombre=eq.${encodeURIComponent(payload.iniciativa_nombre)}`, {
+    sbFetch(`okrs_v2?proyecto_id=eq.${window._proyectoActual.id}&iniciativa_nombre=eq.${encodeURIComponent(payload.iniciativa_nombre)}`, {
       method: 'POST',
       headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
       body: JSON.stringify(payload)
