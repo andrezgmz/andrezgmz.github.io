@@ -684,6 +684,8 @@
     <p class="text-slate-400 text-sm leading-relaxed max-w-2xl mx-auto mt-4">Defina su Norte Digital, pondere sus palancas estratégicas, priorice iniciativas y asígnelas a horizontes. El sistema calcula automáticamente el peso de cada horizonte sobre el 100% de su hoja de ruta.</p>
   </div>
 
+  <div id="roadmap-diag-alert" class="hidden"></div>
+
   <!-- ── PASO 1: NORTE DIGITAL 3×3 ────────────────── -->
   <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6">
     <div class="flex items-center gap-3 mb-1">
@@ -2689,16 +2691,67 @@ function goRoadmap() {
       eje: o.ini.eje,
       impactos: {},
       dificultad: 2,
-      horizonte: null,
+      // H1 las 3 iniciativas de ejes más débiles, H2 las 3 siguientes, H3 las últimas
+      horizonte: i < 3 ? 'h1' : i < 6 ? 'h2' : 'h3',
+      horizonteManual: false,
       score: 0,
       pct: 0
     }));
+    horizonteMap = { h1: [], h2: [], h3: [] };
+    iniciativas.forEach(ini => { if (ini.horizonte) horizonteMap[ini.horizonte].push(ini.id); });
   }
   renderNorteGrid();
   renderPalancas();
   renderIniciativas();
   recalcScores();
   show('s-roadmap');
+  mostrarAlertaDiagnostico();
+}
+
+// Muestra, al abrir la Hoja de Ruta, un resumen del diagnóstico que originó
+// el pre-orden de las iniciativas (ejes más débiles primero).
+function mostrarAlertaDiagnostico() {
+  const result = window._result;
+  const saved = localStorage.getItem('ag_diagnostico');
+  const diag = (result && result.globalAvg) ? result : (saved ? JSON.parse(saved).result : null);
+
+  const alerta = document.getElementById('roadmap-diag-alert');
+  if (!alerta) return;
+  if (!diag) { alerta.classList.add('hidden'); return; }
+
+  const nivel = diag.level || '';
+  const global = diag.globalAvg || 0;
+  const axAvgs = diag.axAvgs || [];
+  if (axAvgs.length === 0) { alerta.classList.add('hidden'); return; }
+
+  const EJES = ['Estrategia & Gobierno','Organización & Colaboración',
+    'Experiencia del Cliente','Tecnología & Plataformas',
+    'Información & Insights','Crecimiento & Innovación',
+    'Seguridad & Privacidad','Operación & Ecosistemas'];
+
+  const debiles = axAvgs
+    .map((avg, i) => ({ nombre: EJES[i], avg }))
+    .sort((a, b) => a.avg - b.avg)
+    .slice(0, 3);
+
+  alerta.innerHTML = `
+    <div style="background:rgb(34 211 238/0.08);border:1px solid rgb(34 211 238/0.20)"
+         class="rounded-xl p-4 mb-6">
+      <div class="flex items-center gap-3 mb-2">
+        <i class="fa-solid fa-circle-info" style="color:rgb(34 211 238)"></i>
+        <p class="text-xs font-bold text-white">
+          Hoja de ruta alineada al diagnóstico — Índice de Madurez:
+          <span style="color:rgb(34 211 238)">${(+global).toFixed(1)} / 5.0</span>
+          · ${nivel}
+        </p>
+      </div>
+      <p class="text-[10px] text-slate-400 ml-6">
+        Las iniciativas están ordenadas por sus 3 ejes más débiles:
+        <strong class="text-white">${debiles.map(d => d.nombre + ' (' + d.avg.toFixed(1) + ')').join(', ')}</strong>.
+        Puede editarlas y ajustar los horizontes según su contexto.
+      </p>
+    </div>`;
+  alerta.classList.remove('hidden');
 }
 
 // Cierra el M2: guarda todo (palancas, iniciativas, horizontes, norte digital) en
@@ -3661,6 +3714,18 @@ function removeFromHorizonte(iniId, h) {
   renderIniciativas();
 }
 
+function moverIniciativa(iniId, desdeH, hastaH) {
+  horizonteMap[desdeH] = horizonteMap[desdeH].filter(id => id !== iniId);
+  if (!horizonteMap[hastaH]) horizonteMap[hastaH] = [];
+  horizonteMap[hastaH].push(iniId);
+  const ini = iniciativas.find(x => x.id === iniId);
+  if (ini) { ini.horizonte = hastaH; ini.horizonteManual = true; }
+  renderHorizonteItems();
+  renderEsfuerzoHorizontes();
+  recalcScores();
+  if (iniciativaExpandida === iniId) renderIniciativas();
+}
+
 function updateHorizonteSelects() {
   ['h1','h2','h3'].forEach(h => {
     const sel = document.querySelector(`select[onchange*="assignToHorizonte"][onchange*="'${h}'"]`);
@@ -3676,30 +3741,38 @@ function updateHorizonteSelects() {
 }
 
 function renderHorizonteItems() {
-  const cfgs = {
-    h1:{ color:'text-rose-400',   bg:'bg-rose-500/10',   border:'border-rose-500/20' },
-    h2:{ color:'text-amber-400',  bg:'bg-amber-500/10',  border:'border-amber-500/20' },
-    h3:{ color:'text-emerald-400',bg:'bg-emerald-500/10',border:'border-emerald-500/20' }
-  };
+  const coloresH = {h1:'rgb(244 63 94)',h2:'rgb(245 158 11)',h3:'rgb(52 211 153)'};
+  const labelsH  = {h1:'H1',h2:'H2',h3:'H3'};
   ['h1','h2','h3'].forEach(h => {
     const container = document.getElementById(h+'-items');
     if (!container) return;
-    const cfg = cfgs[h];
     if (horizonteMap[h].length === 0) {
       container.innerHTML = '<p class="text-[9px] text-slate-700 italic">Use el selector o asigne desde cada iniciativa</p>';
       return;
     }
+    const otrosH = ['h1','h2','h3'].filter(x => x !== h);
     container.innerHTML = horizonteMap[h].map(id => {
       const ini = iniciativas.find(x=>x.id===id);
       if (!ini) return '';
-      return `<div class="${cfg.bg} border ${cfg.border} rounded-lg px-2.5 py-1.5 flex items-center justify-between gap-2">
-        <div class="min-w-0">
-          <p class="text-[10px] text-slate-300 truncate">${ini.nombre||'(sin nombre)'}</p>
-          <p class="text-[9px] ${cfg.color} font-bold">${ini.pct.toFixed(1)}% del esfuerzo</p>
+      return `<div style="background:${coloresH[h]}15;border:1px solid ${coloresH[h]}30"
+           class="rounded-lg px-2.5 py-2">
+        <div class="flex items-start justify-between gap-2 mb-1.5">
+          <p class="text-[10px] text-slate-300 flex-1 leading-snug">${ini.nombre||'(sin nombre)'}</p>
+          <span class="text-[9px] font-black flex-shrink-0" style="color:${coloresH[h]}">${(ini.pct||0).toFixed(1)}%</span>
         </div>
-        <button onclick="removeFromHorizonte('${id}','${h}')" class="text-slate-600 hover:text-rose-400 transition text-[9px] flex-shrink-0">
-          <i class="fa-solid fa-x"></i>
-        </button>
+        <div class="flex items-center gap-1.5">
+          <span class="text-[8px] text-slate-600">Mover a:</span>
+          ${otrosH.map(oh => `
+            <button onclick="moverIniciativa('${ini.id}','${h}','${oh}')"
+              class="text-[8px] font-black px-1.5 py-0.5 rounded transition"
+              style="background:${coloresH[oh]}20;border:1px solid ${coloresH[oh]}40;color:${coloresH[oh]}">
+              ${labelsH[oh]}
+            </button>`).join('')}
+          <button onclick="removeFromHorizonte('${ini.id}','${h}')"
+            class="text-[8px] text-slate-600 hover:text-rose-400 transition ml-auto">
+            ✕
+          </button>
+        </div>
       </div>`;
     }).join('');
   });
@@ -3777,27 +3850,63 @@ function renderOKR() {
     return;
   }
 
-  const filtradas = okrFiltroActual === 'todos'
-    ? fuente
-    : fuente.filter(i => i.horizonte === okrFiltroActual);
+  // Agrupar por horizonte
+  const grupos = {
+    h1: fuente.filter(i => i.horizonte === 'h1'),
+    h2: fuente.filter(i => i.horizonte === 'h2'),
+    h3: fuente.filter(i => i.horizonte === 'h3'),
+    sin: fuente.filter(i => !i.horizonte)
+  };
 
-  document.getElementById('okr-lista').innerHTML = filtradas.map(ini =>
-    renderOKRCard(ini)
-  ).join('');
+  const cfgH = {
+    h1: { label:'Horizonte 1 · Estabilizar', sub:'Meses 1–6', color:'rgb(244 63 94)', bg:'rgb(244 63 94/0.05)', border:'rgb(244 63 94/0.20)', icon:'fa-fire' },
+    h2: { label:'Horizonte 2 · Automatizar',  sub:'Meses 6–18', color:'rgb(245 158 11)', bg:'rgb(245 158 11/0.05)', border:'rgb(245 158 11/0.20)', icon:'fa-rocket' },
+    h3: { label:'Horizonte 3 · Predecir',     sub:'Mes 18+',   color:'rgb(52 211 153)', bg:'rgb(52 211 153/0.05)', border:'rgb(52 211 153/0.20)', icon:'fa-star' },
+    sin:{ label:'Sin horizonte asignado',      sub:'',           color:'rgb(100 116 139)', bg:'rgb(100 116 139/0.05)', border:'rgb(100 116 139/0.20)', icon:'fa-circle-question' }
+  };
 
+  // Aplicar filtro si está activo
+  const mostrar = okrFiltroActual === 'todos'
+    ? ['h1','h2','h3','sin']
+    : [okrFiltroActual, 'sin'].filter(k => grupos[k] && grupos[k].length > 0);
+
+  let html = '';
+  mostrar.forEach(hk => {
+    const lista = grupos[hk];
+    if (!lista || lista.length === 0) return;
+    const cfg = cfgH[hk];
+    html += `
+      <div class="mb-8">
+        <div class="flex items-center gap-3 mb-4 pb-2" style="border-bottom:1px solid ${cfg.border}">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center"
+            style="background:${cfg.bg};border:1px solid ${cfg.border}">
+            <i class="fa-solid ${cfg.icon} text-sm" style="color:${cfg.color}"></i>
+          </div>
+          <div>
+            <p class="text-sm font-black text-white">${cfg.label}</p>
+            ${cfg.sub ? `<p class="text-[9px] text-slate-500">${cfg.sub} · ${lista.length} iniciativa${lista.length>1?'s':''}</p>` : ''}
+          </div>
+        </div>
+        <div class="space-y-4">
+          ${lista.map(ini => renderOKRCard(ini, cfg.color)).join('')}
+        </div>
+      </div>`;
+  });
+
+  document.getElementById('okr-lista').innerHTML = html;
   actualizarResumenOKR(fuente);
 }
 
-function renderOKRCard(ini) {
+function renderOKRCard(ini, colorH) {
   const id = ini.id;
   if (!okrData[id] || !okrData[id].resultadosClave) okrData[id] = nuevoOKR();
   const okr = okrData[id];
   const cumplimiento = calcularCumplimientoOKR(okr);
   const { color, label, bg, border } = semaforoOKR(cumplimiento);
-  const hColor = ini.horizonte === 'h1' ? 'rgb(244 63 94)'
+  const hColor = colorH || (ini.horizonte === 'h1' ? 'rgb(244 63 94)'
                : ini.horizonte === 'h2' ? 'rgb(245 158 11)'
                : ini.horizonte === 'h3' ? 'rgb(52 211 153)'
-               : 'rgb(100 116 139)';
+               : 'rgb(100 116 139)');
   const hLabel = ini.horizonte ? ini.horizonte.toUpperCase() : '—';
 
   const rcHtml = okr.resultadosClave.map((rc, ri) =>
@@ -3806,7 +3915,7 @@ function renderOKRCard(ini) {
 
   return `
     <div id="okr-card-${id}" class="bg-slate-900 border border-slate-800 rounded-2xl p-5"
-         style="border-left:3px solid ${color}">
+         style="border-left:3px solid ${hColor}">
       <!-- Encabezado -->
       <div class="flex items-start justify-between mb-4">
         <div class="flex-1 min-w-0 pr-4">
@@ -3856,6 +3965,16 @@ function renderOKRCard(ini) {
           <div id="okr-progress-bar-${id}" class="h-full rounded-full transition-all duration-700"
             style="width:${cumplimiento}%;background:${color}"></div>
         </div>
+      </div>
+
+      <div class="mt-4 pt-3 flex items-center justify-between"
+           style="border-top:1px solid rgb(51 65 85)">
+        <span id="okr-guardado-${id}" class="text-[9px] text-slate-600"></span>
+        <button onclick="guardarOKRIndividual('${id}')"
+          class="text-[10px] font-black px-4 py-1.5 rounded-lg transition"
+          style="background:rgb(245 158 11/0.15);border:1px solid rgb(245 158 11/0.30);color:rgb(251 191 36)">
+          <i class="fa-solid fa-floppy-disk text-[9px] mr-1"></i> Guardar OKR
+        </button>
       </div>
     </div>`;
 }
@@ -4023,6 +4142,40 @@ function guardarOKRSupabase(iniId) {
       body: JSON.stringify(payload)
     }).catch(e => console.warn('OKR save:', e));
   }, 600); // pequeño debounce para no disparar una llamada por cada tecla
+}
+
+// Guardado explícito por tarjeta (botón "Guardar OKR") — a diferencia de
+// guardarOKRSupabase() (autosave debounced sin feedback), esta confirma
+// visualmente el guardado, igual que el patrón guardar/consultar del M1.
+async function guardarOKRIndividual(iniId) {
+  const ini = iniciativas.find(x => x.id === iniId) ||
+    JSON.parse(localStorage.getItem('ag_iniciativas')||'[]').find(x => x.id === iniId);
+  if (!ini) return;
+
+  const okr = okrData[iniId];
+  if (!okr) return;
+
+  const cumpl = calcularCumplimientoOKR(okr);
+  localStorage.setItem('ag_okr', JSON.stringify(okrData));
+
+  if (window._proyectoActual) {
+    const payload = {
+      proyecto_id: window._proyectoActual.id,
+      iniciativa_nombre: ini.nombre || iniId,
+      horizonte: ini.horizonte || null,
+      objetivo: okr.objetivo || '',
+      resultados_clave_json: okr.resultadosClave || [],
+      cumplimiento: cumpl,
+      updated_at: new Date().toISOString()
+    };
+    await sbFetch(
+      `okrs_v2?proyecto_id=eq.${window._proyectoActual.id}&iniciativa_nombre=eq.${encodeURIComponent(payload.iniciativa_nombre)}`,
+      { method:'POST', headers:{'Prefer':'resolution=merge-duplicates,return=minimal'}, body: JSON.stringify(payload) }
+    ).catch(e => console.warn('OKR save:', e));
+  }
+
+  const el = document.getElementById('okr-guardado-' + iniId);
+  if (el) el.textContent = '✓ Guardado ' + new Date().toLocaleTimeString('es-CO');
 }
 
 function agregarResultadoClave(iniId) {
@@ -4229,7 +4382,35 @@ async function renderAvances() {
     }
   }
 
-  lista.innerHTML = iniciativas.map(ini => renderAvanceRow(ini)).join('');
+  // Agrupar por horizonte
+  const cfgH = {
+    h1:{ label:'H1 · Estabilizar', sub:'Meses 1–6', color:'rgb(244 63 94)' },
+    h2:{ label:'H2 · Automatizar', sub:'Meses 6–18', color:'rgb(245 158 11)' },
+    h3:{ label:'H3 · Predecir',    sub:'Mes 18+',   color:'rgb(52 211 153)' },
+    sin:{ label:'Sin horizonte',   sub:'',           color:'rgb(100 116 139)' }
+  };
+  const grupos = { h1:[], h2:[], h3:[], sin:[] };
+  iniciativas.forEach(ini => {
+    const k = ini.horizonte || 'sin';
+    (grupos[k] || grupos.sin).push(ini);
+  });
+
+  let html = '';
+  ['h1','h2','h3','sin'].forEach(hk => {
+    if (!grupos[hk].length) return;
+    const cfg = cfgH[hk];
+    html += `
+      <div class="mb-6">
+        <div class="flex items-center gap-2 mb-3 pb-2" style="border-bottom:1px solid ${cfg.color}30">
+          <span class="text-xs font-black" style="color:${cfg.color}">${cfg.label}</span>
+          ${cfg.sub ? `<span class="text-[9px] text-slate-600">${cfg.sub}</span>` : ''}
+          <span class="text-[9px] text-slate-600 ml-auto">${grupos[hk].length} iniciativa${grupos[hk].length>1?'s':''}</span>
+        </div>
+        ${grupos[hk].map(ini => renderAvanceRow(ini)).join('')}
+      </div>`;
+  });
+
+  lista.innerHTML = html;
   actualizarResumenAvances();
 }
 
@@ -4239,53 +4420,54 @@ function renderAvanceRow(ini) {
   const pct = a.pct || 0;
   const estado = a.estado || 'pendiente';
   const nota = a.nota || '';
-  const hColor = ini.horizonte === 'h1' ? '#f43f5e' : ini.horizonte === 'h2' ? '#f59e0b' : ini.horizonte === 'h3' ? '#10b981' : '#475569';
-  const hLabel = ini.horizonte ? ini.horizonte.toUpperCase() : 'Sin horiz.';
-  const semColor = pct >= 70 ? '#34d399' : pct >= 40 ? '#f59e0b' : pct > 0 ? '#f43f5e' : '#64748b';
-  const ultimoTxt = a.updated_at ? `Último reporte: ${new Date(a.updated_at).toLocaleDateString('es-CO')}` : 'Sin reportes aún';
+  const semColor = pct >= 70 ? 'rgb(52 211 153)' : pct >= 40 ? 'rgb(245 158 11)' : pct > 0 ? 'rgb(244 63 94)' : 'rgb(100 116 139)';
+  const ultimoTxt = a.updated_at ? `Último reporte: ${new Date(a.updated_at).toLocaleDateString('es-CO')}` : '';
 
   return `
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-      <div class="flex items-start justify-between gap-3 mb-3 flex-wrap">
-        <div class="flex-1 min-w-[200px]">
-          <div class="flex items-center gap-2 mb-1">
-            <span class="text-[8px] font-bold px-1.5 py-0.5 rounded-full" style="background:${hColor}20;color:${hColor}">${hLabel}</span>
-            <span id="av-semaforo-${safeId}" class="w-2 h-2 rounded-full flex-shrink-0" style="background:${semColor}"></span>
-          </div>
-          <p class="text-sm font-bold text-white">${ini.nombre || 'Sin nombre'}</p>
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 mb-3">
+      <div class="flex items-start justify-between gap-3 mb-3">
+        <div class="flex-1">
+          <p class="text-xs font-bold text-white mb-0.5">${ini.nombre || 'Sin nombre'}</p>
+          ${ini.eje ? `<p class="text-[9px] text-slate-500">${ini.eje}</p>` : ''}
         </div>
-        <p id="av-pct-label-${safeId}" class="text-xl font-black flex-shrink-0" style="color:${semColor}">${pct}%</p>
+        <div class="text-right flex-shrink-0">
+          <p class="text-lg font-black" style="color:${semColor}" id="av-pct-display-${safeId}">${pct}%</p>
+          <p class="text-[8px] text-slate-600">${estado.replace('_',' ')}</p>
+        </div>
       </div>
-      <div class="w-full bg-slate-800 rounded-full h-2 mb-4 overflow-hidden">
-        <div id="av-bar-${safeId}" class="h-2 rounded-full transition-all" style="width:${pct}%;background:${semColor}"></div>
+      <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden mb-3">
+        <div id="av-bar-${safeId}" class="h-full rounded-full transition-all"
+          style="width:${pct}%;background:${semColor}"></div>
       </div>
-      <div class="grid sm:grid-cols-2 gap-3 mb-3">
+      <div class="grid grid-cols-2 gap-2 mb-3">
         <div>
-          <label class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1">% de avance</label>
-          <input type="number" min="0" max="100" id="av-input-${safeId}" value="${pct}"
-            oninput="previsualizarAvance('${safeId}', this.value)"
-            class="w-full p-2 bg-slate-800 border border-slate-700 rounded-lg text-white text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500">
+          <label class="block text-[9px] text-slate-500 mb-1">% de avance</label>
+          <input type="number" id="av-pct-${safeId}" min="0" max="100" value="${pct}"
+            oninput="previsualizarAvance('${safeId}',+this.value)"
+            class="w-full p-2 bg-slate-800 border border-slate-700 rounded-lg text-sm font-black text-white text-center focus:outline-none focus:border-cyan-500">
         </div>
         <div>
-          <label class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Estado</label>
-          <select id="av-estado-${safeId}" class="w-full p-2 bg-slate-800 border border-slate-700 rounded-lg text-white text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500">
-            <option value="pendiente" ${estado==='pendiente'?'selected':''}>Pendiente</option>
-            <option value="en_curso" ${estado==='en_curso'?'selected':''}>En curso</option>
-            <option value="completado" ${estado==='completado'?'selected':''}>Completado</option>
-            <option value="pausado" ${estado==='pausado'?'selected':''}>Pausado</option>
+          <label class="block text-[9px] text-slate-500 mb-1">Estado</label>
+          <select id="av-est-${safeId}"
+            class="w-full p-2 bg-slate-800 border border-slate-700 rounded-lg text-[10px] text-white focus:outline-none focus:border-cyan-500">
+            ${['pendiente','en_curso','completado','pausado'].map(s =>
+              `<option value="${s}" ${estado===s?'selected':''}>${s.replace('_',' ')}</option>`
+            ).join('')}
           </select>
         </div>
       </div>
       <div class="mb-3">
-        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Nota del reporte</label>
-        <textarea id="av-nota-${safeId}" rows="2" placeholder="¿Qué avanzó, qué bloqueos hay?"
-          class="w-full p-2 bg-slate-800 border border-slate-700 rounded-lg text-white text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none">${nota}</textarea>
+        <label class="block text-[9px] text-slate-500 mb-1">Nota del reporte</label>
+        <textarea id="av-nota-${safeId}" rows="2"
+          placeholder="Describa el avance, logros o impedimentos..."
+          class="w-full p-2 bg-slate-800 border border-slate-700 rounded-lg text-[10px] text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 resize-none">${nota}</textarea>
       </div>
-      <div class="flex items-center justify-between gap-2 flex-wrap">
-        <p id="av-saved-${safeId}" class="text-[10px] text-slate-600">${ultimoTxt}</p>
-        <button onclick="guardarReporte('${safeId}')" class="text-xs font-black px-4 py-2 rounded-lg transition flex items-center gap-2"
-          style="background:rgb(52 211 153/0.15);border:1px solid rgb(52 211 153/0.30);color:rgb(52 211 153)">
-          <i class="fa-solid fa-floppy-disk text-[10px]"></i> Guardar reporte
+      <div class="flex items-center justify-between">
+        <span id="av-saved-${safeId}" class="text-[9px] text-slate-600">${ultimoTxt}</span>
+        <button onclick="guardarAvance('${ini.id}','${safeId}')"
+          class="text-[10px] font-black px-4 py-2 rounded-xl transition flex items-center gap-1.5"
+          style="background:rgb(34 211 238/0.15);border:1px solid rgb(34 211 238/0.30);color:rgb(34 211 238)">
+          <i class="fa-solid fa-floppy-disk text-[9px]"></i> Guardar reporte
         </button>
       </div>
     </div>`;
@@ -4295,51 +4477,50 @@ function previsualizarAvance(safeId, val) {
   let pct = parseInt(val, 10);
   if (isNaN(pct)) pct = 0;
   pct = Math.max(0, Math.min(100, pct));
-  const semColor = pct >= 70 ? '#34d399' : pct >= 40 ? '#f59e0b' : pct > 0 ? '#f43f5e' : '#64748b';
+  const semColor = pct >= 70 ? 'rgb(52 211 153)' : pct >= 40 ? 'rgb(245 158 11)' : pct > 0 ? 'rgb(244 63 94)' : 'rgb(100 116 139)';
   const bar = document.getElementById(`av-bar-${safeId}`);
-  const label = document.getElementById(`av-pct-label-${safeId}`);
-  const dot = document.getElementById(`av-semaforo-${safeId}`);
+  const display = document.getElementById(`av-pct-display-${safeId}`);
   if (bar) { bar.style.width = pct + '%'; bar.style.background = semColor; }
-  if (label) { label.style.color = semColor; label.textContent = pct + '%'; }
-  if (dot) dot.style.background = semColor;
+  if (display) { display.style.color = semColor; display.textContent = pct + '%'; }
 }
 
-async function guardarReporte(safeId) {
-  const ini = iniciativas.find(i => i.id === safeId);
-  if (!ini) return;
-  const inputEl  = document.getElementById(`av-input-${safeId}`);
-  const estadoEl = document.getElementById(`av-estado-${safeId}`);
-  const notaEl   = document.getElementById(`av-nota-${safeId}`);
-  let pct = parseInt(inputEl.value, 10);
+async function guardarAvance(iniId, safeId) {
+  const pctEl    = document.getElementById('av-pct-'  + safeId);
+  const estadoEl = document.getElementById('av-est-'  + safeId);
+  const notaEl   = document.getElementById('av-nota-' + safeId);
+  let pct = parseInt(pctEl ? pctEl.value : 0, 10);
   if (isNaN(pct)) pct = 0;
   pct = Math.max(0, Math.min(100, pct));
-  const estado = estadoEl.value;
-  const nota = notaEl.value;
+  const estado = estadoEl ? estadoEl.value : 'pendiente';
+  const nota = notaEl ? notaEl.value : '';
   const nowIso = new Date().toISOString();
 
-  avancesData[safeId] = { ...(avancesData[safeId]||{}), pct, estado, nota, updated_at: nowIso };
+  if (!avancesData) avancesData = {};
+  avancesData[iniId] = { ...(avancesData[iniId]||{}), pct, estado, nota, updated_at: nowIso };
   localStorage.setItem('ag_avances', JSON.stringify(avancesData));
 
   if (window._hojaRutaActualId) {
+    const ini = iniciativas.find(i => i.id === iniId) ||
+      JSON.parse(localStorage.getItem('ag_iniciativas')||'[]').find(i => i.id === iniId);
     const payload = JSON.stringify({
       hoja_ruta_id: window._hojaRutaActualId,
-      iniciativa_nombre: ini.nombre,
-      horizonte: ini.horizonte || null,
+      iniciativa_nombre: ini ? ini.nombre : iniId,
+      horizonte: ini ? (ini.horizonte || null) : null,
       pct_avance: pct, estado, ultimo_reporte: nota, updated_at: nowIso
     });
-    const rowId = avancesData[safeId].rowId;
+    const rowId = avancesData[iniId].rowId;
     if (rowId) {
       sbFetch(`iniciativas_avance?id=eq.${rowId}`, { method: 'PATCH', body: payload });
     } else {
-      const existentes = await sbFetch(`iniciativas_avance?hoja_ruta_id=eq.${window._hojaRutaActualId}&iniciativa_nombre=eq.${encodeURIComponent(ini.nombre)}`);
+      const existentes = await sbFetch(`iniciativas_avance?hoja_ruta_id=eq.${window._hojaRutaActualId}&iniciativa_nombre=eq.${encodeURIComponent(ini ? ini.nombre : iniId)}`);
       if (existentes && existentes[0]) {
-        avancesData[safeId].rowId = existentes[0].id;
+        avancesData[iniId].rowId = existentes[0].id;
         localStorage.setItem('ag_avances', JSON.stringify(avancesData));
         sbFetch(`iniciativas_avance?id=eq.${existentes[0].id}`, { method: 'PATCH', body: payload });
       } else {
         sbFetch('iniciativas_avance', { method: 'POST', body: payload }).then(res => {
           if (res && res[0]) {
-            avancesData[safeId].rowId = res[0].id;
+            avancesData[iniId].rowId = res[0].id;
             localStorage.setItem('ag_avances', JSON.stringify(avancesData));
           }
         });
@@ -4347,9 +4528,9 @@ async function guardarReporte(safeId) {
     }
   }
 
-  const savedEl = document.getElementById(`av-saved-${safeId}`);
-  if (savedEl) savedEl.textContent = `Último reporte: ${new Date(nowIso).toLocaleDateString('es-CO')}`;
   previsualizarAvance(safeId, pct);
+  const savedEl = document.getElementById(`av-saved-${safeId}`);
+  if (savedEl) savedEl.textContent = '✓ Guardado ' + new Date().toLocaleTimeString('es-CO');
   actualizarResumenAvances();
 }
 
