@@ -105,6 +105,14 @@
           Acceder al Diagnóstico <i class="fa-solid fa-arrow-right ml-1"></i>
         </button>
       </div>
+      <div class="mt-6 pt-6 text-center" style="border-top:1px solid rgb(30 41 59)">
+        <p class="text-[10px] text-slate-600 mb-3">¿Le compartieron un PIN de taller?</p>
+        <button onclick="show('s-participante')"
+          class="text-xs font-bold px-4 py-2 rounded-lg transition"
+          style="background:rgb(129 140 248/0.10);border:1px solid rgb(129 140 248/0.20);color:rgb(129 140 248)">
+          <i class="fa-solid fa-mobile mr-1"></i> Unirse como participante
+        </button>
+      </div>
     </div>
     <p class="text-center text-xs text-slate-700 mt-5">William Andrés Gómez Lizarazo · andrezgmz.github.io</p>
   </div>
@@ -434,6 +442,132 @@
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     PASO 1.5 · MODO DE APLICACIÓN DEL DIAGNÓSTICO
+═══════════════════════════════ -->
+<div id="s-modo-diagnostico" class="hidden fade">
+  <div class="max-w-3xl mx-auto py-10">
+    <div class="text-center mb-10">
+      <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest mb-5"
+        style="background:rgb(34 211 238/0.10);border:1px solid rgb(34 211 238/0.20);color:rgb(34 211 238)">
+        <i class="fa-solid fa-radar text-[10px]"></i> Módulo 1 · Diagnóstico de Madurez Digital
+      </span>
+      <h2 class="text-3xl font-black text-white mb-3">¿Cómo vas a aplicar el diagnóstico?</h2>
+      <p class="text-slate-400 text-sm">Seleccione el modo según el contexto: sesión individual,
+      taller con equipos o conferencia.</p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-4">
+
+      <!-- Modo 1: Consultoría Completa -->
+      <div onclick="seleccionarModo('individual')"
+        class="bg-slate-900 border border-slate-800 rounded-2xl p-6 cursor-pointer hover:border-cyan-500/40 transition group">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+            style="background:rgb(34 211 238/0.10);border:1px solid rgb(34 211 238/0.20)">
+            <i class="fa-solid fa-user-tie text-lg" style="color:rgb(34 211 238)"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="text-base font-black text-white">Consultoría Individual</h3>
+              <span class="text-[9px] font-bold px-2 py-1 rounded-full"
+                style="background:rgb(34 211 238/0.10);color:rgb(34 211 238)">48 preguntas</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed mb-3">
+              El consultor responde las 48 preguntas eje por eje. Puede guardar el avance
+              por eje y retomar en otra sesión. Ideal para diagnósticos profundos con
+              directivos o en sesiones de trabajo individuales.
+            </p>
+            <div class="flex gap-2">
+              <span class="text-[9px] px-2 py-1 rounded-lg" style="background:rgb(51 65 85);color:rgb(148 163 184)">
+                <i class="fa-solid fa-clock mr-1"></i>60-90 min
+              </span>
+              <span class="text-[9px] px-2 py-1 rounded-lg" style="background:rgb(51 65 85);color:rgb(148 163 184)">
+                <i class="fa-solid fa-user mr-1"></i>1 evaluador
+              </span>
+              <span class="text-[9px] px-2 py-1 rounded-lg" style="background:rgb(51 65 85);color:rgb(148 163 184)">
+                <i class="fa-solid fa-floppy-disk mr-1"></i>Guardado por eje
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modo 2: Taller por Áreas -->
+      <div onclick="seleccionarModo('taller')"
+        class="bg-slate-900 border border-slate-800 rounded-2xl p-6 cursor-pointer hover:border-indigo-500/40 transition group">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+            style="background:rgb(129 140 248/0.10);border:1px solid rgb(129 140 248/0.20)">
+            <i class="fa-solid fa-users text-lg" style="color:rgb(129 140 248)"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="text-base font-black text-white">Taller por Áreas</h3>
+              <span class="text-[9px] font-bold px-2 py-1 rounded-full"
+                style="background:rgb(129 140 248/0.10);color:rgb(129 140 248)">48 preguntas</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed mb-3">
+              Cada equipo responde su eje en sala. El consultor proyecta las preguntas,
+              los participantes votan desde su celular con un PIN. Se ve la distribución
+              de votos en gráfico de escala, se discute y se puede repetir antes de guardar.
+            </p>
+            <div class="flex gap-2">
+              <span class="text-[9px] px-2 py-1 rounded-lg" style="background:rgb(51 65 85);color:rgb(148 163 184)">
+                <i class="fa-solid fa-clock mr-1"></i>2-4 horas
+              </span>
+              <span class="text-[9px] px-2 py-1 rounded-lg" style="background:rgb(51 65 85);color:rgb(148 163 184)">
+                <i class="fa-solid fa-users mr-1"></i>Múltiples equipos
+              </span>
+              <span class="text-[9px] px-2 py-1 rounded-lg" style="background:rgb(51 65 85);color:rgb(148 163 184)">
+                <i class="fa-solid fa-mobile mr-1"></i>Votan desde celular
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modo 3: Conferencia -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+            style="background:rgb(251 191 36/0.10);border:1px solid rgb(251 191 36/0.20)">
+            <i class="fa-solid fa-presentation-screen text-lg" style="color:rgb(251 191 36)"></i>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-base font-black text-white mb-1">Conferencia en Vivo</h3>
+            <p class="text-xs text-slate-400 leading-relaxed mb-3">
+              Sala con PIN para audiencias grandes. El presentador proyecta las preguntas,
+              todos votan en tiempo real desde su celular. El radar se construye
+              colectivamente.
+            </p>
+            <div class="flex gap-3">
+              <button onclick="seleccionarModo('conferencia8')"
+                class="flex-1 font-black py-2.5 rounded-xl text-xs transition"
+                style="background:rgb(251 191 36/0.15);border:1px solid rgb(251 191 36/0.30);color:rgb(251 191 36)">
+                <i class="fa-solid fa-bolt mr-1"></i>8 preguntas · Express
+              </button>
+              <button onclick="seleccionarModo('conferencia16')"
+                class="flex-1 font-black py-2.5 rounded-xl text-xs transition"
+                style="background:rgb(251 191 36/0.15);border:1px solid rgb(251 191 36/0.30);color:rgb(251 191 36)">
+                <i class="fa-solid fa-layer-group mr-1"></i>16 preguntas · Completa
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="mt-6 flex justify-start">
+      <button onclick="show('s-start')"
+        class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg">
+        <i class="fa-solid fa-arrow-left text-[10px]"></i> Volver al Dashboard
+      </button>
+    </div>
   </div>
 </div>
 
@@ -1157,6 +1291,155 @@
   </div>
 </div>
 
+<!-- ═══════════════════════════════
+     MODO TALLER POR ÁREAS — PANTALLA DEL FACILITADOR
+═══════════════════════════════ -->
+<div id="s-taller" class="hidden fade">
+  <div class="max-w-4xl mx-auto py-8">
+
+    <!-- Cabecera del taller -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <p id="taller-eje-label" class="text-xs font-black uppercase tracking-widest mb-1"
+           style="color:rgb(129 140 248)">Eje 1 de 8</p>
+        <h2 id="taller-eje-nombre" class="text-2xl font-black text-white"></h2>
+        <p id="taller-area" class="text-xs text-slate-500 mt-1"></p>
+      </div>
+      <div class="text-center">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl px-6 py-3 mb-2">
+          <p class="text-[9px] text-slate-500 uppercase tracking-wider mb-1">PIN de sala</p>
+          <p id="taller-pin" class="text-3xl font-black tracking-widest"
+             style="color:rgb(129 140 248)">----</p>
+        </div>
+        <p id="taller-participantes" class="text-[9px] text-slate-600">0 participantes</p>
+      </div>
+    </div>
+
+    <!-- Pregunta actual -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <p id="taller-q-num" class="text-[10px] font-mono text-slate-500">Pregunta 1 de 6</p>
+        <div class="flex items-center gap-2">
+          <p id="taller-ronda-label" class="text-[9px] text-slate-600">Ronda 1</p>
+          <button onclick="repetirVotacion()"
+            class="text-[9px] font-bold px-3 py-1 rounded-lg transition"
+            style="background:rgb(245 158 11/0.15);border:1px solid rgb(245 158 11/0.30);color:rgb(251 191 36)">
+            <i class="fa-solid fa-rotate mr-1"></i>Repetir votación
+          </button>
+        </div>
+      </div>
+      <p id="taller-pregunta" class="text-sm font-semibold text-white leading-relaxed mb-2"></p>
+      <p class="text-[10px] text-slate-600">
+        1 = situación más débil &nbsp;·&nbsp; 5 = situación más madura
+      </p>
+    </div>
+
+    <!-- Gráfico de escala de votos -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <p class="text-xs font-bold text-white">Distribución de votos</p>
+        <div class="flex items-center gap-3">
+          <span id="taller-total-votos" class="text-[10px] text-slate-500">0 votos</span>
+          <span id="taller-promedio-badge" class="text-sm font-black px-3 py-1 rounded-lg hidden"
+            style="background:rgb(34 211 238/0.15);color:rgb(34 211 238)"></span>
+        </div>
+      </div>
+      <!-- Barras 1-5 -->
+      <div id="taller-grafico" class="space-y-3">
+        <!-- Se genera dinámicamente -->
+      </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="flex items-center justify-between gap-4">
+      <div class="flex gap-3">
+        <button onclick="tallerPreguntaAnterior()"
+          id="taller-btn-anterior"
+          class="text-xs font-bold px-4 py-2.5 rounded-xl transition"
+          style="background:rgb(30 41 59);border:1px solid rgb(51 65 85);color:rgb(148 163 184)">
+          <i class="fa-solid fa-arrow-left mr-1"></i>Anterior
+        </button>
+        <button onclick="guardarPreguntaTaller()"
+          class="text-xs font-black px-5 py-2.5 rounded-xl transition"
+          style="background:rgb(129 140 248/0.15);border:1px solid rgb(129 140 248/0.30);color:rgb(129 140 248)">
+          <i class="fa-solid fa-check mr-1"></i>Confirmar respuesta
+        </button>
+      </div>
+      <div class="flex gap-3">
+        <button onclick="tallerPreguntaSiguiente()"
+          id="taller-btn-siguiente"
+          class="text-xs font-black px-5 py-2.5 rounded-xl transition"
+          style="background:rgb(129 140 248);color:white">
+          Siguiente pregunta <i class="fa-solid fa-arrow-right ml-1"></i>
+        </button>
+        <button onclick="cerrarEjeTaller()"
+          id="taller-btn-cerrar-eje"
+          class="text-xs font-black px-5 py-2.5 rounded-xl transition hidden"
+          style="background:rgb(34 211 238);color:rgb(2 6 23)">
+          <i class="fa-solid fa-floppy-disk mr-1"></i>Guardar eje y continuar
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     PANTALLA DEL PARTICIPANTE (taller / conferencia, desde celular)
+═══════════════════════════════ -->
+<div id="s-participante" class="hidden fade">
+  <div class="max-w-md mx-auto py-10 px-4">
+
+    <!-- Si no hay sesión activa: ingresar PIN -->
+    <div id="participante-login" class="">
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+          style="background:rgb(129 140 248/0.10);border:1px solid rgb(129 140 248/0.20)">
+          <i class="fa-solid fa-mobile text-2xl" style="color:rgb(129 140 248)"></i>
+        </div>
+        <h2 class="text-2xl font-black text-white mb-2">Unirse al taller</h2>
+        <p class="text-xs text-slate-400">Ingrese el PIN que le indicó el facilitador</p>
+      </div>
+      <div class="space-y-4">
+        <input id="participante-nombre" type="text" placeholder="Su nombre (opcional)"
+          class="w-full p-4 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm
+                 placeholder-slate-600 focus:outline-none focus:border-indigo-500">
+        <input id="participante-pin" type="number" placeholder="PIN de sala (4 dígitos)"
+          maxlength="4" class="w-full p-4 bg-slate-900 border border-slate-800 rounded-xl
+                 text-white text-2xl font-black text-center tracking-widest
+                 placeholder-slate-600 focus:outline-none focus:border-indigo-500">
+        <button onclick="unirseAlTaller()"
+          class="w-full font-black py-4 rounded-xl text-sm transition"
+          style="background:rgb(129 140 248);color:white">
+          Unirse al taller <i class="fa-solid fa-arrow-right ml-2"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Pantalla de votación -->
+    <div id="participante-votacion" class="hidden">
+      <div class="mb-6">
+        <p id="part-eje" class="text-[10px] font-black uppercase tracking-widest mb-1"
+           style="color:rgb(129 140 248)"></p>
+        <p id="part-pregunta" class="text-base font-semibold text-white leading-relaxed"></p>
+        <p class="text-[10px] text-slate-600 mt-2">
+          1 = situación más débil · 5 = situación más madura
+        </p>
+      </div>
+
+      <!-- Botones de votación grandes para celular -->
+      <div class="grid grid-cols-5 gap-2 mb-6" id="part-botones-voto"></div>
+
+      <div id="part-voto-confirmado" class="hidden text-center py-6">
+        <i class="fa-solid fa-circle-check text-4xl mb-3 block" style="color:rgb(52 211 153)"></i>
+        <p class="text-sm font-bold text-white">¡Voto registrado!</p>
+        <p class="text-xs text-slate-500 mt-1">Esperando la siguiente pregunta...</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 </main>
 <footer class="border-t border-slate-800/50 mt-16 py-5 text-center">
   <p class="text-xs text-slate-700">© 2026 William Andrés Gómez Lizarazo · Diagnóstico de Madurez Digital Profesional</p>
@@ -1459,7 +1742,7 @@ function initScores() {
 // NAVEGACIÓN
 // ════════════════════════════════════════
 function show(id) {
-  ['s-login','s-empresas','s-start','s-axis','s-confirm','s-results','s-roadmap','s-okr','s-avances','s-seguimiento'].forEach(s => {
+  ['s-login','s-empresas','s-start','s-modo-diagnostico','s-axis','s-confirm','s-results','s-roadmap','s-okr','s-avances','s-seguimiento','s-taller','s-participante'].forEach(s => {
     const el = document.getElementById(s);
     el.classList.add('hidden');
     el.classList.remove('fade');
@@ -1630,7 +1913,7 @@ function updateDashboard() {
     consultar: 'verDiagnosticoGuardado()',
     editar: 'goStart()',
     nuevo: 'restart()', // restart() ya pide confirmación internamente
-    iniciar: 'goStart()',
+    iniciar: "show('s-modo-diagnostico')",
     labelIniciar: 'Iniciar Diagnóstico'
   });
 
@@ -1705,6 +1988,19 @@ function nuevoOKRGlobal() {
 
 // Módulo 1 — lanza el cuestionario
 function goStart() { currentAx = 0; initScores(); show('s-axis'); renderAx(); }
+
+function seleccionarModo(modo) {
+  window._modosDiagnostico = modo;
+  if (modo === 'individual') {
+    goStart();
+  } else if (modo === 'taller') {
+    iniciarTaller();
+  } else if (modo === 'conferencia8') {
+    iniciarConferencia(8);
+  } else if (modo === 'conferencia16') {
+    iniciarConferencia(16);
+  }
+}
 
 // Módulo 2 — abre hoja de ruta solo si hay diagnóstico
 function accessModulo2() {
@@ -4739,6 +5035,414 @@ async function renderSeguimiento() {
   } else {
     evoWrap.innerHTML = `<p class="text-xs text-slate-600 text-center py-4">Complete el Módulo 1 para ver la evolución de su madurez digital.</p>`;
   }
+}
+
+// ════════════════════════════════════════
+// MODO TALLER POR ÁREAS
+// ════════════════════════════════════════
+let tallerState = {
+  ejActual: 0,        // 0-7
+  pregActual: 0,      // 0-5
+  ronda: 1,
+  sesionId: null,
+  pin: null,
+  votosActuales: {},  // { pregIndex: { 1:n, 2:n, 3:n, 4:n, 5:n } }
+  respuestasGuardadas: [], // Array de promedios por pregunta del eje
+  pollingInterval: null
+};
+
+function generarPIN() {
+  return Math.floor(1000 + Math.random() * 9000).toString();
+}
+
+async function iniciarTaller() {
+  tallerState = {
+    ejActual: 0, pregActual: 0, ronda: 1,
+    sesionId: null, pin: null,
+    votosActuales: {}, respuestasGuardadas: [],
+    pollingInterval: null
+  };
+
+  // Crear sesión en Supabase
+  const pin = generarPIN();
+  const eje = AXES[0];
+  const payload = {
+    proyecto_id: window._proyectoActual ? window._proyectoActual.id : null,
+    eje_index: 0,
+    eje_nombre: eje.key,
+    pin: pin,
+    estado: 'abierta'
+  };
+
+  const res = await sbFetch('sesiones_taller', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  }).catch(() => null);
+
+  if (res && res[0]) {
+    tallerState.sesionId = res[0].id;
+    tallerState.pin = pin;
+  } else {
+    // Fallback sin Supabase
+    tallerState.pin = pin;
+    tallerState.sesionId = 'local-' + Date.now();
+  }
+
+  renderTaller();
+  iniciarPollingVotos();
+  show('s-taller');
+}
+
+function renderTaller() {
+  const eje = AXES[tallerState.ejActual];
+  const pregIdx = tallerState.pregActual;
+  const pregunta = eje.qs[pregIdx];
+
+  // Actualizar cabecera
+  document.getElementById('taller-eje-label').textContent =
+    `Eje ${tallerState.ejActual + 1} de ${AXES.length}`;
+  document.getElementById('taller-eje-nombre').textContent = eje.key;
+  document.getElementById('taller-pin').textContent = tallerState.pin;
+  document.getElementById('taller-q-num').textContent =
+    `Pregunta ${pregIdx + 1} de ${eje.qs.length}`;
+  document.getElementById('taller-ronda-label').textContent =
+    `Ronda ${tallerState.ronda}`;
+
+  // Limpiar el texto de la pregunta (mostrar sin el formato 1=..,3=..,5=..)
+  let titulo = pregunta;
+  const colonIdx = pregunta.indexOf(':');
+  if (colonIdx !== -1) {
+    titulo = pregunta.substring(0, colonIdx)
+      .replace(/^Valore del 1 al 5\s*/i, '').trim();
+    if (!titulo) titulo = pregunta;
+  }
+  document.getElementById('taller-pregunta').textContent = titulo;
+
+  // Botones navegación
+  const btnAnterior = document.getElementById('taller-btn-anterior');
+  const btnSiguiente = document.getElementById('taller-btn-siguiente');
+  const btnCerrar = document.getElementById('taller-btn-cerrar-eje');
+  if (btnAnterior) btnAnterior.style.visibility = pregIdx === 0 ? 'hidden' : 'visible';
+  const esUltima = pregIdx === eje.qs.length - 1;
+  if (btnSiguiente) btnSiguiente.classList.toggle('hidden', esUltima);
+  if (btnCerrar) btnCerrar.classList.toggle('hidden', !esUltima);
+
+  // Renderizar gráfico con votos actuales
+  renderGraficoTaller(tallerState.pregActual);
+}
+
+function renderGraficoTaller(pregIdx) {
+  const votos = tallerState.votosActuales[pregIdx] || {1:0,2:0,3:0,4:0,5:0};
+  const total = Object.values(votos).reduce((a,b) => a+b, 0);
+  const promedio = total > 0
+    ? (Object.entries(votos).reduce((sum,[v,n]) => sum + (+v * n), 0) / total)
+    : 0;
+
+  // Colores por valor
+  const colores = {
+    1:'rgb(244 63 94)', 2:'rgb(251 146 60)',
+    3:'rgb(245 158 11)', 4:'rgb(45 212 191)', 5:'rgb(52 211 153)'
+  };
+  const labels = {1:'Inexistente',2:'Incipiente',3:'En Desarrollo',4:'Avanzado',5:'Referente'};
+
+  const maxVotos = Math.max(...Object.values(votos), 1);
+  const grafico = document.getElementById('taller-grafico');
+  if (!grafico) return;
+
+  grafico.innerHTML = [1,2,3,4,5].map(v => {
+    const n = votos[v] || 0;
+    const pct = Math.round((n / maxVotos) * 100);
+    const pctTotal = total > 0 ? Math.round((n / total) * 100) : 0;
+    return `
+      <div class="flex items-center gap-3">
+        <div class="w-6 text-right flex-shrink-0">
+          <span class="text-sm font-black" style="color:${colores[v]}">${v}</span>
+        </div>
+        <div class="flex-1 relative h-9 rounded-lg overflow-hidden"
+             style="background:rgb(30 41 59)">
+          <div class="h-full rounded-lg transition-all duration-500"
+               style="width:${pct}%;background:${colores[v]}30;border-right:3px solid ${colores[v]}">
+          </div>
+          <div class="absolute inset-0 flex items-center px-3 gap-2">
+            <span class="text-[10px] font-semibold" style="color:${colores[v]}">${labels[v]}</span>
+            <span class="ml-auto text-xs font-black text-white">${n > 0 ? n : ''}</span>
+            ${n > 0 ? `<span class="text-[9px] text-slate-400">${pctTotal}%</span>` : ''}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Actualizar contador y promedio
+  const totalEl = document.getElementById('taller-total-votos');
+  const promEl  = document.getElementById('taller-promedio-badge');
+  if (totalEl) totalEl.textContent = `${total} voto${total !== 1 ? 's' : ''}`;
+  if (promEl) {
+    if (total > 0) {
+      promEl.textContent = `Promedio: ${promedio.toFixed(2)}`;
+      promEl.classList.remove('hidden');
+      const color = promedio >= 4 ? 'rgb(52 211 153)'
+                  : promedio >= 3 ? 'rgb(245 158 11)'
+                  : 'rgb(244 63 94)';
+      promEl.style.background = color.replace(')', '/0.15)');
+      promEl.style.color = color;
+    } else {
+      promEl.classList.add('hidden');
+    }
+  }
+
+  // Actualizar participantes
+  const partEl = document.getElementById('taller-participantes');
+  if (partEl) partEl.textContent = `${total} participante${total !== 1 ? 's' : ''} han votado`;
+}
+
+function iniciarPollingVotos() {
+  // Limpiar polling anterior
+  if (tallerState.pollingInterval) clearInterval(tallerState.pollingInterval);
+
+  tallerState.pollingInterval = setInterval(async () => {
+    if (!tallerState.sesionId || tallerState.sesionId.indexOf('local-') === 0) return;
+
+    const votos = await sbFetch(
+      `votos_taller?sesion_id=eq.${tallerState.sesionId}&ronda=eq.${tallerState.ronda}`
+    ).catch(() => null);
+
+    if (!votos) return;
+
+    // Reconstruir conteo por pregunta y valor
+    const nuevosVotos = {};
+    votos.forEach(v => {
+      if (!nuevosVotos[v.pregunta_index]) nuevosVotos[v.pregunta_index] = {1:0,2:0,3:0,4:0,5:0};
+      nuevosVotos[v.pregunta_index][v.voto] = (nuevosVotos[v.pregunta_index][v.voto] || 0) + 1;
+    });
+    tallerState.votosActuales = nuevosVotos;
+    renderGraficoTaller(tallerState.pregActual);
+  }, 3000); // Polling cada 3 segundos
+}
+
+function tallerPreguntaSiguiente() {
+  const eje = AXES[tallerState.ejActual];
+  if (tallerState.pregActual < eje.qs.length - 1) {
+    tallerState.pregActual++;
+    renderTaller();
+  }
+}
+
+function tallerPreguntaAnterior() {
+  if (tallerState.pregActual > 0) {
+    tallerState.pregActual--;
+    renderTaller();
+  }
+}
+
+function repetirVotacion() {
+  tallerState.ronda++;
+  // Limpiar votos de esta pregunta localmente
+  delete tallerState.votosActuales[tallerState.pregActual];
+  renderGraficoTaller(tallerState.pregActual);
+  document.getElementById('taller-ronda-label').textContent =
+    `Ronda ${tallerState.ronda}`;
+}
+
+function guardarPreguntaTaller() {
+  // Calcular promedio de la pregunta actual y guardarlo
+  const votos = tallerState.votosActuales[tallerState.pregActual] || {};
+  const total = Object.values(votos).reduce((a,b) => a+b, 0);
+  const promedio = total > 0
+    ? Object.entries(votos).reduce((sum,[v,n]) => sum + (+v * n), 0) / total
+    : 3; // Default 3 si no hay votos
+  tallerState.respuestasGuardadas[tallerState.pregActual] = promedio;
+}
+
+async function cerrarEjeTaller() {
+  // Guardar todas las preguntas pendientes
+  const eje = AXES[tallerState.ejActual];
+  eje.qs.forEach((_, qi) => {
+    if (tallerState.respuestasGuardadas[qi] === undefined) {
+      const votos = tallerState.votosActuales[qi] || {};
+      const total = Object.values(votos).reduce((a,b) => a+b, 0);
+      tallerState.respuestasGuardadas[qi] = total > 0
+        ? Object.entries(votos).reduce((sum,[v,n]) => sum + (+v * n), 0) / total
+        : 3;
+    }
+  });
+
+  // Calcular promedio del eje
+  const promedioEje = tallerState.respuestasGuardadas.reduce((a,b) => a+b, 0) /
+    tallerState.respuestasGuardadas.length;
+
+  // Guardar en scores (mismo formato que el modo individual)
+  tallerState.respuestasGuardadas.forEach((val, qi) => {
+    scores[tallerState.ejActual][qi] = Math.round(val);
+  });
+
+  // Guardar en Supabase
+  if (tallerState.sesionId && tallerState.sesionId.indexOf('local-') !== 0) {
+    await sbFetch(`sesiones_taller?id=eq.${tallerState.sesionId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        estado: 'cerrada',
+        respuesta_final: promedioEje,
+        scores_json: { respuestas: tallerState.respuestasGuardadas }
+      })
+    }).catch(() => null);
+  }
+
+  // Parar polling
+  if (tallerState.pollingInterval) clearInterval(tallerState.pollingInterval);
+
+  // ¿Hay más ejes?
+  if (tallerState.ejActual < AXES.length - 1) {
+    // Avanzar al siguiente eje
+    tallerState.ejActual++;
+    tallerState.pregActual = 0;
+    tallerState.ronda = 1;
+    tallerState.votosActuales = {};
+    tallerState.respuestasGuardadas = [];
+
+    // Crear nueva sesión para el siguiente eje
+    const pin = generarPIN();
+    const nuevoEje = AXES[tallerState.ejActual];
+    const res = await sbFetch('sesiones_taller', {
+      method: 'POST',
+      body: JSON.stringify({
+        proyecto_id: window._proyectoActual ? window._proyectoActual.id : null,
+        eje_index: tallerState.ejActual,
+        eje_nombre: nuevoEje.key,
+        pin: pin,
+        estado: 'abierta'
+      })
+    }).catch(() => null);
+
+    tallerState.pin = pin;
+    tallerState.sesionId = (res && res[0]) ? res[0].id : 'local-' + Date.now();
+
+    renderTaller();
+    iniciarPollingVotos();
+  } else {
+    // Todos los ejes completados — generar resultados
+    if (tallerState.pollingInterval) clearInterval(tallerState.pollingInterval);
+    genResults();
+  }
+}
+
+// ════════════════════════════════════════
+// MODO CONFERENCIA (8 o 16 preguntas)
+// ════════════════════════════════════════
+function iniciarConferencia(nPreguntas) {
+  // Seleccionar preguntas: 1 por eje (8) o 2 por eje (16)
+  const porEje = nPreguntas === 8 ? 1 : 2;
+  window._conferenciaPreguntas = AXES.map(eje => ({
+    key: eje.key,
+    icon: eje.icon,
+    color: eje.color,
+    qs: eje.qs.slice(0, porEje)
+  }));
+  window._conferenciaTotal = nPreguntas;
+  window._modosDiagnostico = nPreguntas === 8 ? 'conferencia8' : 'conferencia16';
+
+  // Por ahora redirigir al modo individual con las preguntas reducidas
+  // (en el siguiente incremento se integra la sala con PIN)
+  alert(`Modo conferencia ${nPreguntas} preguntas próximamente disponible. Por ahora use el modo Taller.`);
+}
+
+// ════════════════════════════════════════
+// PANTALLA DEL PARTICIPANTE (vota desde el celular)
+// ════════════════════════════════════════
+let participanteState = {
+  sesionId: null,
+  nombre: 'anónimo',
+  pin: null,
+  pollingInterval: null,
+  ultimaPregIdx: -1
+};
+
+async function unirseAlTaller() {
+  const pinEl = document.getElementById('participante-pin');
+  const nombreEl = document.getElementById('participante-nombre');
+  const pin = pinEl && pinEl.value ? pinEl.value.trim() : '';
+  const nombre = (nombreEl && nombreEl.value ? nombreEl.value.trim() : '') || 'anónimo';
+
+  if (!pin || pin.length !== 4) {
+    alert('Ingrese el PIN de 4 dígitos que le indicó el facilitador.');
+    return;
+  }
+
+  // Buscar sesión por PIN
+  const sesiones = await sbFetch(`sesiones_taller?pin=eq.${pin}&estado=eq.abierta`);
+  if (!sesiones || sesiones.length === 0) {
+    alert('PIN incorrecto o sesión no disponible. Verifique con el facilitador.');
+    return;
+  }
+
+  participanteState.sesionId = sesiones[0].id;
+  participanteState.nombre   = nombre;
+  participanteState.pin      = pin;
+
+  // Mostrar pantalla de votación
+  document.getElementById('participante-login').classList.add('hidden');
+  document.getElementById('participante-votacion').classList.remove('hidden');
+  document.getElementById('part-eje').textContent = sesiones[0].eje_nombre || '';
+
+  // Iniciar polling para recibir preguntas del facilitador
+  iniciarPollingParticipante(sesiones[0]);
+}
+
+function iniciarPollingParticipante(sesion) {
+  if (participanteState.pollingInterval) clearInterval(participanteState.pollingInterval);
+
+  // Renderizar pregunta actual del taller (la que muestra el facilitador)
+  const renderizarPreguntaParticipante = async () => {
+    const sesActual = await sbFetch(`sesiones_taller?id=eq.${participanteState.sesionId}`);
+    if (!sesActual || !sesActual[0]) return;
+
+    const s = sesActual[0];
+    if (s.estado === 'cerrada') {
+      clearInterval(participanteState.pollingInterval);
+      document.getElementById('part-voto-confirmado').classList.remove('hidden');
+      document.getElementById('part-botones-voto').innerHTML = '';
+      document.getElementById('part-pregunta').textContent = 'Este eje ha sido cerrado. Espere al facilitador.';
+      return;
+    }
+  };
+
+  participanteState.pollingInterval = setInterval(renderizarPreguntaParticipante, 3000);
+}
+
+function renderBotonesVoto(pregIdx, ejeNombre, pregTexto) {
+  const colores = {
+    1:'rgb(244 63 94)', 2:'rgb(251 146 60)',
+    3:'rgb(245 158 11)', 4:'rgb(45 212 191)', 5:'rgb(52 211 153)'
+  };
+  document.getElementById('part-pregunta').textContent = pregTexto;
+  document.getElementById('part-voto-confirmado').classList.add('hidden');
+
+  const botones = document.getElementById('part-botones-voto');
+  if (!botones) return;
+  botones.innerHTML = [1,2,3,4,5].map(v => `
+    <button onclick="registrarVotoParticipante(${pregIdx}, ${v})"
+      class="aspect-square rounded-xl font-black text-xl transition active:scale-95"
+      style="background:${colores[v]}20;border:2px solid ${colores[v]}40;color:${colores[v]}">
+      ${v}
+    </button>`).join('');
+}
+
+async function registrarVotoParticipante(pregIdx, voto) {
+  if (!participanteState.sesionId) return;
+
+  await sbFetch('votos_taller', {
+    method: 'POST',
+    body: JSON.stringify({
+      sesion_id: participanteState.sesionId,
+      pregunta_index: pregIdx,
+      participante: participanteState.nombre,
+      voto: voto,
+      ronda: 1
+    })
+  }).catch(() => null);
+
+  // Feedback visual
+  document.getElementById('part-voto-confirmado').classList.remove('hidden');
+  document.getElementById('part-botones-voto').innerHTML = '';
 }
 </script>
 </body>
