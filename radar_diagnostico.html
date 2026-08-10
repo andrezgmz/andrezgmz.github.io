@@ -684,7 +684,35 @@
     <p class="text-slate-400 text-sm leading-relaxed max-w-2xl mx-auto mt-4">Defina su Norte Digital, pondere sus palancas estratégicas, priorice iniciativas y asígnelas a horizontes. El sistema calcula automáticamente el peso de cada horizonte sobre el 100% de su hoja de ruta.</p>
   </div>
 
-  <div id="roadmap-diag-alert" class="hidden"></div>
+  <div id="roadmap-diag-alert" class="hidden mb-8">
+    <div style="background:rgb(34 211 238/0.06);border:1px solid rgb(34 211 238/0.15)"
+         class="rounded-2xl p-6 mb-4">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <i class="fa-solid fa-radar text-lg" style="color:rgb(34 211 238)"></i>
+          <div>
+            <p class="text-xs font-black uppercase tracking-widest"
+               style="color:rgb(34 211 238)">Diagnóstico → Hoja de Ruta</p>
+            <h3 id="roadmap-alert-titulo" class="text-lg font-black text-white"></h3>
+          </div>
+        </div>
+        <button onclick="document.getElementById('roadmap-diag-alert').classList.add('hidden')"
+          class="text-xs text-slate-600 hover:text-slate-400 transition border border-slate-800
+                 px-3 py-1.5 rounded-lg">
+          Ocultar ×
+        </button>
+      </div>
+      <p id="roadmap-alert-resumen" class="text-xs text-slate-400 mb-5 leading-relaxed"></p>
+      <div id="roadmap-horizons-preview" class="space-y-0"></div>
+      <div class="mt-5 pt-4 flex justify-end" style="border-top:1px solid rgb(51 65 85)">
+        <button onclick="document.getElementById('roadmap-diag-alert').classList.add('hidden')"
+          class="font-black text-sm px-6 py-3 rounded-xl transition flex items-center gap-2"
+          style="background:rgb(99 102 241);color:white">
+          <i class="fa-solid fa-map text-sm"></i> Comenzar a construir la Hoja de Ruta
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- ── PASO 1: NORTE DIGITAL 3×3 ────────────────── -->
   <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6">
@@ -2712,45 +2740,49 @@ function goRoadmap() {
 // el pre-orden de las iniciativas (ejes más débiles primero).
 function mostrarAlertaDiagnostico() {
   const result = window._result;
-  const saved = localStorage.getItem('ag_diagnostico');
-  const diag = (result && result.globalAvg) ? result : (saved ? JSON.parse(saved).result : null);
+  const saved  = localStorage.getItem('ag_diagnostico');
+  const diag   = (result && result.globalAvg)
+    ? result
+    : (saved ? JSON.parse(saved).result : null);
 
   const alerta = document.getElementById('roadmap-diag-alert');
-  if (!alerta) return;
-  if (!diag) { alerta.classList.add('hidden'); return; }
+  if (!alerta || !diag) {
+    if (alerta) alerta.classList.add('hidden');
+    return;
+  }
 
-  const nivel = diag.level || '';
-  const global = diag.globalAvg || 0;
   const axAvgs = diag.axAvgs || [];
   if (axAvgs.length === 0) { alerta.classList.add('hidden'); return; }
 
-  const EJES = ['Estrategia & Gobierno','Organización & Colaboración',
-    'Experiencia del Cliente','Tecnología & Plataformas',
-    'Información & Insights','Crecimiento & Innovación',
-    'Seguridad & Privacidad','Operación & Ecosistemas'];
+  // Título y resumen
+  const tituloEl  = document.getElementById('roadmap-alert-titulo');
+  const resumenEl = document.getElementById('roadmap-alert-resumen');
+  if (tituloEl)  tituloEl.textContent  =
+    `Índice de Madurez: ${(+diag.globalAvg).toFixed(1)} / 5.0 · ${diag.level || ''}`;
+  if (resumenEl) resumenEl.textContent = diag.summary ||
+    'La hoja de ruta propuesta está ordenada por sus ejes más débiles. ' +
+    'Revise los horizontes sugeridos y ajuste las iniciativas según el contexto de su organización.';
 
-  const debiles = axAvgs
-    .map((avg, i) => ({ nombre: EJES[i], avg }))
-    .sort((a, b) => a.avg - b.avg)
-    .slice(0, 3);
+  // Reutilizar buildHorizons() moviendo temporalmente su contenedor real
+  // (#r-horizons, en s-results) dentro del preview, y devolviéndolo a su
+  // lugar original una vez pintado — buildHorizons() no se modifica.
+  const previewContainer = document.getElementById('roadmap-horizons-preview');
+  if (previewContainer) {
+    const originalContainer = document.getElementById('r-horizons');
+    const originalParent    = originalContainer ? originalContainer.parentNode : null;
+    const originalNext      = originalContainer ? originalContainer.nextSibling : null;
 
-  alerta.innerHTML = `
-    <div style="background:rgb(34 211 238/0.08);border:1px solid rgb(34 211 238/0.20)"
-         class="rounded-xl p-4 mb-6">
-      <div class="flex items-center gap-3 mb-2">
-        <i class="fa-solid fa-circle-info" style="color:rgb(34 211 238)"></i>
-        <p class="text-xs font-bold text-white">
-          Hoja de ruta alineada al diagnóstico — Índice de Madurez:
-          <span style="color:rgb(34 211 238)">${(+global).toFixed(1)} / 5.0</span>
-          · ${nivel}
-        </p>
-      </div>
-      <p class="text-[10px] text-slate-400 ml-6">
-        Las iniciativas están ordenadas por sus 3 ejes más débiles:
-        <strong class="text-white">${debiles.map(d => d.nombre + ' (' + d.avg.toFixed(1) + ')').join(', ')}</strong>.
-        Puede editarlas y ajustar los horizontes según su contexto.
-      </p>
-    </div>`;
+    if (originalContainer) {
+      previewContainer.innerHTML = '';
+      previewContainer.appendChild(originalContainer);
+      buildHorizons(axAvgs);
+      if (originalParent) {
+        if (originalNext) originalParent.insertBefore(originalContainer, originalNext);
+        else originalParent.appendChild(originalContainer);
+      }
+    }
+  }
+
   alerta.classList.remove('hidden');
 }
 
@@ -3756,9 +3788,17 @@ function renderHorizonteItems() {
       if (!ini) return '';
       return `<div style="background:${coloresH[h]}15;border:1px solid ${coloresH[h]}30"
            class="rounded-lg px-2.5 py-2">
-        <div class="flex items-start justify-between gap-2 mb-1.5">
-          <p class="text-[10px] text-slate-300 flex-1 leading-snug">${ini.nombre||'(sin nombre)'}</p>
-          <span class="text-[9px] font-black flex-shrink-0" style="color:${coloresH[h]}">${(ini.pct||0).toFixed(1)}%</span>
+        <div class="flex items-start justify-between gap-2 mb-1">
+          <p class="text-[10px] text-slate-300 flex-1 leading-snug font-semibold">
+            ${ini.nombre||'(sin nombre)'}
+          </p>
+          <span class="text-[9px] font-black flex-shrink-0"
+                style="color:${coloresH[h]}">${(ini.pct||0).toFixed(1)}%</span>
+        </div>
+        ${ini.eje ? `<p class="text-[8px] text-slate-600 mb-1.5 truncate">${ini.eje}</p>` : ''}
+        <div class="w-full bg-slate-800 h-1 rounded-full overflow-hidden mb-2">
+          <div class="h-full rounded-full"
+               style="width:${Math.min(ini.pct||0,100)}%;background:${coloresH[h]}"></div>
         </div>
         <div class="flex items-center gap-1.5">
           <span class="text-[8px] text-slate-600">Mover a:</span>
