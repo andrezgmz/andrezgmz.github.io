@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radar en Vivo · Panel del Presentador</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+* { font-family: 'Inter', sans-serif; }
+.fade { animation: fadeUp 0.4s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.pulse-dot { animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+.screen{display:none;}
+.screen.active{display:flex;}
+.accordion-body { max-height:0; overflow:hidden; transition: max-height .45s ease, padding .3s ease; }
+.accordion-body.open { max-height: 2000px; }
+.card-dim { transition: all .25s ease; }
+.card-dim:hover { transform: translateY(-2px); }
+</style>
+</head>
+<body class="bg-slate-950 text-white min-h-screen">
+
+<header class="border-b border-slate-800/50 bg-slate-950/95 backdrop-blur sticky top-0 z-50">
+  <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-2 h-2 rounded-full bg-cyan-400 pulse-dot"></div>
+      <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Radar en Vivo · Panel del Presentador</span>
+    </div>
+    <span id="hdr-estado" class="text-xs text-slate-500"></span>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto px-4 py-10">
+
+<!-- ═══════════ LOBBY ═══════════ -->
+<section id="s-lobby" class="screen active fade w-full flex-col items-center justify-center text-center py-10">
+  <div id="lobby-pre">
+    <div class="w-14 h-14 bg-cyan-500/10 border border-cyan-500/20 rounded-2xl flex items-center justify-center mx-auto mb-5">
+      <i class="fa-solid fa-radar text-cyan-400 text-xl"></i>
+    </div>
+    <h1 class="text-2xl md:text-4xl font-black tracking-tight mb-3">Radar Digital en Vivo</h1>
+    <p class="text-slate-500 text-sm mb-8 max-w-md mx-auto">Diagnóstico rápido con el público antes de construir la Hoja de Ruta.</p>
+    <button id="btn-crear" class="bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold px-8 py-4 rounded-xl text-sm">Crear sesión</button>
+    <p id="crear-error" class="text-rose-400 text-xs mt-4 hidden"></p>
+  </div>
+
+  <div id="lobby-post" class="hidden w-full max-w-4xl">
+    <p class="text-slate-500 text-sm mb-2">Ingresen desde el celular a</p>
+    <p id="join-url" class="text-cyan-400 text-lg mb-6 break-all"></p>
+    <div class="flex flex-col md:flex-row items-center justify-center gap-10">
+      <img id="qr-img" class="rounded-xl bg-white p-3" width="240" height="240" alt="QR de acceso" onerror="this.style.display='none'">
+      <div>
+        <p class="text-slate-500 text-sm mb-2">o con el código</p>
+        <p id="pin-display" class="text-7xl font-black tracking-widest text-white mb-6"></p>
+        <p class="text-slate-500 text-sm">Conectados: <span id="contador" class="text-2xl font-black text-emerald-400">0</span></p>
+      </div>
+    </div>
+    <button id="btn-iniciar" class="mt-10 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold px-8 py-4 rounded-xl text-sm">Iniciar diagnóstico →</button>
+  </div>
+</section>
+
+<!-- ═══════════ CONTROL (en vivo) ═══════════ -->
+<section id="s-control" class="screen fade w-full flex-col items-center justify-center">
+  <div class="w-full max-w-3xl text-center">
+    <p id="ctrl-progreso" class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-2"></p>
+    <p id="ctrl-eje" class="text-sm uppercase tracking-widest font-black mb-4"></p>
+    <h2 id="ctrl-pregunta" class="text-2xl md:text-4xl font-bold mb-10 leading-snug"></h2>
+
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-8">
+      <canvas id="chart-actual" height="140"></canvas>
+      <p class="mt-3 text-xs text-slate-500">Respuestas: <span id="ctrl-total" class="font-bold text-white">0</span> · Conectados: <span id="ctrl-conectados" class="font-bold text-emerald-400">0</span></p>
+    </div>
+
+    <div class="flex justify-center gap-4">
+      <button id="btn-anterior" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 px-6 py-3 rounded-xl font-bold text-sm">← Anterior</button>
+      <button id="btn-siguiente" class="bg-cyan-500 hover:bg-cyan-400 text-slate-900 px-6 py-3 rounded-xl font-bold text-sm">Siguiente →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ RESUMEN / PROPUESTA ═══════════ -->
+<section id="s-resumen" class="screen fade w-full flex-col items-start justify-center">
+  <div class="w-full max-w-5xl mx-auto">
+
+    <div class="text-center mb-8">
+      <p id="r-badge" class="inline-block text-xs font-black px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 mb-3"></p>
+      <h2 class="text-2xl md:text-3xl font-black mb-2">Radar de Madurez Digital · Diagnóstico en vivo</h2>
+      <p id="r-level" class="text-lg font-bold text-white mb-2"></p>
+      <p id="r-summary" class="text-slate-400 text-sm max-w-2xl mx-auto leading-relaxed"></p>
+    </div>
+
+    <div id="r-alert" class="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-5 mb-8 flex items-start gap-3">
+      <i class="fa-solid fa-triangle-exclamation text-rose-400 mt-0.5"></i>
+      <div>
+        <p class="text-sm font-bold text-rose-300 mb-1">Eje crítico detectado</p>
+        <p id="r-alert-txt" class="text-xs text-rose-200/80 leading-relaxed"></p>
+      </div>
+    </div>
+
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-8 max-w-xl mx-auto">
+      <canvas id="chart-radar" height="280"></canvas>
+    </div>
+
+    <div id="r-bars" class="grid md:grid-cols-2 gap-x-8 gap-y-4 mb-10"></div>
+
+    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Análisis por dimensión — clic para expandir</p>
+    <div id="r-dims" class="space-y-3 mb-12"></div>
+
+    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Hoja de Ruta · Horizontes de Acción</p>
+    <div id="r-horizons" class="space-y-4 mb-10"></div>
+
+    <div class="text-center">
+      <button id="btn-nueva" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 px-6 py-3 rounded-xl font-bold text-sm">Nueva sesión</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+// ════════════════════════════════════════
+// SUPABASE — mismo proyecto y mismo patrón REST que radar_diagnostico.html
+// (fetch puro, sin librería supabase-js, sin WebSockets/Realtime)
+// ════════════════════════════════════════
+const SUPABASE_URL  = 'https://djgqohrwjxymmguefljs.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqZ3FvaHJ3anh5bW1ndWVmbGpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU1OTI3NDcsImV4cCI6MjEwMTE2ODc0N30.EoloyAKUp7eVQGXSjjojSRqjKJZupWv8jrOGEpVMKSM';
+
+async function sbFetch(endpoint, options = {}) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, {
+    headers: {
+      'apikey': SUPABASE_ANON,
+      'Authorization': `Bearer ${SUPABASE_ANON}`,
+      'Content-Type': 'application/json',
+      'Prefer': options.prefer || 'return=representation',
+      ...options.headers
+    },
+    method: options.method || 'GET',
+    body: options.body ? JSON.stringify(options.body) : undefined
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || res.statusText);
+  }
+  return res.status === 204 ? null : res.json();
+}
+
+// ════════════════════════════════════════
+// PREGUNTAS — 2-3 por eje, tomadas del banco real de 48 (8 ejes) de
+// radar_diagnostico.html. Selección preliminar de Claude — Andrés debe
+// confirmarla o ajustarla antes de la conferencia.
+// ════════════════════════════════════════
+const AXES_VIVO = [
+  { key:'Estrategia & Gobierno', color:'#22d3ee', icon:'fa-chess-king', preguntas:[
+    '¿Existe un presupuesto exclusivo y aprobado por la dirección para iniciativas de transformación digital, separado del presupuesto de mantenimiento de TI?',
+    '¿La estrategia digital está documentada con objetivos medibles (OKRs o KPIs) y horizonte de tiempo definido de 1 a 3 años?',
+    '¿Las iniciativas tecnológicas se evalúan con criterios de ROI y palancas de valor antes de aprobarse, o se aprueban por urgencia o tendencia del mercado?'
+  ],
+  fb:{
+    bajo:{nv:'Inexistente / Incipiente',tx:'No existe gobierno real de la transformación digital. Las decisiones tecnológicas son reactivas y dependen de personas clave en vez de procesos institucionales. Cada iniciativa es un esfuerzo aislado sin respaldo formal.',ac:[
+      {t:'Designar un patrocinador ejecutivo', d:'Nombre formalmente a un líder con autoridad real sobre decisiones y presupuesto digital. Sin este rol, toda iniciativa muere en el primer obstáculo.'},
+      {t:'Formular la primera Estrategia Digital en 90 días', d:'Defina 3 objetivos digitales concretos con métricas de negocio y horizonte de 12 meses. No un plan estático — un documento vivo que se revise trimestralmente.'},
+      {t:'Implementar las 6 preguntas de validación', d:'Aplique este checklist a toda iniciativa tecnológica antes de aprobarla: impacto reglamentario, demanda real, UX esperada, impacto en margen, reducción de tiempos y cobertura de seguros.'}
+    ]},
+    medio:{nv:'En Desarrollo',tx:'Existe conciencia estratégica pero sin gobierno consolidado. Las iniciativas funcionan en silos, la revisión formal es inconsistente y el presupuesto digital no está claramente delimitado.',ac:[
+      {t:'Crear un Comité de Transformación Digital', d:'Establezca un comité multifuncional con reunión trimestral formal. Incluya representantes de TI, Operaciones, Comercial y Riesgos. Sin estructura, la coordinación depende de voluntad individual.'},
+      {t:'Conectar cada iniciativa a un OKR de negocio', d:'Ninguna iniciativa tecnológica debe existir sin un objetivo de negocio medible asignado. Esto fuerza la priorización y elimina proyectos huérfanos.'},
+      {t:'Implementar ejercicio retrospectiva / presente / prospectiva', d:'Una vez al año, el equipo directivo debe responder formalmente: ¿qué aprendimos del año?, ¿dónde estamos hoy en cada eje?, ¿qué escenarios externos debemos anticipar?'}
+    ]},
+    alto:{nv:'Avanzado / Referente',tx:'El gobierno digital está maduro. La estrategia es viva, conectada al negocio y con revisiones periódicas. El riesgo en este nivel es la complacencia: el mercado cambia más rápido que los ciclos anuales de planeación.',ac:[
+      {t:'Implementar revisiones estratégicas trimestrales cortas', d:'Las revisiones anuales son insuficientes. Incorpore micro-revisiones de 2 horas cada trimestre para ajustar la estrategia ante cambios del entorno antes de que sea tarde.'},
+      {t:'Construir un radar de tendencias tecnológicas activo', d:'Monitoree sistemáticamente tecnologías emergentes relevantes para su sector. Asigne a alguien la responsabilidad de nutrir este radar mensualmente.'},
+      {t:'Explorar monetización de capacidades digitales', d:'Evalúe si sus capacidades digitales pueden convertirse en servicios para terceros o en nuevas líneas de ingreso. Este es el salto de empresa digital a negocio digital.'}
+    ]}
+  }},
+  { key:'Organización & Colaboración', color:'#818cf8', icon:'fa-users-gear', preguntas:[
+    '¿Existen equipos multifuncionales (TI, Operaciones, Comercial, Riesgos) dedicados a ejecutar proyectos de transformación digital sin silos jerárquicos?',
+    '¿Los proyectos tecnológicos se ejecutan con metodologías ágiles (Scrum, Kanban) con entregas iterativas cada 2 a 4 semanas, o bajo proyectos en cascada de muchos meses?',
+    '¿Las decisiones operativas de un proyecto digital pueden tomarse sin cruzar más de 2 niveles de aprobación jerárquica?'
+  ],
+  fb:{
+    bajo:{nv:'Inexistente / Incipiente',tx:'La estructura organizacional es el principal freno. Los silos crean duplicidad, fricción y lentitud. Las reuniones sin propósito drenan la capacidad disponible. Ningún software puede compensar un problema de diseño organizacional.',ac:[
+      {t:'Lanzar 2 células piloto multifuncionales', d:'Seleccione los 2 proyectos más críticos y conforme un equipo mixto de 4-6 personas con TI, negocio y operaciones. Mida velocidad de entrega vs. el modelo anterior en 60 días.'},
+      {t:'Auditar y eliminar reuniones ineficientes', d:'Levante un inventario de todas las reuniones recurrentes. Elimine toda reunión sin agenda, sin dueño o sin decisión. Transfiera temas operativos a canales asíncronos (chat, docs).'},
+      {t:'Implementar Scrum básico en un proyecto piloto', d:'Elija el proyecto más urgente y aplique Scrum simplificado: un Product Owner, Sprints de 2 semanas, Daily de 15 min, Retrospectiva al final. Mida qué cambia en 30 días.'}
+    ]},
+    medio:{nv:'En Desarrollo',tx:'El modelo colaborativo existe pero sigue frenado por aprobaciones verticales y reuniones ineficientes. La burocracia consume más tiempo que la ejecución real. Los equipos ágiles existen pero no están conectados a métricas de productividad.',ac:[
+      {t:'Mapear y eliminar cuellos de botella de aprobación', d:'Identifique los 5 procesos de aprobación que más tiempo consumen. Para cada uno, determine: ¿se puede delegar?, ¿se puede eliminar?, ¿se puede automatizar? Ejecute al menos 3 cambios en el próximo trimestre.'},
+      {t:'Implementar métricas de productividad de equipo', d:'Mida cycle time (tiempo de inicio a entrega) y velocidad (Story Points por Sprint). Úselas para mejorar el proceso, nunca para evaluar personas individualmente.'},
+      {t:'Establecer cultura de comunicación asíncrona', d:'Defina qué temas van a reunión y cuáles van a chat/doc. Toda reunión debe tener agenda previa, dueño y decisiones documentadas al finalizar. Mida el tiempo promedio de reunión por semana.'}
+    ]},
+    alto:{nv:'Avanzado / Referente',tx:'El modelo ágil está generando valor consistente. Las células entregan de forma predecible. El reto es escalar la cultura ágil a áreas de negocio más allá de TI y mantener la velocidad sin perder la cohesión.',ac:[
+      {t:'Extender Scrum/Kanban a áreas de negocio', d:'Aplique metodología ágil en Comercial, Riesgos y Operaciones. El agilismo no es exclusivo de TI — cualquier trabajo de conocimiento se beneficia de ciclos cortos y retrospectivas.'},
+      {t:'Evaluar escalamiento ágil con SAFe cuando existan 3+ células', d:'SAFe solo tiene sentido cuando hay múltiples células con dependencias cruzadas reales. No escale antes — la estructura de coordinación sin el problema que resolver es burocracia pura.'},
+      {t:'Documentar el modelo como caso de estudio', d:'Su modelo organizacional ágil es un activo diferenciador. Documentarlo y compartirlo externamente genera liderazgo de pensamiento y fortalece el posicionamiento como organización de referencia.'}
+    ]}
+  }},
+  { key:'Experiencia del Cliente', color:'#f59e0b', icon:'fa-star', preguntas:[
+    '¿Un cliente o asociado puede vincularse (abrir cuenta o afiliarse) de forma 100% digital sin necesidad de ir a una oficina física?',
+    '¿Los trámites más frecuentes (consulta de saldo, solicitud de crédito, pagos, certificados) están disponibles en canales digitales sin intervención humana?',
+    '¿La organización mide el sentimiento del cliente de forma sistemática (NPS, CSAT, señales de abandono) y usa esos datos para mejorar procesos?'
+  ],
+  fb:{
+    bajo:{nv:'Inexistente / Incipiente',tx:'Sus clientes comparan su experiencia contra las mejores apps del mundo, no contra su competencia directa. Cada fricción es una puerta abierta. No medir el sentimiento del cliente equivale a operar sin timón.',ac:[
+      {t:'Aplicar el Hexágono de Experiencia', d:'Evalúe 6 dimensiones de la relación con el cliente: me conoce, me atiende, me informa, aprende de mí, me resuelve, me empodera. Calificando cada una de 1 a 5 identifica con precisión el punto más débil.'},
+      {t:'Digitalizar los 2 trámites más frecuentes', d:'Identifique cuáles son los trámites que más veces repite un cliente en un año. Digitalícelos completamente. El retorno es inmediato: menos carga operativa + mejor experiencia.'},
+      {t:'Implementar NPS mínimo en 3 preguntas', d:'Lance una encuesta de NPS de 3 preguntas en el canal más usado. No espere la solución perfecta — un NPS manual y consistente es más valioso que un sistema automatizado que no existe.'}
+    ]},
+    medio:{nv:'En Desarrollo',tx:'Los canales digitales existen pero la experiencia es inconsistente. Los procesos analógicos en el back-office sabotean la experiencia digital del frente. El sentimiento del cliente se mide pero no se usa para decidir.',ac:[
+      {t:'Digitalizar el back-office que frena el frente digital', d:'Identifique qué procesos internos (validaciones, firmas, aprobaciones) generan demoras en la respuesta al cliente. Use automatización o RPA para eliminarlos. El cliente ve la app — pero espera el proceso manual.'},
+      {t:'Conectar el NPS a decisiones de mejora trimestrales', d:'El NPS solo genera valor cuando sus resultados se revisan en sesiones formales y generan decisiones de cambio. Establezca un ciclo trimestral: medir — analizar — decidir — ejecutar.'},
+      {t:'Implementar análisis de abandono en canales digitales', d:'Mida en qué punto exacto los clientes abandonan un trámite digital. Cada punto de abandono es un defecto de diseño o de proceso que tiene solución técnica concreta.'}
+    ]},
+    alto:{nv:'Avanzado / Referente',tx:'Su experiencia digital es un diferenciador real. La medición es sistemática y se usa para decidir. El siguiente nivel es la anticipación: resolver necesidades antes de que el cliente las exprese.',ac:[
+      {t:'Implementar personalización basada en comportamiento', d:'Use los datos de uso para personalizar la experiencia: contenido relevante, ofertas oportunas, alertas proactivas. El objetivo es pasar de "me resuelve" a "aprende de mí" en el Hexágono.'},
+      {t:'Medir NPS por segmento y canal de forma automatizada', d:'Un NPS global oculta patrones críticos. Segmente por canal, por perfil de cliente y por etapa del ciclo de vida. Las diferencias entre segmentos son las oportunidades de acción más valiosas.'},
+      {t:'Conectar el análisis de sentimiento al tablero directivo', d:'El sentimiento del cliente debe ser un indicador de primer nivel en el tablero de gobierno, al mismo nivel que los indicadores financieros. Si la dirección no lo revisa, nadie en la organización lo prioriza.'}
+    ]}
+  }},
+  { key:'Tecnología & Plataformas', color:'#34d399', icon:'fa-microchip', preguntas:[
+    '¿El sistema core (financiero, ERP u operativo) puede integrarse con nuevas soluciones mediante APIs, sin requerir desarrollo exclusivo del proveedor original?',
+    '¿La organización opera servicios en la nube para al menos sus sistemas más críticos, con elasticidad y disponibilidad 24/7?',
+    '¿Existe una hoja de ruta documentada de modernización tecnológica (migración de sistemas legacy, desacoplamiento, adopción cloud) con hitos y responsables definidos?'
+  ],
+  fb:{
+    bajo:{nv:'Inexistente / Incipiente',tx:'Los sistemas legacy son el lastre más costoso de la transformación. Está pagando mantenimiento de tecnología que no genera ventaja competitiva y bloquea cualquier iniciativa de innovación. Sin desacoplamiento, todo lo demás se construye sobre arena.',ac:[
+      {t:'Realizar inventario de deuda tecnológica con costo estimado', d:'Levante un mapa de todos los sistemas actuales: cuánto cuestan, qué tan integrables son, cuándo termina su vida útil. Sin este inventario no hay base para priorizar la modernización.'},
+      {t:'Elegir la estrategia de modernización correcta', d:'Existen 4 estrategias: desacoplamiento digital (recomendado para la mayoría), modernización en sitio, desacoplamiento en microservicios y reemplazo en paralelo. La elección depende del estado de cada sistema — no son intercambiables.'},
+      {t:'Formalizar política de ciberseguridad con artefactos mínimos', d:'Documente: clasificación de activos de información, matriz de riesgos tecnológicos, control de accesos por privilegio mínimo, política de cifrado y DRP con RTO/RPO definidos. Sin esto, cualquier apertura digital es un riesgo no gestionado.'}
+    ]},
+    medio:{nv:'En Desarrollo',tx:'La modernización está en marcha pero las integraciones parche son un riesgo operativo creciente. Cada nueva conexión sin arquitectura coherente aumenta la fragilidad del ecosistema y el costo de mantenimiento.',ac:[
+      {t:'Establecer un API Gateway central', d:'Centralice todas las integraciones a través de un API Gateway. Esto da visibilidad, control de accesos, monitoreo y la base para cualquier apertura futura a ecosistemas externos.'},
+      {t:'Diseñar hoja de ruta de modernización a 18 meses con hitos', d:'La modernización sin plan es una serie de urgencias. Defina qué sistemas migrar en qué orden, con responsables, presupuesto y criterios de éxito por fase. Preséntela a la dirección como un proyecto de negocio, no de TI.'},
+      {t:'Incorporar CI/CD en al menos un sistema crítico', d:'La capacidad de desplegar sin downtime es una ventaja competitiva. Implemente pipelines de integración y despliegue continuo en el sistema más activo. La curva de aprendizaje justifica el esfuerzo.'}
+    ]},
+    alto:{nv:'Avanzado / Referente',tx:'Su infraestructura es una ventaja competitiva real. Puede innovar a una velocidad que competidores con sistemas legacy no pueden igualar. El siguiente paso es convertir las capacidades tecnológicas en activos de negocio.',ac:[
+      {t:'Integrar IA/ML en procesos core de alto impacto', d:'Identifique 2-3 procesos donde la predicción cambia decisiones de negocio críticas: riesgo de mora, probabilidad de abandono, demanda de productos. Pilotee un modelo predictivo en cada uno.'},
+      {t:'Evaluar convertir capacidades tecnológicas en plataforma', d:'Si su arquitectura es robusta y desacoplada, considere ofrecerla como servicio a terceros. Una API bien diseñada puede convertirse en una nueva línea de ingresos y en una barrera de entrada difícil de replicar.'},
+      {t:'Adoptar prácticas de MLOps para escalar modelos de IA', d:'El verdadero valor de la IA está en los modelos en producción, no en los experimentos. MLOps es la disciplina que lleva un modelo del notebook al negocio con monitoreo, versionamiento y mejora continua.'}
+    ]}
+  }},
+  { key:'Información & Insights', color:'#a78bfa', icon:'fa-database', preguntas:[
+    '¿Existe una única fuente de verdad para los datos críticos del negocio (clientes, cartera, transacciones), o cada área maneja su propia versión con definiciones distintas?',
+    '¿La alta dirección toma decisiones con base en dashboards actualizados en tiempo real, o depende de reportes manuales consolidados con días de retraso?',
+    '¿Existe un modelo formal de gobierno de datos con roles definidos (Data Owner, Data Steward, Comité de Datos) y políticas de calidad?'
+  ],
+  fb:{
+    bajo:{nv:'Inexistente / Incipiente',tx:'Tomar decisiones sin datos confiables es competir con los ojos vendados. Sus competidores más ágiles ya saben cosas sobre su mercado que usted descubrirá meses después, cuando el costo de reaccionar sea mucho mayor. Sin gobierno de datos, la IA es una promesa imposible.',ac:[
+      {t:'Implementar dashboard ejecutivo con 5 KPIs críticos', d:'No espere el sistema perfecto. Construya un primer dashboard manual con los 5 indicadores que más importan para las decisiones de negocio. La velocidad de acceso a datos es su primer activo analítico.'},
+      {t:'Definir un Data Owner por área crítica', d:'Asigne formalmente a una persona la responsabilidad de la calidad y definición de los datos de su área. Sin dueños claros, nadie es responsable y cada área inventa su propia verdad.'},
+      {t:'Levantar manualmente indicadores críticos mientras se gobierna el dato', d:'No posponga la medición esperando el sistema ideal. Un KPI manual y consistente es mejor que un KPI automático que no existe. Mida ya, aunque sea en una hoja de cálculo bien estructurada.'}
+    ]},
+    medio:{nv:'En Desarrollo',tx:'Los datos existen pero no fluyen de forma ordenada. Sin una única fuente de verdad, las reuniones se convierten en debates sobre cuál número es el correcto. El problema no es tecnológico: es de gobernanza.',ac:[
+      {t:'Establecer la única fuente de verdad para los 3 indicadores más críticos', d:'Empiece pequeño: elija los 3 indicadores que más se debaten en reuniones directivas. Defina una sola fuente para cada uno y documéntela. El impacto en la calidad de las decisiones es inmediato.'},
+      {t:'Implementar las 4 capas del modelo de gobierno de datos', d:'Formalice: Capa 1 (Roles: Data Owner, Steward, Comité), Capa 2 (Políticas mínimas: ficha técnica por indicador, trazabilidad), Capa 3 (Arquitectura: fuentes, consolidación, consumo), Capa 4 (Ciclo de mejora trimestral).'},
+      {t:'Evaluar posición frente a regulación de Open Finance', d:'Revise si su organización está bajo el ámbito de regulación de Open Finance vigente. Evalúe qué capacidad técnica tiene hoy para implementar el doble consentimiento y compartición de datos por API.'}
+    ]},
+    alto:{nv:'Avanzado / Referente',tx:'Su cultura de datos es un diferenciador estructural. Puede anticipar el mercado cuando otros reaccionan. El siguiente nivel es pasar de BI descriptivo (qué pasó) a analítica prescriptiva (qué debería hacer) y democratizar los datos en toda la organización.',ac:[
+      {t:'Implementar modelos predictivos en churn y deterioro temprano', d:'Estos son los dos modelos de mayor ROI inmediato en cualquier organización con cartera o base de clientes. El deterioro temprano detectado semanas antes de que se refleje en los estados contables cambia completamente la gestión.'},
+      {t:'Explorar monetización ética de datos bajo Open Finance', d:'Con el gobierno de datos maduro, evalúe qué datos propios pueden generar valor si se comparten de forma controlada con socios del ecosistema. Diseñe el modelo de consentimiento y el esquema de valor antes de cualquier implementación.'},
+      {t:'Democratizar el acceso a datos en toda la organización', d:'Los datos no deben ser exclusivos del equipo de analítica. Implemente alfabetización de datos en todos los niveles. Cuando los equipos operativos pueden acceder a sus propios indicadores en tiempo real, la velocidad de mejora se multiplica.'}
+    ]}
+  }},
+  { key:'Crecimiento & Innovación', color:'#fb923c', icon:'fa-lightbulb', preguntas:[
+    '¿Existe un presupuesto y proceso formal para experimentar con nuevas iniciativas (pilotos, PMVs), separado del presupuesto operativo regular?',
+    '¿La organización tiene alianzas activas con fintechs, startups o proveedores de tecnología emergente para co-desarrollar o pilotar soluciones concretas?',
+    '¿El tiempo promedio desde que se aprueba una idea de innovación hasta que se lanza un piloto medible es inferior a 90 días?'
+  ],
+  fb:{
+    bajo:{nv:'Inexistente / Incipiente',tx:'Sin innovación estructurada, el crecimiento depende de factores externos no controlables. Las organizaciones que no innovan no se quedan quietas: retroceden frente a quienes sí lo hacen. Toda idea nueva muere en el proceso de aprobación antes de ver la luz.',ac:[
+      {t:'Asignar un fondo de experimentación del 2-3% del presupuesto operativo', d:'Sin presupuesto reservado, la innovación compite contra las urgencias operativas y siempre pierde. Un fondo pequeño pero fijo cambia radicalmente qué se puede explorar sin pedir aprobación extraordinaria.'},
+      {t:'Aplicar la Matriz de Valor y Dificultad a las ideas en cartera', d:'Clasifique todas las ideas en cartera en 4 cuadrantes: Alto Valor / Baja Dificultad (ejecutar ya), Alto Valor / Alta Dificultad (planificar con cuidado), Bajo Valor / Baja Dificultad (solo si sobra capacidad), Bajo Valor / Alta Dificultad (descartar).'},
+      {t:'Lanzar un PMV en 60 días', d:'Elija la idea más pequeña de alto valor que pueda validarse en 60 días con recursos mínimos. Un experimento pequeño ejecutado vale más que un plan grande en papel. El objetivo es aprendizaje, no perfección.'}
+    ]},
+    medio:{nv:'En Desarrollo',tx:'La innovación incremental existe pero es insuficiente. Sus competidores más disruptivos no están mejorando lo que ya existe: están creando nuevas categorías donde sus ventajas actuales no aplican.',ac:[
+      {t:'Abrir canal de innovación con el ecosistema externo', d:'Establezca contacto formal con al menos 3 startups o fintechs de su sector. No para comprarles — para co-experimentar. Las alianzas de innovación son más baratas y rápidas que el desarrollo propio.'},
+      {t:'Dedicar 20% de capacidad de innovación a iniciativas que cuestionen el modelo actual', d:'La innovación que solo mejora lo existente tiene un límite natural. Reserve una fracción del esfuerzo para explorar ideas que podrían obsoletar su propia operación antes de que lo haga un competidor externo.'},
+      {t:'Implementar ciclo formal de ideación trimestral', d:'Institucionalice la innovación: un proceso trimestral con criterios de evaluación claros, aprobación de la dirección y asignación de recursos. La innovación como proceso es más sostenible que la innovación como evento.'}
+    ]},
+    alto:{nv:'Avanzado / Referente',tx:'Su capacidad de innovación es un activo estratégico reconocido internamente y externamente. El reto es mantener velocidad sin perder foco. La innovación sin priorización estricta consume recursos sin generar impacto real.',ac:[
+      {t:'Implementar portafolio balanceado de innovación', d:'70% incremental (mejoras sobre lo existente) / 20% adyacente (expansión a mercados cercanos) / 10% disruptivo (nuevos modelos que podrían canibalizar lo actual). Sin este balance, el portafolio tiende a acumular proyectos incrementales de bajo impacto.'},
+      {t:'Medir ROI de innovación por proyecto con criterio de 90 días', d:'Establezca un criterio claro de descarte: toda iniciativa que no demuestre tracción medible en 90 días se cierra o reformula. La cultura de "dar tiempo" a proyectos sin evidencia es la forma más costosa de desperdiciar capacidad de innovación.'},
+      {t:'Explorar modelos de innovación abierta con alianzas formales', d:'Considere un fondo de inversión en startups del sector como vehículo de innovación e inteligencia de mercado simultáneos. O establezca un programa de aceleración interno que invite a startups a resolver problemas reales de su organización.'}
+    ]}
+  }},
+  { key:'Seguridad & Privacidad', color:'#f43f5e', icon:'fa-shield-halved', preguntas:[
+    '¿Existe un Sistema de Gestión de Seguridad de la Información (SGSI) formalmente implementado, con políticas vigentes revisadas en el último año?',
+    '¿La organización realiza simulacros de incidentes de ciberseguridad (ransomware, phishing, pérdida de datos) al menos una vez al año, con el equipo directivo involucrado?',
+    '¿Existe monitoreo continuo 24/7 de amenazas y accesos no autorizados a sistemas críticos, con alertas automáticas y tiempos de respuesta definidos?'
+  ],
+  fb:{
+    bajo:{nv:'Inexistente / Incipiente',tx:'Un incidente de ciberseguridad en este nivel puede ser irreversible: pérdida de datos de clientes, sanciones regulatorias, daño reputacional permanente y en muchos casos cierre de operaciones. El costo de no invertir en seguridad siempre supera el de invertir.',ac:[
+      {t:'Ejecutar análisis de vulnerabilidades urgente', d:'Contrate un análisis de penetración (pen test) básico sobre sus sistemas críticos. Sin saber dónde están las vulnerabilidades reales, cualquier plan de seguridad es una ilusión de control.'},
+      {t:'Implementar los 6 artefactos formales de ciberseguridad', d:'Documente y operacionalice: clasificación de activos de información, matriz de riesgos tecnológicos, control de accesos por privilegio mínimo, política de cifrado en tránsito y reposo, y DRP con RTO/RPO definidos.'},
+      {t:'Ejecutar simulacro de incidente con el equipo directivo', d:'El peor momento para aprender a responder a un incidente es cuando ocurre. Realice un simulacro tipo tabletop con el equipo directivo en los próximos 60 días. La respuesta que observa es su nivel real de preparación.'}
+    ]},
+    medio:{nv:'En Desarrollo',tx:'Las políticas existen pero no se aplican consistentemente. Las auditorías anuales detectan problemas después de que ya ocurrieron. En ciberseguridad, la postura reactiva es la más costosa — el tiempo entre la brecha y su detección importa más que la brecha misma.',ac:[
+      {t:'Implementar monitoreo continuo con SIEM básico', d:'Establezca monitoreo 24/7 con alertas automáticas sobre sus sistemas críticos. Reduzca el tiempo de detección de incidentes de días a horas. Cada hora adicional sin detección tiene un costo exponencial.'},
+      {t:'Incorporar DevSecOps en la Definición de Terminado de cada Sprint', d:'La seguridad que se revisa después del desarrollo es más cara y menos efectiva. Incluya validación de seguridad como requisito en la Definición de Terminado de cada historia de usuario en Scrum.'},
+      {t:'Revisar contratos de proveedores con los 4 puntos de gobierno de terceros', d:'Cada proveedor conectado es una extensión de su superficie de riesgo. Exija en cada contrato: cumplimiento de sus políticas de seguridad, derecho de auditoría, protocolo de respuesta ante incidentes y blindaje de datos del cliente en tránsito y reposo.'}
+    ]},
+    alto:{nv:'Avanzado / Referente',tx:'Su postura de seguridad es proactiva y madura. Es un activo diferenciador en mercados donde la confianza es el principal activo. El siguiente nivel es convertir la seguridad en argumento explícito de valor ante clientes y reguladores.',ac:[
+      {t:'Buscar certificaciones formales de seguridad', d:'ISO 27001 o SOC 2 convierten su postura de seguridad en un diferenciador comercial verificable. Reducen el costo de ventas B2B y abren puertas a clientes enterprise que requieren estos estándares.'},
+      {t:'Publicar su postura de seguridad como propuesta de valor', d:'La transparencia en seguridad genera confianza. Publique un resumen ejecutivo de sus controles y certificaciones. En sectores como el financiero o de salud, esto es un argumento de diferenciación que pocos competidores pueden replicar.'},
+      {t:'Explorar Zero Trust Architecture', d:'Zero Trust asume que ningún usuario o sistema es confiable por defecto, incluso dentro de la red. Es el modelo de seguridad más robusto para organizaciones con ecosistemas digitales abiertos y trabajo remoto. Evalúe la transición si aún no lo ha hecho.'}
+    ]}
+  }},
+  { key:'Operación & Ecosistemas', color:'#2dd4bf', icon:'fa-network-wired', preguntas:[
+    '¿Los procesos de recaudo, conciliación y pagos están automatizados en tiempo real, sin requerir intervención manual diaria o semanal?',
+    '¿La organización está integrada (o en proceso formal de integración) a esquemas de pagos digitales interoperables (PSE, Transfiya, QR, ACH u equivalentes)?',
+    '¿Existe una arquitectura de APIs documentada que permita conectarse con socios del ecosistema sin desarrollos a medida para cada integración?'
+  ],
+  fb:{
+    bajo:{nv:'Inexistente / Incipiente',tx:'Una organización completamente cerrada en la era de los ecosistemas está construyendo todo desde cero mientras otros se benefician de la red. Los procesos manuales de recaudo y conciliación son un cuello de botella que escala mal y genera errores costosos.',ac:[
+      {t:'Identificar las 3 integraciones externas de mayor impacto', d:'Mapee con qué actores externos debería estar conectado su sistema hoy: pasarelas de pago, burós de crédito, plataformas de comunicación, entidades regulatorias. Priorice la integración más crítica para el negocio.'},
+      {t:'Automatizar la conciliación del proceso de mayor volumen', d:'Identifique el proceso de conciliación manual más frecuente y costoso en tiempo. Cualquier proceso que se repite más de 2 veces por semana debe automatizarse. El retorno es inmediato en reducción de errores y tiempo.'},
+      {t:'Evaluar posición frente a Open Finance usando el checklist regulatorio', d:'Revise si su organización está en el ámbito de la regulación de Open Finance vigente en su país. Evalúe qué capacidad técnica tiene hoy para el doble consentimiento y compartición de datos por API. Este análisis es urgente si el plazo de cumplimiento está próximo.'}
+    ]},
+    medio:{nv:'En Desarrollo',tx:'Las alianzas son comerciales pero no técnicas. Las integraciones manuales o por archivo son un riesgo operativo que escala mal. Cada nueva integración sin arquitectura coherente aumenta la fragilidad del ecosistema.',ac:[
+      {t:'Migrar las 2 integraciones más frecuentes a APIs en tiempo real', d:'Reemplace los procesos de integración por archivo plano o manual con conexiones API directas. El retorno es inmediato: menor error humano, mayor velocidad y mejor experiencia para el cliente final.'},
+      {t:'Incorporar indicadores de ecosistema al tablero directivo', d:'La disponibilidad de integraciones y la tasa de errores en transacciones digitales son indicadores críticos de negocio, no solo de TI. Si la dirección no los monitorea, los problemas se detectan tarde y cuestan más.'},
+      {t:'Construir la hoja de ruta de cumplimiento Open Finance', d:'Diseñe un plan de cumplimiento en fases: diagnóstico de brechas técnicas, actualización de políticas de consentimiento, desarrollo de APIs requeridas, pruebas de integración y despliegue. La organización que llega preparada al plazo regulatorio tiene ventaja competitiva.'}
+    ]},
+    alto:{nv:'Avanzado / Referente',tx:'Su modelo de ecosistema genera valor real y diferenciado. Las integraciones automatizadas están reduciendo costos operativos y mejorando la experiencia. El siguiente nivel: convertirse en orquestador del ecosistema, no solo participante.',ac:[
+      {t:'Evaluar qué capacidades propias ofrecer como servicio externo', d:'Si su arquitectura está madura, considere exponer algunas capacidades propias como APIs consumibles por terceros. Una API bien diseñada puede ser una nueva línea de ingresos y una barrera de entrada que sus competidores no pueden replicar fácilmente.'},
+      {t:'Diseñar incentivos para ampliar el ecosistema de socios', d:'Cada nuevo participante en su ecosistema aumenta el valor para todos, incluyendo para usted. Diseñe un programa formal de socios con criterios de onboarding, niveles de integración y beneficios mutuos.'},
+      {t:'Explorar modelo de plataforma en su sector', d:'El modelo de plataforma genera efectos de red que se componen con el tiempo y crean barreras de entrada estructurales. Evalúe si puede posicionarse como la plataforma que otros actores de su sector usan para conectarse, en vez de ser un participante más en plataformas de terceros.'}
+    ]}
+  }}
+];
+
+// ─── Horizontes: misma estructura y textos genéricos que radar_diagnostico.html ───
+const H_DATA_BASE = [
+  { id:'h1', label:'Horizonte 1', period:'Meses 1 a 6', icon:'fa-fire', color:'#f43f5e', bg:'bg-rose-500/5', border:'border-rose-500/20', tc:'text-rose-400',
+    title:'Estabilizar — Cimientos críticos',
+    intro:'Estos son los ejes más débiles de la sala. Sin estabilizarlos primero, cualquier iniciativa en los otros horizontes construirá sobre bases inestables. La regla es clara: no avanzar al Horizonte 2 hasta que estos ejes superen el nivel 3.',
+    recomend: [
+      {icon:'fa-bullseye', txt:'Defina un OKR específico por cada eje de este horizonte. Sin objetivos medibles, el avance es invisible y no genera compromiso institucional.'},
+      {icon:'fa-calendar-check', txt:'Asigne un responsable y un presupuesto concreto a cada eje. La responsabilidad difusa es la causa más común de que los planes de transformación no se ejecuten.'},
+      {icon:'fa-gauge-high', txt:'Establezca revisiones mensuales del avance en estos ejes. La frecuencia importa: mensual en Horizonte 1, trimestral en Horizontes 2 y 3.'}
+    ]},
+  { id:'h2', label:'Horizonte 2', period:'Meses 6 a 18', icon:'fa-rocket', color:'#f59e0b', bg:'bg-amber-500/5', border:'border-amber-500/20', tc:'text-amber-400',
+    title:'Automatizar y escalar',
+    intro:'Con los cimientos del Horizonte 1 estabilizados, estos ejes son el siguiente nivel de madurez. Aquí la organización pasa de corregir deficiencias a construir capacidades que generan ventaja competitiva real.',
+    recomend: [
+      {icon:'fa-chart-line', txt:'Conecte cada iniciativa de este horizonte a un KPI de negocio con meta cuantificada. Los proyectos de transformación sin métricas de impacto son proyectos de gasto, no de inversión.'},
+      {icon:'fa-users-gear', txt:'Escale las células ágiles: cada iniciativa de este horizonte debe tener un equipo multifuncional con Product Owner, Scrum Master y capacidad de entrega en Sprints de 2 semanas.'},
+      {icon:'fa-plug', txt:'Priorice integraciones que multipliquen el valor de lo construido en el Horizonte 1. La automatización y los ecosistemas solo funcionan sobre datos gobernados y sistemas desacoplados.'}
+    ]},
+  { id:'h3', label:'Horizonte 3', period:'Mes 18 en adelante', icon:'fa-star', color:'#34d399', bg:'bg-emerald-500/5', border:'border-emerald-500/20', tc:'text-emerald-400',
+    title:'Predecir y liderar el ecosistema',
+    intro:'Las dimensiones más maduras de la sala. El reto en este horizonte no es construir — es mantener la velocidad de innovación y convertir las capacidades construidas en ventajas competitivas que el mercado reconozca.',
+    recomend: [
+      {icon:'fa-brain', txt:'Explore inteligencia artificial y analítica predictiva en las capacidades de este horizonte. Los datos gobernados y los sistemas desacoplados son el prerrequisito — si están listos, el valor de la IA es inmediato.'},
+      {icon:'fa-share-nodes', txt:'Evalúe convertirse en orquestador del ecosistema. Las organizaciones más maduras digitalmente no participan en plataformas de terceros — crean las plataformas que otros usan.'},
+      {icon:'fa-trophy', txt:'Documente y comparta sus capacidades como caso de referencia. El liderazgo de pensamiento en transformación digital es un activo de posicionamiento que genera nuevas oportunidades de negocio.'}
+    ]}
+];
+
+const $ = (id) => document.getElementById(id);
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+const SECUENCIA = [];
+AXES_VIVO.forEach((eje, ejeIdx) => {
+  eje.preguntas.forEach((texto, pIdx) => {
+    SECUENCIA.push({ ejeIdx, pIdx, texto, ejeKey: eje.key, color: eje.color });
+  });
+});
+
+let sesionId = null;
+let pin = null;
+let posActual = 0;
+let chartActual = null;
+let chartRadar = null;
+let pollPresencia = null;
+let pollConteo = null;
+
+function generarPin(){ return String(Math.floor(1000 + Math.random() * 9000)); }
+
+$('btn-crear').addEventListener('click', async () => {
+  $('btn-crear').disabled = true;
+  $('crear-error').classList.add('hidden');
+  let intentos = 0;
+  while (intentos < 5) {
+    intentos++;
+    pin = generarPin();
+    try {
+      const data = await sbFetch('sesiones_vivo', {
+        method: 'POST',
+        body: { pin, estado: 'lobby', eje_index: 0, pregunta_index: 0 }
+      });
+      sesionId = data[0].id;
+      break;
+    } catch (e) {
+      if (intentos >= 5) {
+        $('crear-error').textContent = 'No se pudo crear la sesión: ' + e.message + ' (revisa SUPABASE_URL/ANON y que hayas corrido schema.sql)';
+        $('crear-error').classList.remove('hidden');
+        $('btn-crear').disabled = false;
+        return;
+      }
+      // PIN duplicado u otro error transitorio: reintenta con otro PIN
+    }
+  }
+
+  const url = new URL('radar_vivo_participante.html', window.location.href);
+  url.searchParams.set('pin', pin);
+  $('join-url').textContent = url.href;
+  $('pin-display').textContent = pin;
+  $('qr-img').src = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + encodeURIComponent(url.href);
+
+  $('lobby-pre').classList.add('hidden');
+  $('lobby-post').classList.remove('hidden');
+
+  pollPresencia = setInterval(actualizarConectados, 3000);
+  actualizarConectados();
+});
+
+async function actualizarConectados(){
+  try {
+    const cutoff = new Date(Date.now() - 15000).toISOString();
+    const data = await sbFetch(`presencia_vivo?sesion_id=eq.${sesionId}&last_seen=gte.${encodeURIComponent(cutoff)}&select=participante_id`);
+    const n = data.length;
+    $('contador').textContent = n;
+    $('ctrl-conectados').textContent = n;
+  } catch (e) { /* no bloquear la sesión por un fallo de conteo */ }
+}
+
+$('btn-iniciar').addEventListener('click', async () => {
+  posActual = 0;
+  clearInterval(pollPresencia);
+  pollPresencia = setInterval(actualizarConectados, 4000);
+  await avanzarA(posActual, 'activa');
+  showScreen('s-control');
+  pollConteo = setInterval(() => cargarConteoActual(posActual), 2000);
+});
+
+async function avanzarA(pos, estadoOverride){
+  const item = SECUENCIA[pos];
+  const estado = estadoOverride || 'activa';
+  await sbFetch(`sesiones_vivo?id=eq.${sesionId}`, {
+    method: 'PATCH',
+    body: { eje_index: item.ejeIdx, pregunta_index: item.pIdx, estado }
+  });
+  renderPregunta(pos);
+}
+
+function renderPregunta(pos){
+  const item = SECUENCIA[pos];
+  $('ctrl-progreso').textContent = `Pregunta ${pos + 1} de ${SECUENCIA.length}`;
+  $('ctrl-eje').textContent = item.ejeKey;
+  $('ctrl-eje').style.color = item.color;
+  $('ctrl-pregunta').textContent = item.texto;
+  $('btn-anterior').disabled = pos === 0;
+  $('btn-anterior').classList.toggle('opacity-40', pos === 0);
+  renderChartActual([0,0,0,0,0]);
+  $('ctrl-total').textContent = '0';
+  cargarConteoActual(pos);
+}
+
+async function cargarConteoActual(pos){
+  const item = SECUENCIA[pos];
+  try {
+    const data = await sbFetch(`respuestas_vivo?sesion_id=eq.${sesionId}&eje_index=eq.${item.ejeIdx}&pregunta_index=eq.${item.pIdx}&select=valor`);
+    const counts = [0,0,0,0,0];
+    data.forEach(r => counts[r.valor - 1]++);
+    renderChartActual(counts);
+    $('ctrl-total').textContent = data.length;
+  } catch (e) { /* se reintenta en el próximo ciclo de sondeo */ }
+}
+
+function renderChartActual(counts){
+  const ctx = $('chart-actual').getContext('2d');
+  if (chartActual) chartActual.destroy();
+  chartActual = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['1 · Inexistente','2 · Incipiente','3 · En desarrollo','4 · Avanzado','5 · Referente'],
+      datasets: [{ data: counts, backgroundColor: '#22d3ee', borderRadius: 6 }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, ticks: { color: '#94a3b8', precision: 0 }, grid: { color: '#1e293b' } },
+        x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+$('btn-siguiente').addEventListener('click', async () => {
+  if (posActual < SECUENCIA.length - 1) {
+    posActual++;
+    await avanzarA(posActual);
+  } else {
+    clearInterval(pollConteo);
+    await sbFetch(`sesiones_vivo?id=eq.${sesionId}`, { method: 'PATCH', body: { estado: 'finalizada' } });
+    mostrarResumen();
+  }
+});
+
+$('btn-anterior').addEventListener('click', async () => {
+  if (posActual > 0) {
+    posActual--;
+    await avanzarA(posActual);
+  }
+});
+
+// ════════════════════════════════════════
+// PROPUESTA — mismo motor de diagnóstico que radar_diagnostico.html:
+// clasificación global, eje crítico, tarjetas por eje (fb bajo/medio/alto)
+// y Horizontes de Acción H1/H2/H3. Puente directo hacia la Hoja de Ruta.
+// ════════════════════════════════════════
+function getColor(s){ return s<2?'#f43f5e':s<3?'#fb923c':s<4?'#f59e0b':s<4.5?'#2dd4bf':'#34d399'; }
+function getBadge(s){ return s<2?'text-rose-400 bg-rose-500/10 border-rose-500/30':s<3?'text-orange-400 bg-orange-500/10 border-orange-500/30':s<4?'text-amber-400 bg-amber-500/10 border-amber-500/30':s<4.5?'text-teal-400 bg-teal-500/10 border-teal-500/30':'text-emerald-400 bg-emerald-500/10 border-emerald-500/30'; }
+function getLvlLabel(s){ return s<2?'Inexistente':s<3?'Incipiente':s<4?'En Desarrollo':s<4.5?'Avanzado':'Referente'; }
+function getTier(s){ return s<2.5?'bajo':s<4.0?'medio':'alto'; }
+
+async function mostrarResumen(){
+  showScreen('s-resumen');
+  let data;
+  try {
+    data = await sbFetch(`respuestas_vivo?sesion_id=eq.${sesionId}&select=eje_index,valor`);
+  } catch (e) {
+    alert('Error cargando el resumen: ' + e.message);
+    return;
+  }
+
+  const sumas = new Array(AXES_VIVO.length).fill(0);
+  const conteos = new Array(AXES_VIVO.length).fill(0);
+  data.forEach(r => { sumas[r.eje_index] += r.valor; conteos[r.eje_index]++; });
+  const avgs = sumas.map((s, i) => conteos[i] ? +(s / conteos[i]).toFixed(2) : 0);
+
+  const global = +(avgs.reduce((a,b) => a+b, 0) / avgs.length).toFixed(1);
+  let level, summary;
+  if (global < 2.0) { level='Madurez Inicial'; summary='La sala enfrenta brechas críticas en múltiples dimensiones. La prioridad inmediata es estabilizar los ejes más débiles antes de cualquier iniciativa de escala. Sin cimientos básicos, cada nueva herramienta suma complejidad sin valor.'; }
+  else if (global < 3.0) { level='Madurez Básica'; summary='Se han dado los primeros pasos pero las iniciativas son dispersas. El riesgo es invertir en tecnología sin arquitectura clara y terminar con más complejidad que antes. El foco debe ser conectar lo existente en una estrategia coherente antes de sumar nuevas herramientas.'; }
+  else if (global < 4.0) { level='En Desarrollo'; summary='Avances concretos pero gobernanza fragmentada. El reto no es empezar — es conectar las iniciativas existentes en una estrategia con OKRs medibles y horizontes claros. El eje más débil es el límite real de la capacidad de transformación.'; }
+  else if (global < 4.6) { level='Avanzado'; summary='Bases digitales sólidas. La mayoría de dimensiones operan con madurez real. El siguiente nivel es la diferenciación: convertir capacidades digitales en ventajas competitivas estructurales que la competencia no pueda replicar en el corto plazo.'; }
+  else { level='Referente Digital'; summary='La sala está en el top de madurez digital de su sector. El desafío ahora es mantener la velocidad de innovación, escalar el modelo de forma sostenible y convertir capacidades digitales en nuevas fuentes de ingreso.'; }
+
+  const minIdx = avgs.indexOf(Math.min(...avgs));
+  const minAx = AXES_VIVO[minIdx];
+  $('r-badge').textContent = `Índice Global: ${global} / 5.0`;
+  $('r-level').textContent = level;
+  $('r-summary').textContent = summary;
+  $('r-alert-txt').textContent = `${minAx.key} obtuvo ${avgs[minIdx]}/5 — el eje más bajo determina el techo real de toda iniciativa que dependa de él. Sin mejorar este eje primero, los demás avances tendrán un impacto limitado.`;
+
+  buildRadarChart(avgs);
+  buildBars(avgs);
+  buildDims(avgs);
+  buildHorizons(avgs);
+}
+
+function buildRadarChart(avgs){
+  const ctx = $('chart-radar').getContext('2d');
+  if (chartRadar) chartRadar.destroy();
+  chartRadar = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: AXES_VIVO.map(e => e.key.split(' & ')[0]),
+      datasets: [{
+        data: avgs,
+        backgroundColor: 'rgba(34,211,238,.10)',
+        borderColor: 'rgba(34,211,238,.9)',
+        borderWidth: 2,
+        pointBackgroundColor: avgs.map(s => getColor(s)),
+        pointBorderColor: '#0f172a',
+        pointBorderWidth: 2,
+        pointRadius: 5
+      }]
+    },
+    options: {
+      scales: {
+        r: {
+          min: 0, max: 5,
+          angleLines: { color: '#1e293b' },
+          grid: { color: '#1e293b' },
+          pointLabels: { color: '#e2e8f0', font: { size: 10, weight: '600' } },
+          ticks: { color: '#94a3b8', backdropColor: 'transparent', stepSize: 1 }
+        }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+function buildBars(avgs){
+  const c = $('r-bars');
+  c.innerHTML = '';
+  AXES_VIVO.forEach((ax, i) => {
+    const avg = avgs[i];
+    c.innerHTML += `
+      <div>
+        <div class="flex justify-between items-center mb-1">
+          <span class="text-xs text-slate-400 flex items-center gap-1.5">
+            <i class="fa-solid ${ax.icon} text-[9px]" style="color:${ax.color}"></i>${ax.key}
+          </span>
+          <span class="text-xs font-black font-mono border px-2 py-0.5 rounded-full ${getBadge(avg)}">${avg}/5</span>
+        </div>
+        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+          <div class="h-full rounded-full" style="width:${avg/5*100}%;background:${getColor(avg)}"></div>
+        </div>
+      </div>`;
+  });
+}
+
+function buildDims(avgs){
+  const c = $('r-dims');
+  c.innerHTML = '';
+  AXES_VIVO.forEach((ax, i) => {
+    const avg = avgs[i];
+    const tier = getTier(avg);
+    const fb = ax.fb[tier];
+    const borderCls = avg<2?'border-rose-500/40':avg<3?'border-orange-500/40':avg<4?'border-amber-500/40':avg<4.5?'border-teal-500/40':'border-emerald-500/40';
+    const actionsHtml = fb.ac.map(a => `
+      <div class="bg-slate-900 border border-slate-700/50 rounded-xl p-4 mb-3">
+        <p class="text-xs font-bold text-cyan-400 mb-1.5"><i class="fa-solid fa-bolt mr-1.5 text-[10px]"></i>${a.t}</p>
+        <p class="text-xs text-slate-400 leading-relaxed">${a.d}</p>
+      </div>`).join('');
+
+    c.innerHTML += `
+      <div class="card-dim bg-slate-900 border ${borderCls} rounded-2xl overflow-hidden">
+        <button onclick="toggleDim(${i})" class="w-full flex items-center justify-between p-5 text-left group hover:bg-slate-800/40 transition">
+          <div class="flex items-center gap-3">
+            <i class="fa-solid ${ax.icon} text-base" style="color:${ax.color}"></i>
+            <div>
+              <span class="text-sm font-bold text-white">${ax.key}</span>
+              <span class="ml-2 text-xs px-2 py-0.5 rounded-full border font-bold ${getBadge(avg)}">${avg}/5 · ${fb.nv}</span>
+            </div>
+          </div>
+          <i id="dim-arrow-${i}" class="fa-solid fa-chevron-down text-slate-600 group-hover:text-cyan-400 transition-transform duration-300 text-xs"></i>
+        </button>
+        <div id="dim-body-${i}" class="accordion-body border-t border-slate-800/60">
+          <div class="p-5">
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Diagnóstico</p>
+            <p class="text-sm text-slate-300 leading-relaxed mb-5">${fb.tx}</p>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Acciones prioritarias</p>
+            ${actionsHtml}
+          </div>
+        </div>
+      </div>`;
+  });
+}
+
+function toggleDim(i){
+  const body = $(`dim-body-${i}`);
+  const arrow = $(`dim-arrow-${i}`);
+  const isOpen = body.classList.contains('open');
+  document.querySelectorAll('.accordion-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('[id^="dim-arrow-"]').forEach(a => a.style.transform = 'rotate(0deg)');
+  if (!isOpen) { body.classList.add('open'); arrow.style.transform = 'rotate(180deg)'; }
+}
+
+function buildHorizons(avgs){
+  const sorted = avgs.map((avg, i) => ({avg, i})).sort((a,b) => a.avg - b.avg);
+  const grupos = [sorted.slice(0,3), sorted.slice(3,6), sorted.slice(6,8)];
+  const c = $('r-horizons');
+  c.innerHTML = '';
+  H_DATA_BASE.forEach((h, hi) => {
+    const axes = grupos[hi];
+    const axHtml = axes.map(({avg, i}) => `
+      <div class="flex items-center justify-between py-2 border-b border-slate-700/40 last:border-0">
+        <div class="flex items-center gap-2 text-xs text-slate-300">
+          <i class="fa-solid ${AXES_VIVO[i].icon} text-[10px]" style="color:${AXES_VIVO[i].color}"></i>
+          ${AXES_VIVO[i].key}
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="h-1.5 w-16 bg-slate-700 rounded-full overflow-hidden">
+            <div class="h-full rounded-full" style="width:${avg/5*100}%;background:${getColor(avg)}"></div>
+          </div>
+          <span class="text-xs font-black font-mono" style="color:${getColor(avg)}">${avg}/5</span>
+        </div>
+      </div>`).join('');
+
+    const recHtml = h.recomend.map(r => `
+      <div class="flex gap-3 items-start">
+        <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style="background:${h.color}18;border:1px solid ${h.color}30">
+          <i class="fa-solid ${r.icon} text-[10px]" style="color:${h.color}"></i>
+        </div>
+        <p class="text-xs text-slate-400 leading-relaxed">${r.txt}</p>
+      </div>`).join('');
+
+    c.innerHTML += `
+      <div class="${h.bg} border ${h.border} rounded-2xl overflow-hidden">
+        <div class="p-5 grid md:grid-cols-2 gap-5">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <i class="fa-solid ${h.icon} text-sm" style="color:${h.color}"></i>
+              <span class="text-sm font-black ${h.tc}">${h.label}</span>
+              <span class="text-xs text-slate-500 font-mono">${h.period}</span>
+            </div>
+            <h4 class="text-base font-bold text-white mb-2">${h.title}</h4>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">${h.intro}</p>
+            <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-700/40">${axHtml}</div>
+          </div>
+          <div>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Cómo ejecutar este horizonte</p>
+            <div class="space-y-3">${recHtml}</div>
+          </div>
+        </div>
+      </div>`;
+  });
+}
+
+$('btn-nueva').addEventListener('click', () => window.location.reload());
+</script>
+</body>
+</html>
