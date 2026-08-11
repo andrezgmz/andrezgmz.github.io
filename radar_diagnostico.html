@@ -58,6 +58,7 @@
 .card-dim { transition: all .25s ease; }
 .card-dim:hover { transform: translateY(-2px); }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="bg-slate-950 text-white min-h-screen">
 
@@ -1297,6 +1298,62 @@
 <div id="s-taller" class="hidden fade">
   <div class="max-w-4xl mx-auto py-8">
 
+    <!-- Sala de espera — se muestra al iniciar el taller, hasta que el facilitador confirma inicio -->
+    <div id="taller-sala-espera" class="">
+      <div class="max-w-2xl mx-auto py-10 text-center">
+
+        <p class="text-xs font-black uppercase tracking-widest mb-2"
+           style="color:rgb(129 140 248)">Sala de espera · Taller por Áreas</p>
+        <h2 class="text-2xl font-black text-white mb-1" id="taller-espera-eje"></h2>
+        <p class="text-xs text-slate-500 mb-8">
+          Comparta el QR o el PIN con los participantes antes de iniciar
+        </p>
+
+        <!-- QR + PIN lado a lado -->
+        <div class="flex items-center justify-center gap-8 mb-8">
+
+          <!-- QR -->
+          <div class="bg-white p-4 rounded-2xl">
+            <div id="taller-qr" style="width:180px;height:180px"></div>
+          </div>
+
+          <!-- PIN y stats -->
+          <div class="text-left">
+            <p class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">PIN de sala</p>
+            <p id="taller-espera-pin" class="text-6xl font-black tracking-widest mb-4"
+               style="color:rgb(129 140 248)">----</p>
+            <div class="flex items-center gap-2 mb-2">
+              <i class="fa-solid fa-circle-dot text-[8px] animate-pulse"
+                 style="color:rgb(52 211 153)"></i>
+              <span id="taller-espera-count" class="text-sm font-bold text-white">
+                0 participantes conectados
+              </span>
+            </div>
+            <p class="text-[9px] text-slate-600">
+              Escaneen el QR o vayan a:<br>
+              <span class="text-slate-400 font-mono">andrezgmz.github.io/radar_diagnostico.html</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Botón iniciar -->
+        <button onclick="iniciarTallerDesdeEspera()"
+          class="font-black text-sm px-8 py-4 rounded-xl transition"
+          style="background:rgb(129 140 248);color:white">
+          <i class="fa-solid fa-play mr-2"></i>
+          Iniciar taller con <span id="taller-espera-count-btn">0</span> participantes
+        </button>
+        <p class="text-[9px] text-slate-600 mt-3">
+          Puede iniciar aunque no todos hayan escaneado —
+          los participantes pueden unirse durante el taller
+        </p>
+
+      </div>
+    </div>
+
+    <!-- Contenido del taller (oculto hasta que inicia) -->
+    <div id="taller-contenido" class="hidden">
+
     <!-- Cabecera del taller -->
     <div class="flex items-center justify-between mb-8">
       <div>
@@ -1381,6 +1438,9 @@
       </div>
     </div>
 
+    </div>
+    <!-- /taller-contenido -->
+
   </div>
 </div>
 
@@ -1446,6 +1506,22 @@
 </footer>
 
 <script>
+// ════════════════════════════════════════
+// AUTO-DETECCIÓN DE MODO PARTICIPANTE (?pin=XXXX&modo=participante)
+// ════════════════════════════════════════
+(function detectarModoParticipante() {
+  const params = new URLSearchParams(window.location.search);
+  const pin    = params.get('pin');
+  const modo   = params.get('modo');
+  if (pin && modo === 'participante') {
+    window.addEventListener('DOMContentLoaded', function() {
+      const pinInput = document.getElementById('participante-pin');
+      if (pinInput) pinInput.value = pin;
+      show('s-participante');
+    });
+  }
+})();
+
 // ════════════════════════════════════════
 // SUPABASE
 // ════════════════════════════════════════
@@ -5048,7 +5124,8 @@ let tallerState = {
   pin: null,
   votosActuales: {},  // { pregIndex: { 1:n, 2:n, 3:n, 4:n, 5:n } }
   respuestasGuardadas: [], // Array de promedios por pregunta del eje
-  pollingInterval: null
+  pollingInterval: null,
+  esperaInterval: null
 };
 
 function generarPIN() {
@@ -5060,7 +5137,7 @@ async function iniciarTaller() {
     ejActual: 0, pregActual: 0, ronda: 1,
     sesionId: null, pin: null,
     votosActuales: {}, respuestasGuardadas: [],
-    pollingInterval: null
+    pollingInterval: null, esperaInterval: null
   };
 
   // Crear sesión en Supabase
@@ -5088,9 +5165,63 @@ async function iniciarTaller() {
     tallerState.sesionId = 'local-' + Date.now();
   }
 
-  renderTaller();
-  iniciarPollingVotos();
+  // Mostrar sala de espera y ocultar contenido
+  const salaEspera = document.getElementById('taller-sala-espera');
+  const contenido  = document.getElementById('taller-contenido');
+  if (salaEspera) salaEspera.classList.remove('hidden');
+  if (contenido) contenido.classList.add('hidden');
+
+  // Rellenar datos de espera
+  const pinEl = document.getElementById('taller-espera-pin');
+  if (pinEl) pinEl.textContent = tallerState.pin;
+  const ejeEl = document.getElementById('taller-espera-eje');
+  if (ejeEl) ejeEl.textContent = `Eje 1 · ${AXES[0].key}`;
+
+  // Generar QR
+  const urlParticipante = `${window.location.origin}${window.location.pathname}?pin=${tallerState.pin}&modo=participante`;
+  const qrContainer = document.getElementById('taller-qr');
+  if (qrContainer && typeof QRCode !== 'undefined') {
+    qrContainer.innerHTML = '';
+    new QRCode(qrContainer, {
+      text: urlParticipante,
+      width: 180,
+      height: 180,
+      colorDark: '#000000',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
+
+  // Polling de participantes en sala de espera
+  tallerState.esperaInterval = setInterval(async () => {
+    if (!tallerState.sesionId || tallerState.sesionId.indexOf('local-') === 0) return;
+    const votos = await sbFetch(
+      `votos_taller?sesion_id=eq.${tallerState.sesionId}&select=participante`
+    ).catch(() => null);
+    if (!votos) return;
+    const unicos = new Set(votos.map(v => v.participante)).size;
+    const countEl1 = document.getElementById('taller-espera-count');
+    const countEl2 = document.getElementById('taller-espera-count-btn');
+    if (countEl1) countEl1.textContent = `${unicos} participante${unicos !== 1 ? 's' : ''} conectado${unicos !== 1 ? 's' : ''}`;
+    if (countEl2) countEl2.textContent = unicos;
+  }, 3000);
+
   show('s-taller');
+}
+
+function iniciarTallerDesdeEspera() {
+  // Detener polling de espera
+  if (tallerState.esperaInterval) {
+    clearInterval(tallerState.esperaInterval);
+    tallerState.esperaInterval = null;
+  }
+  // Ocultar sala de espera, mostrar contenido
+  document.getElementById('taller-sala-espera').classList.add('hidden');
+  document.getElementById('taller-contenido').classList.remove('hidden');
+  // Iniciar polling de votos
+  iniciarPollingVotos();
+  // Renderizar primera pregunta
+  renderTaller();
 }
 
 function renderTaller() {
