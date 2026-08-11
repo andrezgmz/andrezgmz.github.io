@@ -2020,6 +2020,35 @@ async function cargarEstadoEmpresa(empresaId, proyectoId) {
     if (h.iniciativas_json) localStorage.setItem('ag_iniciativas', JSON.stringify(h.iniciativas_json));
     if (h.horizontes_json)  localStorage.setItem('ag_horizontes', JSON.stringify(h.horizontes_json));
   }
+
+  // Cargar OKRs de este proyecto desde Supabase
+  const okrs = await sbFetch(
+    `okrs_v2?proyecto_id=eq.${proyectoId}`
+  ).catch(() => null);
+
+  if (okrs && okrs.length > 0) {
+    // okrs_v2 guarda iniciativa_nombre (el id de iniciativa es efímero, solo de
+    // sesión) — hay que mapear de vuelta al id real usando las iniciativas que
+    // se acaban de restaurar arriba, que es como el resto del app indexa okrData.
+    const iniciativasRestauradas = (hoja && hoja[0] && hoja[0].iniciativas_json) || [];
+    const nuevoOkrData = {};
+    okrs.forEach(o => {
+      const iniMatch = iniciativasRestauradas.find(i => i.nombre === o.iniciativa_nombre);
+      const key = iniMatch ? iniMatch.id : o.iniciativa_nombre;
+      nuevoOkrData[key] = {
+        objetivo: o.objetivo || '',
+        resultadosClave: o.resultados_clave_json || [],
+        cumplimiento: o.cumplimiento || 0
+      };
+    });
+    // Guardar en memoria y localStorage
+    if (typeof okrData !== 'undefined') {
+      Object.assign(okrData, nuevoOkrData);
+    }
+    localStorage.setItem('ag_okr', JSON.stringify(
+      typeof okrData !== 'undefined' ? okrData : nuevoOkrData
+    ));
+  }
 }
 
 // Pinta el patrón de 3 botones (Consultar/Editar/Nuevo) o 1 botón (Iniciar) según
