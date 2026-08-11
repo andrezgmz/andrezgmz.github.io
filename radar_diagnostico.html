@@ -204,6 +204,11 @@
       <div>
         <p class="text-xs text-slate-500 uppercase tracking-widest font-bold mb-1">Plataforma de Transformación Digital</p>
         <h1 class="text-2xl font-black text-white">Bienvenido, <span id="start-name" class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400"></span></h1>
+        <p id="start-empresa-info" class="text-xs text-slate-500 mt-1 hidden">
+          <i class="fa-solid fa-building text-[9px] mr-1"></i>
+          <span id="start-empresa-nombre"></span>
+          <span id="start-empresa-sector" class="ml-2 text-slate-600"></span>
+        </p>
         <p id="start-empresa" class="text-cyan-400 text-xs font-semibold mt-1"></p>
         <p class="text-slate-500 text-xs mt-1">Seleccione el módulo por el que desea comenzar o continuar su proceso.</p>
       </div>
@@ -444,6 +449,12 @@
 <div id="s-modo-diagnostico" class="hidden fade">
   <div class="max-w-3xl mx-auto py-10">
     <div class="text-center mb-10">
+      <div class="flex justify-start mb-4">
+        <button onclick="show('s-start')"
+          class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg">
+          ← Dashboard
+        </button>
+      </div>
       <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest mb-5"
         style="background:rgb(34 211 238/0.10);border:1px solid rgb(34 211 238/0.20);color:rgb(34 211 238)">
         <i class="fa-solid fa-radar text-[10px]"></i> Módulo 1 · Diagnóstico de Madurez Digital
@@ -1294,6 +1305,16 @@
     <div id="taller-sala-espera" class="">
       <div class="max-w-2xl mx-auto py-10 text-center">
 
+        <div class="flex justify-start mb-6">
+          <button onclick="if(confirm('¿Salir? Se cerrarán las conexiones activas.'))
+            { if(tallerState.pollingInterval) clearInterval(tallerState.pollingInterval);
+              if(tallerState.esperaInterval) clearInterval(tallerState.esperaInterval);
+              show('s-modo-diagnostico'); }"
+            class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg">
+            ← Salir del taller
+          </button>
+        </div>
+
         <p class="text-xs font-black uppercase tracking-widest mb-2"
            style="color:rgb(129 140 248)">Sala de espera · Taller por Áreas</p>
         <h2 class="text-2xl font-black text-white mb-1" id="taller-espera-eje"></h2>
@@ -1349,6 +1370,12 @@
     <!-- Cabecera del taller -->
     <div class="flex items-center justify-between mb-8">
       <div>
+        <button onclick="if(confirm('¿Salir? Se perderán los votos del eje actual.'))
+          { if(tallerState.pollingInterval) clearInterval(tallerState.pollingInterval);
+            show('s-modo-diagnostico'); }"
+          class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg mb-3">
+          ← Salir del taller
+        </button>
         <p id="taller-eje-label" class="text-xs font-black uppercase tracking-widest mb-1"
            style="color:rgb(129 140 248)">Eje 1 de 8</p>
         <h2 id="taller-eje-nombre" class="text-2xl font-black text-white"></h2>
@@ -1444,6 +1471,12 @@
 
     <!-- Si no hay sesión activa: ingresar PIN -->
     <div id="participante-login" class="">
+      <div class="flex justify-start mb-4">
+        <button onclick="show('s-login')"
+          class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg">
+          ← Volver
+        </button>
+      </div>
       <div class="text-center mb-8">
         <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
           style="background:rgb(129 140 248/0.10);border:1px solid rgb(129 140 248/0.20)">
@@ -1477,6 +1510,22 @@
         <p class="text-[10px] text-slate-600 mt-2">
           1 = situación más débil · 5 = situación más madura
         </p>
+      </div>
+
+      <div id="part-espera" class="">
+        <div class="text-center py-8">
+          <div style="width:32px;height:32px;border:3px solid
+            rgb(129 140 248/0.20);border-top-color:rgb(129 140 248);
+            border-radius:50%;animation:spin 0.8s linear infinite;
+            margin:0 auto 12px"></div>
+          <p class="text-sm font-bold text-white mb-1">
+            Esperando al facilitador...
+          </p>
+          <p class="text-[10px] text-slate-500">
+            La pregunta aparecerá automáticamente cuando el
+            facilitador la active
+          </p>
+        </div>
       </div>
 
       <!-- Botones de votación grandes para celular -->
@@ -1540,6 +1589,9 @@ async function sbFetch(endpoint, options = {}) {
     return res.status === 204 ? null : res.json();
   } catch (e) {
     console.warn('Supabase error:', e.message);
+    if (e.message && !e.message.includes('Failed to fetch')) {
+      toast('Error de conexión: ' + e.message.substring(0,60), 'error');
+    }
     return null;
   }
 }
@@ -1826,6 +1878,22 @@ function show(id) {
 }
 
 // ════════════════════════════════════════
+// NOTIFICACIONES
+// ════════════════════════════════════════
+function toast(msg, tipo='error') {
+  const t = document.createElement('div');
+  const color = tipo==='ok'?'rgb(52 211 153)':tipo==='warn'?'rgb(245 158 11)':'rgb(244 63 94)';
+  t.style.cssText = `position:fixed;bottom:20px;right:20px;z-index:9999;
+    padding:12px 18px;border-radius:12px;font-size:12px;font-weight:700;
+    color:white;max-width:300px;line-height:1.4;
+    background:${color};box-shadow:0 4px 20px ${color}40;
+    animation:slideIn 0.3s ease;`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+// ════════════════════════════════════════
 // LOGIN
 // ════════════════════════════════════════
 function doLogin() {
@@ -1953,6 +2021,16 @@ async function abrirEmpresa(id) {
   window._empresaActual = empresas.find(e => e.id === id) || null;
   const nombreEl = document.getElementById('start-empresa');
   if (nombreEl) nombreEl.textContent = window._empresaActual?.nombre || '';
+
+  const infoEl = document.getElementById('start-empresa-info');
+  const nomEl  = document.getElementById('start-empresa-nombre');
+  const secEl  = document.getElementById('start-empresa-sector');
+  if (infoEl && window._empresaActual) {
+    nomEl.textContent  = window._empresaActual.nombre || '';
+    secEl.textContent  = window._empresaActual.sector
+      ? '· ' + window._empresaActual.sector : '';
+    infoEl.classList.remove('hidden');
+  }
 
   const proyectos = await sbFetch(`proyectos_td?empresa_id=eq.${id}&estado=eq.en_curso&order=created_at.desc&limit=1`).catch(()=>null);
   if (proyectos && proyectos[0]) {
@@ -2087,6 +2165,23 @@ function updateDashboard() {
     iniciar: "show('s-okr');renderOKR()",
     labelIniciar: 'Ir al Tablero OKR'
   });
+
+  // M4 Avances
+  const hasAvances = !!(localStorage.getItem('ag_avances'));
+  const bm4 = document.getElementById('badge-m4');
+  if (bm4) {
+    bm4.textContent = hasAvances ? 'Con reportes' : 'Sin reportes';
+    bm4.className = hasAvances
+      ? 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400'
+      : 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-500';
+  }
+
+  // M5 Seguimiento — siempre disponible si hay diagnóstico
+  const bm5 = document.getElementById('badge-m5');
+  if (bm5 && hasDiag) {
+    bm5.textContent = 'Disponible';
+    bm5.className = 'text-[9px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400';
+  }
 
   // Acciones rápidas
   const qa = document.getElementById('quick-actions');
@@ -2425,7 +2520,9 @@ function verDiagnosticoGuardado() {
   const minAx = AXES[minIdx];
   document.getElementById('r-alert-txt').textContent = `${minAx.key} obtuvo ${axAvgs[minIdx]}/5 — el eje más bajo determina el techo real de toda iniciativa que dependa de él. Sin mejorar este eje primero, los demás avances tendrán un impacto limitado.`;
   document.getElementById('r-user').textContent = userData.nombre || userData.user || '';
-  document.getElementById('r-empresa').textContent = (userData.empresa && userData.empresa !== '—') ? userData.empresa : '';
+  document.getElementById('r-empresa').textContent =
+    window._empresaActual?.nombre ||
+    (userData.empresa && userData.empresa !== '—' ? userData.empresa : '');
   document.getElementById('r-level').textContent = level;
   document.getElementById('r-badge').textContent = `Índice Global: ${globalAvg} / 5.0`;
   document.getElementById('r-summary').textContent = summary;
@@ -2690,6 +2787,16 @@ function downloadPDF() {
   const orig = btn.innerHTML;
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Generando PDF...';
   btn.disabled = true;
+
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    // jsPDF aún cargando — cargar dinámicamente y reintentar
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    script.onload = () => downloadPDF();
+    document.head.appendChild(script);
+    btn.innerHTML = orig; btn.disabled = false;
+    return;
+  }
 
   const { globalAvg, level, summary, axAvgs } = window._result || {};
   if (!globalAvg) {
@@ -3119,6 +3226,12 @@ let horizonteMap = { h1:[], h2:[], h3:[] };
 
 // ── Ir al módulo ──────────────────────────────────────
 function goRoadmap() {
+  if (!window._empresaActual) {
+    toast('Seleccione una empresa primero para construir la hoja de ruta.', 'warn');
+    show('s-empresas'); renderEmpresas();
+    return;
+  }
+
   // Cargar Norte Digital guardado de una sesión anterior — bloqueado hasta "Editar"
   const savedNorte = localStorage.getItem('ag_norte');
   if (savedNorte) {
@@ -4328,6 +4441,12 @@ function nuevoOKR() {
 }
 
 function renderOKR() {
+  if (!window._empresaActual) {
+    document.getElementById('okr-lista').innerHTML =
+      '<div class="text-center py-8"><p class="text-sm text-slate-500">Seleccione una empresa primero.</p></div>';
+    return;
+  }
+
   cargarOKRGuardados();
   // Obtener iniciativas desde el M2
   const fuente = iniciativas && iniciativas.length > 0
@@ -5729,6 +5848,9 @@ function iniciarPollingParticipante(sesionInicial) {
     const ronda    = s.ronda_actual ?? 1;
     const ejeNombre = s.eje_nombre || '';
 
+    const espera = document.getElementById('part-espera');
+    if (espera && ultimaPregVista === -1) espera.classList.remove('hidden');
+
     // Si cambió la pregunta o la ronda, mostrar la nueva
     if (pregIdx !== ultimaPregVista || ronda !== ultimaRondaVista) {
       ultimaPregVista  = pregIdx;
@@ -5763,6 +5885,10 @@ function iniciarPollingParticipante(sesionInicial) {
 }
 
 function renderBotonesVoto(pregIdx, ejeNombre, pregTexto) {
+  // Ocultar espera y mostrar botones
+  const espera = document.getElementById('part-espera');
+  if (espera) espera.classList.add('hidden');
+
   const colores = {
     1:'rgb(244 63 94)', 2:'rgb(251 146 60)',
     3:'rgb(245 158 11)', 4:'rgb(45 212 191)', 5:'rgb(52 211 153)'
