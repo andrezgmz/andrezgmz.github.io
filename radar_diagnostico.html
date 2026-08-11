@@ -1910,24 +1910,116 @@ async function guardarEmpresa() {
 }
 
 async function abrirEmpresa(id) {
-  window._empresaActual = empresas.find(e => e.id === id);
-  document.getElementById('start-empresa').textContent = window._empresaActual ? window._empresaActual.nombre : '';
+  // Si hay una empresa activa diferente, hay que limpiar el estado de la anterior
+  const empresaAnteriorId = window._empresaActual ? window._empresaActual.id : null;
+  const cambiandoEmpresa  = !!empresaAnteriorId && empresaAnteriorId !== id;
 
-  const proyectos = await sbFetch(`proyectos_td?empresa_id=eq.${id}&estado=eq.en_curso&order=created_at.desc&limit=1`);
+  let nuevaEmpresa = empresas.find(e => e.id === id);
+  if (!nuevaEmpresa) {
+    const res = await sbFetch(`empresas?id=eq.${id}`).catch(() => null);
+    nuevaEmpresa = (res && res[0]) || null;
+  }
+  window._empresaActual = nuevaEmpresa;
+
+  const nombreEl = document.getElementById('start-empresa');
+  if (nombreEl) nombreEl.textContent = window._empresaActual ? window._empresaActual.nombre : '';
+
+  // Si cambió la empresa, limpiar TODO el estado anterior antes de cargar la nueva
+  if (cambiandoEmpresa) {
+    window._proyectoActual      = null;
+    window._diagnosticoActualId = null;
+    window._hojaRutaActualId    = null;
+    window._result              = null;
+
+    // Estado en memoria de cada módulo
+    if (typeof iniciativas !== 'undefined')  iniciativas  = [];
+    if (typeof horizonteMap !== 'undefined') horizonteMap = { h1:[], h2:[], h3:[] };
+    if (typeof okrData !== 'undefined')      okrData      = {};
+    if (typeof avancesData !== 'undefined')  avancesData  = {};
+    if (typeof palancasPesos !== 'undefined') {
+      palancasPesos = { ingresos:20, inclusion:15, experiencia:25,
+                        eficiencia:20, datos:10, reputacion:10 };
+    }
+    if (typeof palancaData !== 'undefined')   palancaData   = {};
+    if (typeof norteHoy !== 'undefined')      norteHoy      = null;
+    if (typeof norteEstrella !== 'undefined') norteEstrella = null;
+
+    // Limpiar localStorage de la empresa anterior
+    ['ag_diagnostico','ag_norte','ag_palancas',
+     'ag_iniciativas','ag_horizontes','ag_okr','ag_avances'
+    ].forEach(k => localStorage.removeItem(k));
+
+    // Limpiar scores del diagnóstico
+    if (typeof initScores === 'function') initScores();
+  }
+
+  // Cargar proyecto activo de la nueva empresa
+  const proyectos = await sbFetch(
+    `proyectos_td?empresa_id=eq.${id}&estado=eq.en_curso&order=created_at.desc&limit=1`
+  ).catch(() => null);
+
   if (proyectos && proyectos[0]) {
     window._proyectoActual = proyectos[0];
-  } else if (proyectos) {
+    // Cargar estado guardado de esta empresa desde Supabase
+    await cargarEstadoEmpresa(id, proyectos[0].id);
+  } else if (proyectos !== null) {
     const nuevo = await sbFetch('proyectos_td', {
       method: 'POST',
       body: JSON.stringify({ empresa_id: id, nombre: `Plan TD ${new Date().getFullYear()}`, estado: 'en_curso' })
-    });
-    window._proyectoActual = nuevo ? nuevo[0] : null;
+    }).catch(() => null);
+    window._proyectoActual = (nuevo && nuevo[0]) || null;
   } else {
     window._proyectoActual = null;
   }
 
   show('s-start');
   updateDashboard();
+}
+
+// Restaura desde Supabase el diagnóstico y la hoja de ruta más recientes de la
+// empresa/proyecto que se acaba de abrir — se llama solo cuando ya hay un
+// proyecto activo, justo después de limpiar el estado de la empresa anterior.
+async function cargarEstadoEmpresa(empresaId, proyectoId) {
+  // Cargar último diagnóstico de este proyecto
+  const diags = await sbFetch(
+    `diagnosticos?proyecto_id=eq.${proyectoId}&order=created_at.desc&limit=1`
+  ).catch(() => null);
+
+  if (diags && diags[0]) {
+    const d = diags[0];
+    window._diagnosticoActualId = d.id;
+    // Reconstruir _result para que el dashboard sepa que hay diagnóstico
+    const axAvgs = (d.scores_json && d.scores_json.axAvgs) || [];
+    if (axAvgs.length === 8) {
+      window._result = {
+        globalAvg: d.nivel_global,
+        level:     d.nivel_texto,
+        summary:   d.resumen,
+        axAvgs:    axAvgs
+      };
+      // Guardar en localStorage para que los módulos lo encuentren
+      localStorage.setItem('ag_diagnostico', JSON.stringify({ result: window._result }));
+    }
+  }
+
+  // Cargar hoja de ruta de este proyecto
+  const hoja = await sbFetch(
+    `hoja_ruta?proyecto_id=eq.${proyectoId}&order=updated_at.desc&limit=1`
+  ).catch(() => null);
+
+  if (hoja && hoja[0]) {
+    const h = hoja[0];
+    window._hojaRutaActualId = h.id;
+    // Restaurar estado de los módulos M2
+    if (h.norte_hoy) {
+      if (typeof norteHoy !== 'undefined')      norteHoy      = h.norte_hoy;
+      if (typeof norteEstrella !== 'undefined') norteEstrella = h.norte_estrella;
+      localStorage.setItem('ag_norte', JSON.stringify({ norteHoy: h.norte_hoy, norteEstrella: h.norte_estrella, vision: h.vision }));
+    }
+    if (h.palancas_json)    localStorage.setItem('ag_palancas', JSON.stringify(h.palancas_json));
+    if (h.iniciativas_json) localStorage.setItem('ag_iniciativas', JSON.stringify(h.iniciativas_json));
+    if (h.horizontes_json)  localStorage.setItem('ag_horizontes', JSON.stringify(h.horizontes_json));
+  }
 }
 
 // Pinta el patrón de 3 botones (Consultar/Editar/Nuevo) o 1 botón (Iniciar) según
