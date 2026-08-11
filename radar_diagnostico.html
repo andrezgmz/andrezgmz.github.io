@@ -1542,6 +1542,15 @@
         <p class="text-sm font-bold text-white">¡Voto registrado!</p>
         <p class="text-xs text-slate-500 mt-1">Esperando la siguiente pregunta...</p>
       </div>
+
+      <div id="part-grafico-participante" class="hidden mt-4">
+        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">
+          Distribución de votos en tiempo real
+        </p>
+        <div id="part-grafico-barras" class="space-y-2"></div>
+        <p id="part-grafico-promedio" class="text-center mt-3 text-sm font-black"
+           style="color:rgb(34 211 238)"></p>
+      </div>
     </div>
 
   </div>
@@ -3288,29 +3297,45 @@ function goRoadmap() {
 
   // Pre-cargar iniciativas ordenadas por ejes más débiles (solo si no había nada guardado)
   if (iniciativas.length === 0) {
-    const { axAvgs } = window._result || {};
-    let order = INICIATIVAS_BASE.map((ini,i) => ({ ini, score: axAvgs ? axAvgs[i < 8 ? i : 7] : Math.random() }));
-    order.sort((a,b) => a.score - b.score); // más débil primero
-    iniciativas = order.map((o, i) => ({
-      id: 'ini-' + i,
-      nombre: o.ini.nombre,
-      desc: o.ini.desc,
-      eje: o.ini.eje,
+    const axAvgs = window._result?.axAvgs || [];
+    const EJES_NOMBRES = AXES.map(a => a.key);
+
+    let ordenadas = [...INICIATIVAS_BASE];
+    if (axAvgs.length === 8) {
+      const promedios = {};
+      EJES_NOMBRES.forEach((n,i) => promedios[n] = axAvgs[i]);
+      ordenadas.sort((a,b) => (promedios[a.eje]||5) - (promedios[b.eje]||5));
+    }
+
+    iniciativas = ordenadas.map((base, idx) => ({
+      id: 'ini-' + idx,
+      nombre: base.nombre,
+      desc: base.desc,
+      eje: base.eje,
       impactos: {},
       dificultad: 2,
-      // H1 las 3 iniciativas de ejes más débiles, H2 las 3 siguientes, H3 las últimas
-      horizonte: i < 3 ? 'h1' : i < 6 ? 'h2' : 'h3',
+      horizonte: idx < 3 ? 'h1' : idx < 6 ? 'h2' : 'h3',
       horizonteManual: false,
       score: 0,
       pct: 0
     }));
-    horizonteMap = { h1: [], h2: [], h3: [] };
-    iniciativas.forEach(ini => { if (ini.horizonte) horizonteMap[ini.horizonte].push(ini.id); });
+
+    // Actualizar mapa de horizontes
+    horizonteMap = { h1:[], h2:[], h3:[] };
+    iniciativas.forEach(ini => {
+      if (ini.horizonte) horizonteMap[ini.horizonte].push(ini.id);
+    });
+
+    // Guardar en localStorage para persistencia
+    localStorage.setItem('ag_iniciativas', JSON.stringify(iniciativas));
   }
+
   renderNorteGrid();
   renderPalancas();
   renderIniciativas();
   recalcScores();
+  renderHorizonteItems();
+  renderEsfuerzoHorizontes();
   show('s-roadmap');
   mostrarAlertaDiagnostico();
 }
@@ -5440,6 +5465,20 @@ function renderTaller() {
       document.getElementById('taller-pin').textContent = tallerState.pin;
       document.getElementById('taller-q-num').textContent = `${confPregunta.ejeNombre} · Pregunta ${confPregunta.pregIdx + 1}`;
       renderGraficoTaller(tallerState.pregActual);
+
+      // Publicar pregunta actual para los participantes (modo conferencia)
+      if (tallerState.sesionId && tallerState.sesionId.indexOf('local-') !== 0) {
+        sbFetch(`sesiones_taller?id=eq.${tallerState.sesionId}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            pregunta_actual: tallerState.pregActual,
+            eje_actual: tallerState.ejActual,
+            ronda_actual: tallerState.ronda,
+            estado: 'abierta'
+          })
+        }).catch(() => null);
+      }
+
       return; // No continuar con el render normal
     }
   }
@@ -5583,18 +5622,57 @@ function iniciarPollingVotos() {
 }
 
 function tallerPreguntaSiguiente() {
-  const eje = AXES[tallerState.ejActual];
-  if (tallerState.pregActual < eje.qs.length - 1) {
-    tallerState.pregActual++;
-    renderTaller();
+  if (tallerState.modoConferencia) {
+    // En conferencia avanzar por la lista lineal de preguntas
+    const total = tallerState.preguntasConferencia?.length || 0;
+    const idx = (tallerState.ejActual * 2 + tallerState.pregActual) + 1;
+    if (idx >= total) {
+      // Terminó la conferencia
+      cerrarEjeConferencia();
+      return;
+    }
+    // Calcular nuevo eje y pregunta
+    const porEje = Math.ceil(total / 8);
+    tallerState.ejActual   = Math.floor(idx / porEje);
+    tallerState.pregActual = idx % porEje;
+  } else {
+    const eje = AXES[tallerState.ejActual];
+    if (tallerState.pregActual < eje.qs.length - 1) {
+      tallerState.pregActual++;
+    }
   }
+  tallerState.votosActuales = {};
+  renderTaller();
 }
 
 function tallerPreguntaAnterior() {
-  if (tallerState.pregActual > 0) {
-    tallerState.pregActual--;
-    renderTaller();
+  if (tallerState.modoConferencia) {
+    const porEje = Math.ceil((tallerState.preguntasConferencia?.length||8) / 8);
+    const idx = tallerState.ejActual * porEje + tallerState.pregActual;
+    if (idx > 0) {
+      const nuevo = idx - 1;
+      tallerState.ejActual   = Math.floor(nuevo / porEje);
+      tallerState.pregActual = nuevo % porEje;
+      renderTaller();
+    }
+  } else {
+    if (tallerState.pregActual > 0) {
+      tallerState.pregActual--;
+      renderTaller();
+    }
   }
+}
+
+async function cerrarEjeConferencia() {
+  if (tallerState.pollingInterval) clearInterval(tallerState.pollingInterval);
+  if (tallerState.sesionId && tallerState.sesionId.indexOf('local-') !== 0) {
+    await sbFetch(`sesiones_taller?id=eq.${tallerState.sesionId}`, {
+      method: 'PATCH', body: JSON.stringify({ estado: 'cerrada' })
+    }).catch(() => null);
+  }
+  toast('Conferencia finalizada', 'ok');
+  show('s-results');
+  genResults();
 }
 
 function repetirVotacion() {
@@ -5607,83 +5685,103 @@ function repetirVotacion() {
 }
 
 function guardarPreguntaTaller() {
-  // Calcular promedio de la pregunta actual y guardarlo
   const votos = tallerState.votosActuales[tallerState.pregActual] || {};
-  const total = Object.values(votos).reduce((a,b) => a+b, 0);
-  const promedio = total > 0
-    ? Object.entries(votos).reduce((sum,[v,n]) => sum + (+v * n), 0) / total
-    : 3; // Default 3 si no hay votos
-  tallerState.respuestasGuardadas[tallerState.pregActual] = promedio;
+  const total  = Object.values(votos).reduce((a,b)=>a+b,0);
+  const prom   = total > 0
+    ? Object.entries(votos).reduce((s,[v,n])=>s+(+v*n),0)/total : 3;
+
+  tallerState.respuestasGuardadas[tallerState.pregActual] = prom;
+
+  // Feedback visual en el botón
+  const btn = document.querySelector('[onclick="guardarPreguntaTaller()"]');
+  if (btn) {
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-check mr-1"></i>Confirmado ✓';
+    btn.style.background = 'rgb(52 211 153/0.20)';
+    btn.style.borderColor = 'rgb(52 211 153/0.40)';
+    btn.style.color = 'rgb(52 211 153)';
+    setTimeout(() => {
+      btn.innerHTML = orig;
+      btn.style.background = '';
+      btn.style.borderColor = '';
+      btn.style.color = '';
+    }, 2000);
+  }
+
+  toast(`Pregunta ${tallerState.pregActual+1} confirmada (${prom.toFixed(1)}/5)`, 'ok');
 }
 
 async function cerrarEjeTaller() {
-  // Guardar todas las preguntas pendientes
-  const eje = AXES[tallerState.ejActual];
-  eje.qs.forEach((_, qi) => {
-    if (tallerState.respuestasGuardadas[qi] === undefined) {
-      const votos = tallerState.votosActuales[qi] || {};
-      const total = Object.values(votos).reduce((a,b) => a+b, 0);
-      tallerState.respuestasGuardadas[qi] = total > 0
-        ? Object.entries(votos).reduce((sum,[v,n]) => sum + (+v * n), 0) / total
-        : 3;
+  // Guardar respuestas pendientes del eje actual
+  const eje = tallerState.modoConferencia
+    ? null
+    : AXES[tallerState.ejActual];
+
+  if (eje) {
+    eje.qs.forEach((_, qi) => {
+      if (tallerState.respuestasGuardadas[qi] === undefined) {
+        const votos = tallerState.votosActuales[qi] || {};
+        const total = Object.values(votos).reduce((a,b)=>a+b,0);
+        tallerState.respuestasGuardadas[qi] = total > 0
+          ? Object.entries(votos).reduce((s,[v,n])=>s+(+v*n),0)/total : 3;
+      }
+    });
+
+    // Guardar scores del eje actual
+    tallerState.respuestasGuardadas.forEach((val, qi) => {
+      scores[tallerState.ejActual][qi] = Math.round(val);
+    });
+
+    // Actualizar sesión en Supabase con el progreso del eje
+    if (tallerState.sesionId && tallerState.sesionId.indexOf('local-') !== 0) {
+      await sbFetch(`sesiones_taller?id=eq.${tallerState.sesionId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          scores_json: { respuestas: tallerState.respuestasGuardadas,
+                         ejeCompletado: tallerState.ejActual }
+        })
+      }).catch(() => null);
     }
-  });
-
-  // Calcular promedio del eje
-  const promedioEje = tallerState.respuestasGuardadas.reduce((a,b) => a+b, 0) /
-    tallerState.respuestasGuardadas.length;
-
-  // Guardar en scores (mismo formato que el modo individual)
-  tallerState.respuestasGuardadas.forEach((val, qi) => {
-    scores[tallerState.ejActual][qi] = Math.round(val);
-  });
-
-  // Guardar en Supabase
-  if (tallerState.sesionId && tallerState.sesionId.indexOf('local-') !== 0) {
-    await sbFetch(`sesiones_taller?id=eq.${tallerState.sesionId}`, {
-      method: 'PATCH',
-      body: JSON.stringify({
-        estado: 'cerrada',
-        respuesta_final: promedioEje,
-        scores_json: { respuestas: tallerState.respuestasGuardadas }
-      })
-    }).catch(() => null);
   }
 
-  // Parar polling
-  if (tallerState.pollingInterval) clearInterval(tallerState.pollingInterval);
-
   // ¿Hay más ejes?
-  if (tallerState.ejActual < AXES.length - 1) {
-    // Avanzar al siguiente eje
+  if (!tallerState.modoConferencia && tallerState.ejActual < AXES.length - 1) {
     tallerState.ejActual++;
     tallerState.pregActual = 0;
     tallerState.ronda = 1;
     tallerState.votosActuales = {};
     tallerState.respuestasGuardadas = [];
 
-    // Crear nueva sesión para el siguiente eje
-    const pin = generarPIN();
-    const nuevoEje = AXES[tallerState.ejActual];
-    const res = await sbFetch('sesiones_taller', {
-      method: 'POST',
-      body: JSON.stringify({
-        proyecto_id: window._proyectoActual ? window._proyectoActual.id : null,
-        eje_index: tallerState.ejActual,
-        eje_nombre: nuevoEje.key,
-        pin: pin,
-        estado: 'abierta'
-      })
-    }).catch(() => null);
-
-    tallerState.pin = pin;
-    tallerState.sesionId = (res && res[0]) ? res[0].id : 'local-' + Date.now();
+    // MISMO PIN — actualizar la sesión existente con el nuevo eje
+    if (tallerState.sesionId && tallerState.sesionId.indexOf('local-') !== 0) {
+      await sbFetch(`sesiones_taller?id=eq.${tallerState.sesionId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          eje_index:      tallerState.ejActual,
+          eje_nombre:     AXES[tallerState.ejActual].key,
+          eje_actual:     tallerState.ejActual,
+          pregunta_actual: 0,
+          ronda_actual:   1,
+          estado:         'abierta'
+        })
+      }).catch(() => null);
+    }
 
     renderTaller();
-    iniciarPollingVotos();
+    // El polling ya está activo — no reiniciarlo
   } else {
-    // Todos los ejes completados — generar resultados
+    // Todos los ejes completados
     if (tallerState.pollingInterval) clearInterval(tallerState.pollingInterval);
+    if (tallerState.esperaInterval)  clearInterval(tallerState.esperaInterval);
+
+    // Marcar sesión como cerrada
+    if (tallerState.sesionId && tallerState.sesionId.indexOf('local-') !== 0) {
+      await sbFetch(`sesiones_taller?id=eq.${tallerState.sesionId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ estado: 'cerrada' })
+      }).catch(() => null);
+    }
+
     genResults();
   }
 }
@@ -5789,7 +5887,8 @@ let participanteState = {
   nombre: 'anónimo',
   pin: null,
   pollingInterval: null,
-  ultimaPregIdx: -1
+  ultimaPregIdx: -1,
+  resultadosInterval: null
 };
 
 async function unirseAlTaller() {
@@ -5895,6 +5994,14 @@ function renderBotonesVoto(pregIdx, ejeNombre, pregTexto) {
   const espera = document.getElementById('part-espera');
   if (espera) espera.classList.add('hidden');
 
+  // Nueva pregunta: detener el polling de resultados de la pregunta anterior y ocultar su gráfico
+  if (participanteState.resultadosInterval) {
+    clearInterval(participanteState.resultadosInterval);
+    participanteState.resultadosInterval = null;
+  }
+  const graficoEl = document.getElementById('part-grafico-participante');
+  if (graficoEl) graficoEl.classList.add('hidden');
+
   const colores = {
     1:'rgb(244 63 94)', 2:'rgb(251 146 60)',
     3:'rgb(245 158 11)', 4:'rgb(45 212 191)', 5:'rgb(52 211 153)'
@@ -5915,6 +6022,10 @@ function renderBotonesVoto(pregIdx, ejeNombre, pregTexto) {
 async function registrarVotoParticipante(pregIdx, voto) {
   if (!participanteState.sesionId) return;
 
+  // Deshabilitar botones mientras vota
+  const botones = document.getElementById('part-botones-voto');
+  if (botones) [...botones.querySelectorAll('button')].forEach(b => b.disabled = true);
+
   await sbFetch('votos_taller', {
     method: 'POST',
     body: JSON.stringify({
@@ -5926,9 +6037,63 @@ async function registrarVotoParticipante(pregIdx, voto) {
     })
   }).catch(() => null);
 
-  // Feedback visual
-  document.getElementById('part-voto-confirmado').classList.remove('hidden');
-  document.getElementById('part-botones-voto').innerHTML = '';
+  // Mostrar gráfico de votos en el dispositivo del participante
+  const confirmEl = document.getElementById('part-voto-confirmado');
+  if (confirmEl) confirmEl.classList.remove('hidden');
+
+  // Iniciar polling de resultados para ver cómo van los votos
+  if (participanteState.resultadosInterval) clearInterval(participanteState.resultadosInterval);
+  participanteState.resultadosInterval = setInterval(async () => {
+    const votos = await sbFetch(
+      `votos_taller?sesion_id=eq.${participanteState.sesionId}&pregunta_index=eq.${pregIdx}`
+    ).catch(() => null);
+    if (!votos) return;
+
+    // Construir conteo
+    const conteo = {1:0,2:0,3:0,4:0,5:0};
+    votos.forEach(v => { conteo[v.voto] = (conteo[v.voto]||0) + 1; });
+    const total = votos.length;
+    const promedio = total > 0
+      ? votos.reduce((s,v) => s+v.voto, 0) / total : 0;
+
+    // Mostrar gráfico en part-grafico-participante
+    renderGraficoParticipante(conteo, total, promedio);
+  }, 2000);
+}
+
+function renderGraficoParticipante(conteo, total, promedio) {
+  const graficoEl = document.getElementById('part-grafico-participante');
+  const barrasEl  = document.getElementById('part-grafico-barras');
+  const promEl    = document.getElementById('part-grafico-promedio');
+  if (!graficoEl || !barrasEl) return;
+
+  graficoEl.classList.remove('hidden');
+  const colores = {1:'rgb(244 63 94)',2:'rgb(251 146 60)',3:'rgb(245 158 11)',4:'rgb(45 212 191)',5:'rgb(52 211 153)'};
+  const labels  = {1:'Inexistente',2:'Incipiente',3:'En Desarrollo',4:'Avanzado',5:'Referente'};
+  const maxV = Math.max(...Object.values(conteo), 1);
+
+  barrasEl.innerHTML = [1,2,3,4,5].map(v => {
+    const n   = conteo[v] || 0;
+    const pct = Math.round((n/maxV)*100);
+    const pctT= total > 0 ? Math.round((n/total)*100) : 0;
+    return `<div class="flex items-center gap-2">
+      <span class="text-xs font-black w-4 text-right" style="color:${colores[v]}">${v}</span>
+      <div class="flex-1 h-7 rounded-lg overflow-hidden relative" style="background:rgb(30 41 59)">
+        <div class="h-full rounded-lg transition-all duration-500"
+          style="width:${pct}%;background:${colores[v]}30;border-right:3px solid ${colores[v]}"></div>
+        <div class="absolute inset-0 flex items-center px-2 gap-1">
+          <span class="text-[9px]" style="color:${colores[v]}">${labels[v]}</span>
+          ${n>0?`<span class="ml-auto text-[10px] font-black text-white">${n} (${pctT}%)</span>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  if (promEl) {
+    const color = promedio>=4?'rgb(52 211 153)':promedio>=3?'rgb(245 158 11)':'rgb(244 63 94)';
+    promEl.textContent = `Promedio: ${promedio.toFixed(2)} / 5.0`;
+    promEl.style.color = color;
+  }
 }
 
 // ════════════════════════════════════════
