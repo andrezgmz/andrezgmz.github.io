@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico de Madurez Digital | Herramienta Profesional</title>
 <link rel="preconnect" href="https://cdn.tailwindcss.com">
 <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="dns-prefetch" href="https://djgqohrwjxymmguefljs.supabase.co">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Diagnóstico de Madurez Digital | Herramienta Profesional</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 /* ── Safelist de clases dinámicas que Tailwind CDN no puede detectar ── */
@@ -43,11 +43,7 @@
 .bg-teal-500   { background-color: rgb(20 184 166); }
 .bg-emerald-500{ background-color: rgb(16 185 129); }
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-  media="print" onload="this.media='all'">
-<noscript>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</noscript>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 <style>
@@ -70,25 +66,14 @@
 </head>
 <body class="bg-slate-950 text-white min-h-screen">
 
-<div id="loading-screen" style="
-  position:fixed;inset:0;
-  background:rgb(2 6 23);
-  display:flex;align-items:center;justify-content:center;
-  z-index:9999;transition:opacity 0.3s">
+<!-- LOADING SCREEN -->
+<div id="loading-screen" style="position:fixed;inset:0;background:rgb(2 6 23);display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.3s">
   <div style="text-align:center">
-    <div style="width:40px;height:40px;border:3px solid rgb(34 211 238/0.20);
-      border-top-color:rgb(34 211 238);border-radius:50%;
-      animation:spin 0.8s linear infinite;margin:0 auto 16px"></div>
-    <p style="color:rgb(100 116 139);font-size:12px;font-family:sans-serif">
-      Cargando plataforma...
-    </p>
+    <div style="width:40px;height:40px;border:3px solid rgb(34 211 238/0.20);border-top-color:rgb(34 211 238);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px"></div>
+    <p style="color:rgb(100 116 139);font-size:12px;font-family:sans-serif">Cargando plataforma...</p>
   </div>
 </div>
-<style>
-  @keyframes spin { to { transform: rotate(360deg); } }
-</style>
-
-<!-- HEADER -->
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 <header class="border-b border-slate-800/50 bg-slate-950/95 backdrop-blur sticky top-0 z-50">
   <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
     <div class="flex items-center gap-3">
@@ -1530,21 +1515,6 @@
 })();
 
 // ════════════════════════════════════════
-// PANTALLA DE CARGA
-// ════════════════════════════════════════
-function ocultarLoadingScreen() {
-  const loadingScreen = document.getElementById('loading-screen');
-  if (loadingScreen) {
-    loadingScreen.style.opacity = '0';
-    setTimeout(() => loadingScreen.remove(), 300);
-  }
-}
-// Respaldo: si el usuario solo ve el login (show() no se llama hasta que
-// interactúa), la pantalla de carga igual debe desaparecer apenas la app
-// esté lista — no depender únicamente de la primera llamada a show().
-window.addEventListener('DOMContentLoaded', ocultarLoadingScreen);
-
-// ════════════════════════════════════════
 // SUPABASE
 // ════════════════════════════════════════
 const SUPABASE_URL  = 'https://djgqohrwjxymmguefljs.supabase.co';
@@ -1840,8 +1810,10 @@ function initScores() {
 // NAVEGACIÓN
 // ════════════════════════════════════════
 function show(id) {
-  // Ocultar pantalla de carga en el primer show()
-  ocultarLoadingScreen();
+  // Ocultar loading screen en el primer show()
+  const ls = document.getElementById('loading-screen');
+  if (ls) { ls.style.opacity='0'; setTimeout(()=>ls.remove(),300); }
+
   ['s-login','s-empresas','s-start','s-modo-diagnostico','s-axis','s-confirm','s-results','s-roadmap','s-okr','s-avances','s-seguimiento','s-taller','s-participante'].forEach(s => {
     const el = document.getElementById(s);
     el.classList.add('hidden');
@@ -1913,8 +1885,13 @@ async function renderEmpresas() {
       </div>
       ${e.contacto_nombre ? `<p class="text-[10px] text-slate-500 mb-1"><i class="fa-solid fa-user text-[9px] mr-1"></i>${e.contacto_nombre}</p>` : ''}
       ${e.contacto_email ? `<p class="text-[10px] text-slate-500 mb-3"><i class="fa-solid fa-envelope text-[9px] mr-1"></i>${e.contacto_email}</p>` : ''}
-      <button onclick="abrirEmpresa('${e.id}')" class="w-full bg-slate-800 text-white font-black py-2.5 rounded-xl hover:bg-slate-700 transition text-xs flex items-center justify-center gap-2">
+      <button onclick="abrirEmpresa('${e.id}')" class="w-full bg-slate-800 text-white font-black py-2.5 rounded-xl hover:bg-slate-700 transition text-xs flex items-center justify-center gap-2 mb-2">
         Abrir <i class="fa-solid fa-arrow-right text-[10px]"></i>
+      </button>
+      <button onclick="eliminarEmpresa('${e.id}','${e.nombre.replace(/'/g,"\\'")}')"
+        class="w-full text-[10px] font-bold py-1.5 rounded-lg transition flex items-center justify-center gap-1"
+        style="background:rgb(244 63 94/0.08);border:1px solid rgb(244 63 94/0.20);color:rgb(248 113 113)">
+        <i class="fa-solid fa-trash text-[9px]"></i> Eliminar empresa
       </button>
     </div>`).join('');
 }
@@ -1953,64 +1930,40 @@ async function guardarEmpresa() {
 }
 
 async function abrirEmpresa(id) {
-  // Si hay una empresa activa diferente, hay que limpiar el estado de la anterior
-  const empresaAnteriorId = window._empresaActual ? window._empresaActual.id : null;
-  const cambiandoEmpresa  = !!empresaAnteriorId && empresaAnteriorId !== id;
-
-  let nuevaEmpresa = empresas.find(e => e.id === id);
-  if (!nuevaEmpresa) {
-    const res = await sbFetch(`empresas?id=eq.${id}`).catch(() => null);
-    nuevaEmpresa = (res && res[0]) || null;
-  }
-  window._empresaActual = nuevaEmpresa;
-
-  const nombreEl = document.getElementById('start-empresa');
-  if (nombreEl) nombreEl.textContent = window._empresaActual ? window._empresaActual.nombre : '';
-
-  // Si cambió la empresa, limpiar TODO el estado anterior antes de cargar la nueva
-  if (cambiandoEmpresa) {
+  // Limpiar estado de la empresa anterior si cambió
+  const empresaAnteriorId = window._empresaActual?.id;
+  if (empresaAnteriorId && empresaAnteriorId !== id) {
     window._proyectoActual      = null;
     window._diagnosticoActualId = null;
     window._hojaRutaActualId    = null;
     window._result              = null;
-
-    // Estado en memoria de cada módulo
-    if (typeof iniciativas !== 'undefined')  iniciativas  = [];
-    if (typeof horizonteMap !== 'undefined') horizonteMap = { h1:[], h2:[], h3:[] };
-    if (typeof okrData !== 'undefined')      okrData      = {};
-    if (typeof avancesData !== 'undefined')  avancesData  = {};
-    if (typeof palancasPesos !== 'undefined') {
-      palancasPesos = { ingresos:20, inclusion:15, experiencia:25,
-                        eficiencia:20, datos:10, reputacion:10 };
-    }
-    if (typeof palancaData !== 'undefined')   palancaData   = {};
-    if (typeof norteHoy !== 'undefined')      norteHoy      = null;
-    if (typeof norteEstrella !== 'undefined') norteEstrella = null;
-
-    // Limpiar localStorage de la empresa anterior
-    ['ag_diagnostico','ag_norte','ag_palancas',
-     'ag_iniciativas','ag_horizontes','ag_okr','ag_avances'
-    ].forEach(k => localStorage.removeItem(k));
-
-    // Limpiar scores del diagnóstico
+    if (typeof iniciativas  !== 'undefined') iniciativas  = [];
+    if (typeof horizonteMap !== 'undefined') horizonteMap = {h1:[],h2:[],h3:[]};
+    if (typeof okrData      !== 'undefined') okrData      = {};
+    if (typeof avancesData  !== 'undefined') avancesData  = {};
+    if (typeof norteHoy     !== 'undefined') norteHoy     = null;
+    if (typeof norteEstrella!== 'undefined') norteEstrella= null;
+    if (typeof palancasPesos!== 'undefined') palancasPesos= {ingresos:20,inclusion:15,experiencia:25,eficiencia:20,datos:10,reputacion:10};
+    if (typeof palancaData  !== 'undefined') palancaData  = {};
+    ['ag_diagnostico','ag_norte','ag_palancas','ag_iniciativas',
+     'ag_horizontes','ag_okr','ag_avances'].forEach(k=>localStorage.removeItem(k));
     if (typeof initScores === 'function') initScores();
   }
 
-  // Cargar proyecto activo de la nueva empresa
-  const proyectos = await sbFetch(
-    `proyectos_td?empresa_id=eq.${id}&estado=eq.en_curso&order=created_at.desc&limit=1`
-  ).catch(() => null);
+  window._empresaActual = empresas.find(e => e.id === id) || null;
+  const nombreEl = document.getElementById('start-empresa');
+  if (nombreEl) nombreEl.textContent = window._empresaActual?.nombre || '';
 
+  const proyectos = await sbFetch(`proyectos_td?empresa_id=eq.${id}&estado=eq.en_curso&order=created_at.desc&limit=1`).catch(()=>null);
   if (proyectos && proyectos[0]) {
     window._proyectoActual = proyectos[0];
-    // Cargar estado guardado de esta empresa desde Supabase
     await cargarEstadoEmpresa(id, proyectos[0].id);
   } else if (proyectos !== null) {
     const nuevo = await sbFetch('proyectos_td', {
-      method: 'POST',
-      body: JSON.stringify({ empresa_id: id, nombre: `Plan TD ${new Date().getFullYear()}`, estado: 'en_curso' })
-    }).catch(() => null);
-    window._proyectoActual = (nuevo && nuevo[0]) || null;
+      method:'POST',
+      body: JSON.stringify({empresa_id:id, nombre:`Plan TD ${new Date().getFullYear()}`, estado:'en_curso'})
+    }).catch(()=>null);
+    window._proyectoActual = nuevo?.[0] || null;
   } else {
     window._proyectoActual = null;
   }
@@ -2019,79 +1972,50 @@ async function abrirEmpresa(id) {
   updateDashboard();
 }
 
-// Restaura desde Supabase el diagnóstico y la hoja de ruta más recientes de la
-// empresa/proyecto que se acaba de abrir — se llama solo cuando ya hay un
-// proyecto activo, justo después de limpiar el estado de la empresa anterior.
 async function cargarEstadoEmpresa(empresaId, proyectoId) {
-  // Cargar último diagnóstico de este proyecto
-  const diags = await sbFetch(
-    `diagnosticos?proyecto_id=eq.${proyectoId}&order=created_at.desc&limit=1`
-  ).catch(() => null);
-
+  // Cargar último diagnóstico
+  const diags = await sbFetch(`diagnosticos?proyecto_id=eq.${proyectoId}&order=created_at.desc&limit=1`).catch(()=>null);
   if (diags && diags[0]) {
     const d = diags[0];
     window._diagnosticoActualId = d.id;
-    // Reconstruir _result para que el dashboard sepa que hay diagnóstico
-    const axAvgs = (d.scores_json && d.scores_json.axAvgs) || [];
+    const axAvgs = d.scores_json?.axAvgs || [];
     if (axAvgs.length === 8) {
-      window._result = {
-        globalAvg: d.nivel_global,
-        level:     d.nivel_texto,
-        summary:   d.resumen,
-        axAvgs:    axAvgs
-      };
-      // Guardar en localStorage para que los módulos lo encuentren
-      localStorage.setItem('ag_diagnostico', JSON.stringify({ result: window._result }));
+      window._result = { globalAvg:d.nivel_global, level:d.nivel_texto, summary:d.resumen, axAvgs };
+      localStorage.setItem('ag_diagnostico', JSON.stringify({result:window._result}));
     }
   }
-
-  // Cargar hoja de ruta de este proyecto
-  const hoja = await sbFetch(
-    `hoja_ruta?proyecto_id=eq.${proyectoId}&order=updated_at.desc&limit=1`
-  ).catch(() => null);
-
+  // Cargar hoja de ruta
+  const hoja = await sbFetch(`hoja_ruta?proyecto_id=eq.${proyectoId}&order=updated_at.desc&limit=1`).catch(()=>null);
   if (hoja && hoja[0]) {
     const h = hoja[0];
     window._hojaRutaActualId = h.id;
-    // Restaurar estado de los módulos M2
-    if (h.norte_hoy) {
-      if (typeof norteHoy !== 'undefined')      norteHoy      = h.norte_hoy;
-      if (typeof norteEstrella !== 'undefined') norteEstrella = h.norte_estrella;
-      localStorage.setItem('ag_norte', JSON.stringify({ norteHoy: h.norte_hoy, norteEstrella: h.norte_estrella, vision: h.vision }));
-    }
-    if (h.palancas_json)    localStorage.setItem('ag_palancas', JSON.stringify(h.palancas_json));
+    if (h.norte_hoy) { norteHoy=h.norte_hoy; norteEstrella=h.norte_estrella; localStorage.setItem('ag_norte', JSON.stringify({norteHoy:h.norte_hoy,norteEstrella:h.norte_estrella,vision:h.vision})); }
+    if (h.palancas_json)    localStorage.setItem('ag_palancas',    JSON.stringify(h.palancas_json));
     if (h.iniciativas_json) localStorage.setItem('ag_iniciativas', JSON.stringify(h.iniciativas_json));
-    if (h.horizontes_json)  localStorage.setItem('ag_horizontes', JSON.stringify(h.horizontes_json));
+    if (h.horizontes_json)  localStorage.setItem('ag_horizontes',  JSON.stringify(h.horizontes_json));
   }
-
-  // Cargar OKRs de este proyecto desde Supabase
-  const okrs = await sbFetch(
-    `okrs_v2?proyecto_id=eq.${proyectoId}`
-  ).catch(() => null);
-
+  // Cargar OKRs
+  const okrs = await sbFetch(`okrs_v2?proyecto_id=eq.${proyectoId}`).catch(()=>null);
   if (okrs && okrs.length > 0) {
-    // okrs_v2 guarda iniciativa_nombre (el id de iniciativa es efímero, solo de
-    // sesión) — hay que mapear de vuelta al id real usando las iniciativas que
-    // se acaban de restaurar arriba, que es como el resto del app indexa okrData.
-    const iniciativasRestauradas = (hoja && hoja[0] && hoja[0].iniciativas_json) || [];
     const nuevoOkrData = {};
-    okrs.forEach(o => {
-      const iniMatch = iniciativasRestauradas.find(i => i.nombre === o.iniciativa_nombre);
-      const key = iniMatch ? iniMatch.id : o.iniciativa_nombre;
-      nuevoOkrData[key] = {
-        objetivo: o.objetivo || '',
-        resultadosClave: o.resultados_clave_json || [],
-        cumplimiento: o.cumplimiento || 0
-      };
-    });
-    // Guardar en memoria y localStorage
-    if (typeof okrData !== 'undefined') {
-      Object.assign(okrData, nuevoOkrData);
-    }
-    localStorage.setItem('ag_okr', JSON.stringify(
-      typeof okrData !== 'undefined' ? okrData : nuevoOkrData
-    ));
+    okrs.forEach(o => { nuevoOkrData[o.iniciativa_nombre] = {objetivo:o.objetivo||'',resultadosClave:o.resultados_clave_json||[],cumplimiento:o.cumplimiento||0}; });
+    if (typeof okrData !== 'undefined') Object.assign(okrData, nuevoOkrData);
+    localStorage.setItem('ag_okr', JSON.stringify(typeof okrData!=='undefined'?okrData:nuevoOkrData));
   }
+}
+
+async function eliminarEmpresa(id, nombre) {
+  if (!confirm(`¿Eliminar "${nombre}" y todos sus datos? Esta acción no se puede deshacer.`)) return;
+  await sbFetch(`empresas?id=eq.${id}`, {method:'DELETE', headers:{'Prefer':'return=minimal'}}).catch(()=>null);
+  empresas = empresas.filter(e => e.id !== id);
+  saveEmpresas();
+  if (window._empresaActual?.id === id) {
+    window._empresaActual = null;
+    window._proyectoActual = null;
+    window._result = null;
+    ['ag_diagnostico','ag_norte','ag_palancas','ag_iniciativas','ag_horizontes','ag_okr','ag_avances'].forEach(k=>localStorage.removeItem(k));
+  }
+  renderEmpresas();
 }
 
 // Pinta el patrón de 3 botones (Consultar/Editar/Nuevo) o 1 botón (Iniciar) según
@@ -5337,18 +5261,27 @@ async function iniciarTaller() {
     });
   }
 
-  // Polling de participantes en sala de espera
+  // Polling sala de espera: contar participantes únicos en sesiones_taller
   tallerState.esperaInterval = setInterval(async () => {
     if (!tallerState.sesionId || tallerState.sesionId.indexOf('local-') === 0) return;
+
+    // Contar votos únicos de esta sesión como proxy de participantes
     const votos = await sbFetch(
       `votos_taller?sesion_id=eq.${tallerState.sesionId}&select=participante`
     ).catch(() => null);
-    if (!votos) return;
-    const unicos = new Set(votos.map(v => v.participante)).size;
+
+    // También verificar si hay participantes que ingresaron su PIN
+    // (buscando en sesiones_taller el campo de participantes)
+    const sesion = await sbFetch(
+      `sesiones_taller?id=eq.${tallerState.sesionId}&select=id`
+    ).catch(() => null);
+
+    const nVotos = votos ? new Set(votos.map(v => v.participante)).size : 0;
+
     const countEl1 = document.getElementById('taller-espera-count');
     const countEl2 = document.getElementById('taller-espera-count-btn');
-    if (countEl1) countEl1.textContent = `${unicos} participante${unicos !== 1 ? 's' : ''} conectado${unicos !== 1 ? 's' : ''}`;
-    if (countEl2) countEl2.textContent = unicos;
+    if (countEl1) countEl1.textContent = `${nVotos} participante${nVotos !== 1 ? 's' : ''} conectado${nVotos !== 1 ? 's' : ''}`;
+    if (countEl2) countEl2.textContent = nVotos;
   }, 3000);
 
   show('s-taller');
@@ -5370,6 +5303,22 @@ function iniciarTallerDesdeEspera() {
 }
 
 function renderTaller() {
+  // Si está en modo conferencia, usar las preguntas de conferencia
+  if (tallerState.modoConferencia && tallerState.preguntasConferencia) {
+    const confIdx = tallerState.ejActual * (tallerState.preguntasConferencia.length / 8 | 0) + tallerState.pregActual;
+    const confPregunta = tallerState.preguntasConferencia[Math.min(confIdx, tallerState.preguntasConferencia.length - 1)];
+    if (confPregunta) {
+      document.getElementById('taller-eje-label').textContent =
+        `Pregunta ${confIdx + 1} de ${tallerState.preguntasConferencia.length}`;
+      document.getElementById('taller-eje-nombre').textContent = confPregunta.ejeNombre;
+      document.getElementById('taller-pregunta').textContent = confPregunta.texto.split(':')[0].replace(/^Valore del 1 al 5\s*/i,'').trim();
+      document.getElementById('taller-pin').textContent = tallerState.pin;
+      document.getElementById('taller-q-num').textContent = `${confPregunta.ejeNombre} · Pregunta ${confPregunta.pregIdx + 1}`;
+      renderGraficoTaller(tallerState.pregActual);
+      return; // No continuar con el render normal
+    }
+  }
+
   const eje = AXES[tallerState.ejActual];
   const pregIdx = tallerState.pregActual;
   const pregunta = eje.qs[pregIdx];
@@ -5405,6 +5354,19 @@ function renderTaller() {
 
   // Renderizar gráfico con votos actuales
   renderGraficoTaller(tallerState.pregActual);
+
+  // Publicar pregunta actual para los participantes
+  if (tallerState.sesionId && tallerState.sesionId.indexOf('local-') !== 0) {
+    sbFetch(`sesiones_taller?id=eq.${tallerState.sesionId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        pregunta_actual: tallerState.pregActual,
+        eje_actual: tallerState.ejActual,
+        ronda_actual: tallerState.ronda,
+        estado: 'abierta'
+      })
+    }).catch(() => null);
+  }
 }
 
 function renderGraficoTaller(pregIdx) {
@@ -5604,21 +5566,94 @@ async function cerrarEjeTaller() {
 // ════════════════════════════════════════
 // MODO CONFERENCIA (8 o 16 preguntas)
 // ════════════════════════════════════════
-function iniciarConferencia(nPreguntas) {
-  // Seleccionar preguntas: 1 por eje (8) o 2 por eje (16)
+async function iniciarConferencia(nPreguntas) {
   const porEje = nPreguntas === 8 ? 1 : 2;
-  window._conferenciaPreguntas = AXES.map(eje => ({
-    key: eje.key,
-    icon: eje.icon,
-    color: eje.color,
-    qs: eje.qs.slice(0, porEje)
-  }));
-  window._conferenciaTotal = nPreguntas;
-  window._modosDiagnostico = nPreguntas === 8 ? 'conferencia8' : 'conferencia16';
 
-  // Por ahora redirigir al modo individual con las preguntas reducidas
-  // (en el siguiente incremento se integra la sala con PIN)
-  alert(`Modo conferencia ${nPreguntas} preguntas próximamente disponible. Por ahora use el modo Taller.`);
+  // Seleccionar preguntas: 1 o 2 por eje
+  const preguntasConf = [];
+  AXES.forEach((eje, ejeIdx) => {
+    for (let qi = 0; qi < porEje; qi++) {
+      if (eje.qs[qi]) {
+        preguntasConf.push({
+          ejeIdx, ejeNombre: eje.key,
+          pregIdx: qi, texto: eje.qs[qi]
+        });
+      }
+    }
+  });
+  window._conferenciaPreguntas = preguntasConf;
+  window._conferenciaTotal = nPreguntas;
+
+  // Generar PIN único
+  const pin = generarPIN();
+
+  // Crear sesión de conferencia en Supabase
+  const res = await sbFetch('sesiones_taller', {
+    method: 'POST',
+    body: JSON.stringify({
+      proyecto_id: window._proyectoActual?.id || null,
+      eje_index: 0,
+      eje_nombre: `Conferencia ${nPreguntas} preguntas`,
+      pin: pin,
+      estado: 'abierta',
+      modo: `conferencia${nPreguntas}`,
+      pregunta_actual: 0,
+      eje_actual: 0
+    })
+  }).catch(() => null);
+
+  const sesionId = res?.[0]?.id || ('local-conf-' + Date.now());
+  window._conferenciaSesionId = sesionId;
+  window._conferenciaPIN = pin;
+  window._conferenciaIdx = 0;
+
+  // Iniciar modo conferencia en s-taller
+  tallerState = {
+    ejActual: 0, pregActual: 0, ronda: 1,
+    sesionId: sesionId, pin: pin,
+    votosActuales: {}, respuestasGuardadas: [],
+    pollingInterval: null, esperaInterval: null,
+    modoConferencia: true,
+    preguntasConferencia: preguntasConf
+  };
+
+  // Mostrar sala de espera del taller con PIN de conferencia
+  const espera = document.getElementById('taller-sala-espera');
+  const contenido = document.getElementById('taller-contenido');
+  if (espera) espera.classList.remove('hidden');
+  if (contenido) contenido.classList.add('hidden');
+
+  const pinEl = document.getElementById('taller-espera-pin');
+  const ejeEl = document.getElementById('taller-espera-eje');
+  if (pinEl) pinEl.textContent = pin;
+  if (ejeEl) ejeEl.textContent = `Conferencia · ${nPreguntas} preguntas`;
+
+  // Generar QR
+  const urlParticipante = `${window.location.origin}${window.location.pathname}?pin=${pin}&modo=participante`;
+  const qrContainer = document.getElementById('taller-qr');
+  if (qrContainer && typeof QRCode !== 'undefined') {
+    qrContainer.innerHTML = '';
+    new QRCode(qrContainer, {
+      text: urlParticipante, width: 180, height: 180,
+      colorDark: '#000000', colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
+
+  // Iniciar polling de sala de espera
+  tallerState.esperaInterval = setInterval(async () => {
+    if (sesionId.indexOf('local-') === 0) return;
+    const votos = await sbFetch(
+      `votos_taller?sesion_id=eq.${sesionId}&select=participante`
+    ).catch(() => null);
+    const n = votos ? new Set(votos.map(v => v.participante)).size : 0;
+    const c1 = document.getElementById('taller-espera-count');
+    const c2 = document.getElementById('taller-espera-count-btn');
+    if (c1) c1.textContent = `${n} participante${n!==1?'s':''} conectado${n!==1?'s':''}`;
+    if (c2) c2.textContent = n;
+  }, 3000);
+
+  show('s-taller');
 }
 
 // ════════════════════════════════════════
@@ -5663,25 +5698,68 @@ async function unirseAlTaller() {
   iniciarPollingParticipante(sesiones[0]);
 }
 
-function iniciarPollingParticipante(sesion) {
+function iniciarPollingParticipante(sesionInicial) {
   if (participanteState.pollingInterval) clearInterval(participanteState.pollingInterval);
 
-  // Renderizar pregunta actual del taller (la que muestra el facilitador)
-  const renderizarPreguntaParticipante = async () => {
-    const sesActual = await sbFetch(`sesiones_taller?id=eq.${participanteState.sesionId}`);
-    if (!sesActual || !sesActual[0]) return;
+  let ultimaPregVista = -1;
+  let ultimaRondaVista = -1;
 
-    const s = sesActual[0];
+  const sincronizar = async () => {
+    const sesiones = await sbFetch(
+      `sesiones_taller?id=eq.${participanteState.sesionId}`
+    ).catch(() => null);
+    if (!sesiones || !sesiones[0]) return;
+
+    const s = sesiones[0];
+
+    // Si la sesión se cerró
     if (s.estado === 'cerrada') {
       clearInterval(participanteState.pollingInterval);
-      document.getElementById('part-voto-confirmado').classList.remove('hidden');
-      document.getElementById('part-botones-voto').innerHTML = '';
-      document.getElementById('part-pregunta').textContent = 'Este eje ha sido cerrado. Espere al facilitador.';
+      const confirmEl = document.getElementById('part-voto-confirmado');
+      const botonesEl = document.getElementById('part-botones-voto');
+      const pregEl    = document.getElementById('part-pregunta');
+      if (confirmEl) confirmEl.classList.remove('hidden');
+      if (botonesEl) botonesEl.innerHTML = '';
+      if (pregEl)    pregEl.textContent = 'Este eje ha finalizado. Espere al facilitador.';
       return;
+    }
+
+    const pregIdx  = s.pregunta_actual ?? 0;
+    const ejeIdx   = s.eje_actual ?? 0;
+    const ronda    = s.ronda_actual ?? 1;
+    const ejeNombre = s.eje_nombre || '';
+
+    // Si cambió la pregunta o la ronda, mostrar la nueva
+    if (pregIdx !== ultimaPregVista || ronda !== ultimaRondaVista) {
+      ultimaPregVista  = pregIdx;
+      ultimaRondaVista = ronda;
+
+      // Actualizar eje
+      const ejeEl = document.getElementById('part-eje');
+      if (ejeEl) ejeEl.textContent = ejeNombre;
+
+      // Obtener texto de la pregunta desde AXES
+      const pregTexto = (AXES[ejeIdx] && AXES[ejeIdx].qs[pregIdx])
+        ? AXES[ejeIdx].qs[pregIdx]
+        : `Pregunta ${pregIdx + 1}`;
+
+      // Limpiar el texto de la pregunta (formato ¿...?)
+      let titulo = pregTexto;
+      const colonIdx = pregTexto.indexOf(':');
+      if (colonIdx !== -1) {
+        titulo = pregTexto.substring(0, colonIdx)
+          .replace(/^Valore del 1 al 5\s*/i, '').trim();
+        if (!titulo) titulo = pregTexto;
+      }
+
+      // Mostrar pregunta y botones de voto
+      renderBotonesVoto(pregIdx, ejeNombre, titulo);
     }
   };
 
-  participanteState.pollingInterval = setInterval(renderizarPreguntaParticipante, 3000);
+  // Ejecutar inmediatamente y luego cada 2 segundos
+  sincronizar();
+  participanteState.pollingInterval = setInterval(sincronizar, 2000);
 }
 
 function renderBotonesVoto(pregIdx, ejeNombre, pregTexto) {
@@ -5720,6 +5798,38 @@ async function registrarVotoParticipante(pregIdx, voto) {
   document.getElementById('part-voto-confirmado').classList.remove('hidden');
   document.getElementById('part-botones-voto').innerHTML = '';
 }
+
+// ════════════════════════════════════════
+// INICIALIZACIÓN AL CARGAR
+// ════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  // Timeout de seguridad: si en 4s no se llamó show(), mostrar login de todas formas
+  const safetyTimeout = setTimeout(function() {
+    const ls = document.getElementById('loading-screen');
+    if (ls) { ls.style.opacity='0'; setTimeout(()=>ls.remove(),300); }
+    const login = document.getElementById('s-login');
+    if (login && login.classList.contains('hidden')) {
+      login.classList.remove('hidden');
+    }
+  }, 4000);
+
+  // Detectar modo participante por URL
+  const params = new URLSearchParams(window.location.search);
+  const pinUrl  = params.get('pin');
+  const modoUrl = params.get('modo');
+  if (pinUrl && modoUrl === 'participante') {
+    clearTimeout(safetyTimeout);
+    const pinInput = document.getElementById('participante-pin');
+    if (pinInput) pinInput.value = pinUrl;
+    show('s-participante');
+    return;
+  }
+
+  // Flujo normal — mostrar login
+  clearTimeout(safetyTimeout);
+  initScores();
+  show('s-login');
+});
 </script>
 </body>
 </html>
