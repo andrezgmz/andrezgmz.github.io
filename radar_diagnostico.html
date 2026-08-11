@@ -5605,7 +5605,7 @@ function iniciarPollingVotos() {
     if (!tallerState.sesionId || tallerState.sesionId.indexOf('local-') === 0) return;
 
     const votos = await sbFetch(
-      `votos_taller?sesion_id=eq.${tallerState.sesionId}&ronda=eq.${tallerState.ronda}`
+      `votos_taller?sesion_id=eq.${tallerState.sesionId}&eje_index=eq.${tallerState.ejActual}&ronda=eq.${tallerState.ronda}`
     ).catch(() => null);
 
     if (!votos) return;
@@ -5888,7 +5888,8 @@ let participanteState = {
   pin: null,
   pollingInterval: null,
   ultimaPregIdx: -1,
-  resultadosInterval: null
+  resultadosInterval: null,
+  ejeActual: 0
 };
 
 async function unirseAlTaller() {
@@ -5960,6 +5961,7 @@ function iniciarPollingParticipante(sesionInicial) {
     if (pregIdx !== ultimaPregVista || ronda !== ultimaRondaVista) {
       ultimaPregVista  = pregIdx;
       ultimaRondaVista = ronda;
+      participanteState.ejeActual = ejeIdx;
 
       // Actualizar eje
       const ejeEl = document.getElementById('part-eje');
@@ -6031,6 +6033,7 @@ async function registrarVotoParticipante(pregIdx, voto) {
     body: JSON.stringify({
       sesion_id: participanteState.sesionId,
       pregunta_index: pregIdx,
+      eje_index: participanteState.ejeActual || 0,
       participante: participanteState.nombre,
       voto: voto,
       ronda: 1
@@ -6045,7 +6048,7 @@ async function registrarVotoParticipante(pregIdx, voto) {
   if (participanteState.resultadosInterval) clearInterval(participanteState.resultadosInterval);
   participanteState.resultadosInterval = setInterval(async () => {
     const votos = await sbFetch(
-      `votos_taller?sesion_id=eq.${participanteState.sesionId}&pregunta_index=eq.${pregIdx}`
+      `votos_taller?sesion_id=eq.${participanteState.sesionId}&eje_index=eq.${participanteState.ejeActual||0}&pregunta_index=eq.${pregIdx}`
     ).catch(() => null);
     if (!votos) return;
 
