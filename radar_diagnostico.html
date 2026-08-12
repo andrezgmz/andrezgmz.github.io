@@ -2781,38 +2781,60 @@ function buildHorizons(avgs) {
 
 // ─── Radar Chart ───
 function buildRadar(avgs) {
-  setTimeout(() => {
-    const ctx = document.getElementById('rChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'radar',
-      data: {
-        labels: AXES.map(a => a.key.split(' & ')[0]),
-        datasets: [{
-          data: avgs,
-          backgroundColor: 'rgba(34,211,238,.10)',
-          borderColor: 'rgba(34,211,238,.9)',
-          borderWidth: 2,
-          pointBackgroundColor: avgs.map(s => getColor(s)),
-          pointBorderColor: '#0f172a',
-          pointBorderWidth: 2,
-          pointRadius: 5
-        }]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: true,
-        plugins: { legend: { display: false } },
-        scales: {
-          r: {
-            angleLines: { color: 'rgba(255,255,255,.06)' },
-            grid: { color: 'rgba(255,255,255,.06)' },
-            pointLabels: { color: 'rgba(148,163,184,1)', font: { size: 9, weight: '600' } },
-            ticks: { backdropColor:'transparent', color:'rgba(71,85,105,1)', stepSize:1, showLabelBackdrop:false, font:{size:8} },
-            min:0, max:5
-          }
+  if (typeof Chart === 'undefined') {
+    let intentos = 0;
+    const esperar = setInterval(() => {
+      intentos++;
+      if (typeof Chart !== 'undefined') {
+        clearInterval(esperar);
+        _dibujarRadar(avgs);
+      } else if (intentos > 20) {
+        clearInterval(esperar);
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+        s.onload = () => _dibujarRadar(avgs);
+        document.head.appendChild(s);
+      }
+    }, 200);
+    return;
+  }
+  setTimeout(() => _dibujarRadar(avgs), 100);
+}
+
+function _dibujarRadar(avgs) {
+  const canvas = document.getElementById('rChart');
+  if (!canvas) return;
+  if (window._radarChart) { try { window._radarChart.destroy(); } catch(e) {} }
+  const ctx = canvas.getContext('2d');
+  window._radarChart = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: AXES.map(a => a.key.split(' & ')[0]),
+      datasets: [{
+        data: avgs,
+        backgroundColor: 'rgba(34,211,238,.10)',
+        borderColor: 'rgba(34,211,238,.9)',
+        borderWidth: 2,
+        pointBackgroundColor: avgs.map(s => getColor(s)),
+        pointBorderColor: '#0f172a',
+        pointBorderWidth: 2,
+        pointRadius: 5
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        r: {
+          angleLines: { color: 'rgba(255,255,255,.06)' },
+          grid: { color: 'rgba(255,255,255,.06)' },
+          pointLabels: { color: 'rgba(148,163,184,1)', font: { size: 9, weight: '600' } },
+          ticks: { backdropColor:'transparent', color:'rgba(71,85,105,1)', stepSize:1, showLabelBackdrop:false, font:{size:8} },
+          min:0, max:5
         }
       }
-    });
-  }, 150);
+    }
+  });
 }
 
 // ─── Notas por eje ───
