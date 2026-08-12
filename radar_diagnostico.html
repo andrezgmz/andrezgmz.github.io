@@ -5687,13 +5687,55 @@ function tallerPreguntaAnterior() {
 
 async function cerrarEjeConferencia() {
   if (tallerState.pollingInterval) clearInterval(tallerState.pollingInterval);
+  if (tallerState.esperaInterval)  clearInterval(tallerState.esperaInterval);
+
+  // Cargar todos los votos de la sesión desde Supabase
+  let votosDB = [];
+  if (tallerState.sesionId && tallerState.sesionId.indexOf('local-') !== 0) {
+    votosDB = await sbFetch(
+      `votos_taller?sesion_id=eq.${tallerState.sesionId}&select=eje_index,pregunta_index,voto`
+    ).catch(() => null) || [];
+  }
+
+  // Reconstruir scores[][] desde los votos de Supabase
+  // Agrupar por eje_index y pregunta_index, calcular promedio
+  const votosPorEje = {};
+  votosDB.forEach(v => {
+    if (!votosPorEje[v.eje_index]) votosPorEje[v.eje_index] = {};
+    if (!votosPorEje[v.eje_index][v.pregunta_index])
+      votosPorEje[v.eje_index][v.pregunta_index] = [];
+    votosPorEje[v.eje_index][v.pregunta_index].push(v.voto);
+  });
+
+  // Llenar scores[][] con los promedios
+  // En conferencia de 8 preguntas: 1 pregunta por eje (pregunta_index 0)
+  // En conferencia de 16 preguntas: 2 preguntas por eje (pregunta_index 0 y 1)
+  AXES.forEach((eje, ejeIdx) => {
+    for (let qi = 0; qi < eje.qs.length; qi++) {
+      const votosPreg = votosPorEje[ejeIdx]?.[qi % (tallerState.preguntasConferencia
+        ? Math.ceil(tallerState.preguntasConferencia.length / 8) : 1)] || [];
+      if (votosPreg.length > 0) {
+        const prom = Math.round(votosPreg.reduce((a,b)=>a+b,0) / votosPreg.length);
+        scores[ejeIdx][qi] = prom;
+      } else {
+        // Si no hay votos para esta pregunta, usar el promedio del eje
+        const todosVotosEje = Object.values(votosPorEje[ejeIdx] || {}).flat();
+        const promEje = todosVotosEje.length > 0
+          ? Math.round(todosVotosEje.reduce((a,b)=>a+b,0) / todosVotosEje.length)
+          : 3;
+        scores[ejeIdx][qi] = promEje;
+      }
+    }
+  });
+
+  // Cerrar sesión en Supabase
   if (tallerState.sesionId && tallerState.sesionId.indexOf('local-') !== 0) {
     await sbFetch(`sesiones_taller?id=eq.${tallerState.sesionId}`, {
       method: 'PATCH', body: JSON.stringify({ estado: 'cerrada' })
     }).catch(() => null);
   }
-  toast('Conferencia finalizada', 'ok');
-  show('s-results');
+
+  // Generar resultados ANTES de mostrar la pantalla
   genResults();
 }
 
