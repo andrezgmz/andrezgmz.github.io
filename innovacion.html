@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taller de Innovación Digital | Herramienta Profesional</title>
+<link rel="preconnect" href="https://cdn.tailwindcss.com">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="dns-prefetch" href="https://djgqohrwjxymmguefljs.supabase.co">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+* { font-family: 'Inter', sans-serif; }
+.fade { animation: fadeUp 0.4s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.pulse-dot { animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+.bar-fill { transition: width 1s cubic-bezier(.4,0,.2,1); }
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes slideIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+</style>
+</head>
+<body class="bg-slate-950 text-white min-h-screen">
+
+<!-- LOADING SCREEN -->
+<div id="loading-screen" style="position:fixed;inset:0;background:rgb(2 6 23);display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.3s">
+  <div style="text-align:center">
+    <div style="width:40px;height:40px;border:3px solid rgb(139 92 246/0.20);border-top-color:rgb(139 92 246);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px"></div>
+    <p style="color:rgb(100 116 139);font-size:12px;font-family:sans-serif">Cargando taller...</p>
+  </div>
+</div>
+
+<header class="border-b border-slate-800/50 bg-slate-950/95 backdrop-blur sticky top-0 z-50">
+  <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-2 h-2 rounded-full pulse-dot" style="background:rgb(139 92 246)"></div>
+      <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Taller de Innovación Digital · Design Thinking + Doblin</span>
+    </div>
+    <a href="https://andrezgmz.github.io" class="text-xs text-slate-500 hover:text-violet-400 transition flex items-center gap-1">
+      <i class="fa-solid fa-arrow-left text-[10px]"></i> Inicio
+    </a>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto px-4 py-10">
+
+<!-- ═══════════════════════════════
+     S-LOGIN
+═══════════════════════════════ -->
+<div id="s-login" class="fade">
+  <div class="max-w-md mx-auto pt-12 pb-20">
+    <div class="text-center mb-8">
+      <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5" style="background:rgb(139 92 246/0.10);border:1px solid rgb(139 92 246/0.20)">
+        <i class="fa-solid fa-lightbulb text-xl" style="color:rgb(139 92 246)"></i>
+      </div>
+      <h1 class="text-2xl font-black tracking-tight">Taller de Innovación Digital</h1>
+      <p class="text-slate-500 text-sm mt-1">Metodología Design Thinking + Doblin</p>
+    </div>
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-7">
+      <div id="login-err" class="hidden mb-4 bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold px-4 py-3 rounded-xl">
+        <i class="fa-solid fa-circle-exclamation mr-2"></i><span id="login-err-txt">Credenciales incorrectas.</span>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Usuario</label>
+          <input id="lu" type="text" placeholder="Ingrese su usuario" class="w-full p-3.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-sm placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Contraseña</label>
+          <input id="lp" type="password" placeholder="Ingrese su contraseña" class="w-full p-3.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-sm placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <button onclick="doLogin()" class="w-full font-black py-4 rounded-xl text-sm mt-2 transition" style="background:rgb(139 92 246);color:white">
+          Ingresar <i class="fa-solid fa-arrow-right ml-1"></i>
+        </button>
+      </div>
+      <div class="mt-6 pt-6 text-center" style="border-top:1px solid rgb(30 41 59)">
+        <p class="text-[10px] text-slate-600 mb-3">¿Le compartieron un PIN?</p>
+        <button onclick="show('s-participante')" class="text-xs font-bold px-4 py-2 rounded-lg transition" style="background:rgb(139 92 246/0.10);border:1px solid rgb(139 92 246/0.20);color:rgb(167 139 250)">
+          <i class="fa-solid fa-mobile mr-1"></i> Unirse como participante
+        </button>
+      </div>
+    </div>
+    <p class="text-center text-xs text-slate-700 mt-5">William Andrés Gómez Lizarazo · andrezgmz.github.io</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     S-EMPRESA
+═══════════════════════════════ -->
+<div id="s-empresa" class="hidden fade">
+  <div class="max-w-4xl mx-auto py-8">
+
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <p class="text-xs text-slate-500 uppercase tracking-widest font-bold mb-1">Taller de Innovación</p>
+        <h1 class="text-2xl font-black text-white">Empresas</h1>
+        <p class="text-slate-500 text-xs mt-1">Seleccione una empresa para abrir su taller o cree una nueva.</p>
+      </div>
+      <button onclick="doLogout()" class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg">
+        <i class="fa-solid fa-right-from-bracket text-[10px]"></i> Cerrar sesión
+      </button>
+    </div>
+
+    <button id="empresa-nueva-btn" onclick="mostrarFormEmpresa()" class="w-full mb-4 border border-dashed border-slate-700 text-slate-400 hover:border-violet-500/40 hover:text-violet-400 transition rounded-xl py-3 text-xs font-bold flex items-center justify-center gap-2">
+      <i class="fa-solid fa-plus text-[10px]"></i> Nueva Empresa
+    </button>
+
+    <div id="empresa-form" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-4">
+      <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Nueva Empresa</p>
+      <div class="grid md:grid-cols-2 gap-3 mb-3">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Nombre</label>
+          <input id="emp-nombre" type="text" placeholder="Nombre de la empresa" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-violet-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Sector</label>
+          <input id="emp-sector" type="text" placeholder="Ej: Cooperativo, Financiero..." class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-violet-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Ciudad</label>
+          <input id="emp-ciudad" type="text" placeholder="Ciudad" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-violet-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Contacto</label>
+          <input id="emp-contacto-nombre" type="text" placeholder="Nombre del contacto" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-violet-500">
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Email de contacto</label>
+          <input id="emp-contacto-email" type="email" placeholder="correo@empresa.com" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-violet-500">
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="guardarEmpresaInn()" class="font-black px-5 py-2.5 rounded-xl text-xs flex items-center gap-2" style="background:rgb(139 92 246);color:white">
+          <i class="fa-solid fa-check text-[10px]"></i> Guardar
+        </button>
+        <button onclick="cancelarFormEmpresa()" class="text-slate-500 hover:text-slate-300 text-xs px-3 py-2.5 transition">Cancelar</button>
+      </div>
+    </div>
+
+    <div id="empresas-grid" class="grid md:grid-cols-2 gap-4"></div>
+
+    <!-- Detalle de empresa: talleres -->
+    <div id="empresa-detalle" class="hidden">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <button onclick="volverAEmpresas()" class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg mb-3">
+            <i class="fa-solid fa-arrow-left text-[10px]"></i> Empresas
+          </button>
+          <h2 class="text-xl font-black text-white" id="empresa-detalle-nombre"></h2>
+          <p class="text-slate-500 text-xs mt-1">Talleres de esta empresa</p>
+        </div>
+      </div>
+      <div id="talleres-lista" class="mb-4"></div>
+      <button onclick="crearTallerNuevo()" class="w-full font-black py-3 rounded-xl text-xs" style="background:rgb(139 92 246/0.15);border:1px solid rgb(139 92 246/0.30);color:rgb(167 139 250)">
+        <i class="fa-solid fa-plus mr-1"></i> Crear nuevo taller
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     S-DASHBOARD
+═══════════════════════════════ -->
+<div id="s-dashboard" class="hidden fade">
+  <div class="max-w-4xl mx-auto py-8">
+    <div class="flex items-start justify-between mb-6">
+      <div>
+        <p class="text-xs text-slate-500 uppercase tracking-widest font-bold mb-1">Taller de Innovación</p>
+        <h1 class="text-2xl font-black text-white" id="dash-taller-nombre"></h1>
+        <p class="text-xs mt-1" style="color:rgb(167 139 250)"><i class="fa-solid fa-building text-[9px] mr-1"></i><span id="dash-empresa-nombre"></span></p>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="text-center rounded-xl px-4 py-2" style="background:rgb(139 92 246/0.10);border:1px solid rgb(139 92 246/0.25)">
+          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider">PIN</p>
+          <p class="text-lg font-black" style="color:rgb(167 139 250)" id="dash-pin"></p>
+        </div>
+        <button onclick="volverAEmpresaDesdeDashboard()" class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg h-fit">
+          <i class="fa-solid fa-arrow-left text-[10px]"></i> Empresa
+        </button>
+      </div>
+    </div>
+
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6">
+      <div class="flex items-center justify-between mb-2">
+        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Avance del taller</p>
+        <p class="text-xs font-bold" id="dash-progress-txt" style="color:rgb(167 139 250)"></p>
+      </div>
+      <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
+        <div id="dash-progress-bar" class="h-full bar-fill" style="width:0%;background:rgb(139 92 246)"></div>
+      </div>
+    </div>
+
+    <div id="dash-fases-grid" class="grid md:grid-cols-2 gap-4"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     S-FASE0 · Priorizar Problemas
+═══════════════════════════════ -->
+<div id="s-fase0" class="hidden fade">
+  <div class="max-w-4xl mx-auto py-8">
+    <div class="flex items-start justify-between mb-6">
+      <div>
+        <p class="text-[10px] font-black uppercase tracking-widest mb-1" style="color:rgb(245 158 11)">Fase 0</p>
+        <h1 class="text-xl font-black text-white">Priorizar Problemas</h1>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="text-center rounded-xl px-3 py-1.5" style="background:rgb(245 158 11/0.10);border:1px solid rgb(245 158 11/0.25)">
+          <p class="text-[8px] font-bold text-slate-500 uppercase">PIN participantes</p>
+          <p class="text-sm font-black" id="f0-pin" style="color:rgb(245 158 11)"></p>
+        </div>
+        <button onclick="irADashboard()" class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg h-fit">← Dashboard</button>
+      </div>
+    </div>
+
+    <!-- Sección A -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-5">
+      <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Proponer problemas</p>
+      <div class="flex gap-2 mb-4">
+        <input id="f0-input" type="text" placeholder="Describa un problema u oportunidad..." class="flex-1 p-3 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-600 focus:outline-none" onkeydown="if(event.key==='Enter')fase0AgregarProblema()">
+        <button onclick="fase0AgregarProblema()" class="px-4 py-2 rounded-xl text-xs font-bold" style="background:rgb(245 158 11);color:rgb(2 6 23)">Agregar</button>
+      </div>
+      <div id="f0-lista"></div>
+    </div>
+
+    <!-- Sección B -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-5">
+      <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Matriz Valor × Dificultad</p>
+      <div id="f0-matriz"></div>
+    </div>
+
+    <!-- Sección C -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-8">
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Selección final</p>
+        <select id="f0-num-selector" onchange="fase0CambiarN(this.value)" class="text-xs bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-slate-300">
+          <option value="1">1 problema</option>
+          <option value="2">2 problemas</option>
+          <option value="3">3 problemas</option>
+        </select>
+      </div>
+      <div id="f0-seleccion" class="mb-4"></div>
+      <button onclick="fase0GuardarYAvanzar()" class="w-full font-black py-3.5 rounded-xl text-xs" style="background:rgb(245 158 11);color:rgb(2 6 23)">
+        Guardar selección y avanzar a Fase 1 <i class="fa-solid fa-arrow-right ml-1"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     S-FASE1 · Descubre
+═══════════════════════════════ -->
+<div id="s-fase1" class="hidden fade">
+  <div class="max-w-4xl mx-auto py-8">
+    <div class="flex items-start justify-between mb-6">
+      <div>
+        <p class="text-[10px] font-black uppercase tracking-widest mb-1" style="color:rgb(34 211 238)">Fase 1</p>
+        <h1 class="text-xl font-black text-white">Descubre · Mapa de Empatía</h1>
+      </div>
+      <button onclick="irADashboard()" class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg h-fit">← Dashboard</button>
+    </div>
+    <div id="f1-contenido" class="mb-6"></div>
+    <div class="flex gap-2">
+      <button onclick="fase1Guardar()" class="flex-1 font-black py-3.5 rounded-xl text-xs bg-slate-800 border border-slate-700 text-slate-300">Guardar avance</button>
+      <button onclick="fase1Avanzar()" class="flex-1 font-black py-3.5 rounded-xl text-xs" style="background:rgb(34 211 238);color:rgb(2 6 23)">Avanzar a Fase 2 <i class="fa-solid fa-arrow-right ml-1"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     S-FASE2 · Describe
+═══════════════════════════════ -->
+<div id="s-fase2" class="hidden fade">
+  <div class="max-w-4xl mx-auto py-8">
+    <div class="flex items-start justify-between mb-6">
+      <div>
+        <p class="text-[10px] font-black uppercase tracking-widest mb-1" style="color:rgb(129 140 248)">Fase 2</p>
+        <h1 class="text-xl font-black text-white">Describe · 5 Por Qués</h1>
+      </div>
+      <button onclick="irADashboard()" class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg h-fit">← Dashboard</button>
+    </div>
+    <div id="f2-contenido" class="mb-5"></div>
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6">
+      <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">¿Cómo podríamos...?</label>
+      <textarea id="f2-como" oninput="setComoPodriamos(this.value)" rows="3" placeholder="Reformule el problema como una oportunidad de acción..." class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-600 focus:outline-none"></textarea>
+    </div>
+    <div class="flex gap-2">
+      <button onclick="fase2Guardar()" class="flex-1 font-black py-3.5 rounded-xl text-xs bg-slate-800 border border-slate-700 text-slate-300">Guardar</button>
+      <button onclick="fase2Avanzar()" class="flex-1 font-black py-3.5 rounded-xl text-xs" style="background:rgb(129 140 248);color:rgb(2 6 23)">Avanzar a Fase 3 <i class="fa-solid fa-arrow-right ml-1"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     S-FASE3A · Co-Crea (Grupos)
+═══════════════════════════════ -->
+<div id="s-fase3a" class="hidden fade">
+  <div class="max-w-4xl mx-auto py-8">
+    <div class="flex items-start justify-between mb-6">
+      <div>
+        <p class="text-[10px] font-black uppercase tracking-widest mb-1" style="color:rgb(167 139 250)">Fase 3</p>
+        <h1 class="text-xl font-black text-white">Co-Crea — Ideas por Grupo</h1>
+      </div>
+      <button onclick="irADashboard()" class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg h-fit">← Dashboard</button>
+    </div>
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 mb-5">
+      <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">¿Cómo podríamos...?</p>
+      <p class="text-xs text-white" id="f3a-como"></p>
+    </div>
+
+    <div class="flex gap-2 mb-5">
+      <input id="f3a-grupo-input" type="text" placeholder="Nombre del grupo..." class="flex-1 p-3 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-600 focus:outline-none" onkeydown="if(event.key==='Enter')agregarGrupo()">
+      <button onclick="agregarGrupo()" class="px-4 py-2 rounded-xl text-xs font-bold" style="background:rgb(167 139 250);color:rgb(2 6 23)">Agregar grupo</button>
+    </div>
+
+    <div id="f3a-grupos"></div>
+
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6">
+      <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Ideas ganadoras registradas</p>
+      <div id="f3a-ideas-lista"></div>
+    </div>
+
+    <button onclick="pasarAVotacionPlenaria()" class="w-full font-black py-3.5 rounded-xl text-xs" style="background:rgb(167 139 250);color:rgb(2 6 23)">
+      Pasar a votación plenaria <i class="fa-solid fa-arrow-right ml-1"></i>
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     S-FASE3B · Co-Crea (Votación plenaria)
+═══════════════════════════════ -->
+<div id="s-fase3b" class="hidden fade">
+  <div class="max-w-4xl mx-auto py-8">
+    <div class="flex items-start justify-between mb-6">
+      <div>
+        <p class="text-[10px] font-black uppercase tracking-widest mb-1" style="color:rgb(167 139 250)">Fase 3</p>
+        <h1 class="text-xl font-black text-white">Votación Plenaria</h1>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="text-center rounded-xl px-3 py-1.5" style="background:rgb(167 139 250/0.10);border:1px solid rgb(167 139 250/0.25)">
+          <p class="text-[8px] font-bold text-slate-500 uppercase">PIN</p>
+          <p class="text-sm font-black" id="f3b-pin" style="color:rgb(167 139 250)"></p>
+        </div>
+        <button onclick="irADashboard()" class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg h-fit">← Dashboard</button>
+      </div>
+    </div>
+    <div id="f3b-ideas" class="mb-6"></div>
+    <button onclick="cerrarVotacionYAvanzar()" class="w-full font-black py-3.5 rounded-xl text-xs" style="background:rgb(167 139 250);color:rgb(2 6 23)">
+      Cerrar votación y confirmar ganadora <i class="fa-solid fa-arrow-right ml-1"></i>
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     S-FASE4 · Escala
+═══════════════════════════════ -->
+<div id="s-fase4" class="hidden fade">
+  <div class="max-w-4xl mx-auto py-8">
+    <div class="flex items-start justify-between mb-6">
+      <div>
+        <p class="text-[10px] font-black uppercase tracking-widest mb-1" style="color:rgb(52 211 153)">Fase 4</p>
+        <h1 class="text-xl font-black text-white">Escala — Cartel de Concepto</h1>
+      </div>
+      <button onclick="irADashboard()" class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg h-fit">← Dashboard</button>
+    </div>
+
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 mb-5">
+      <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Idea ganadora</p>
+      <div id="f4-idea-ganadora"></div>
+    </div>
+
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-5 space-y-3">
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Nombre atractivo de la solución</label>
+        <input id="f4-nombre" oninput="setCartelField('nombre',this.value)" type="text" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-600 focus:outline-none">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Propuesta de valor</label>
+        <textarea id="f4-propuesta_valor" oninput="setCartelField('propuesta_valor',this.value)" rows="2" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none"></textarea>
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Necesidad del cliente que resuelve</label>
+        <textarea id="f4-necesidad_cliente" oninput="setCartelField('necesidad_cliente',this.value)" rows="2" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none"></textarea>
+      </div>
+      <div class="grid md:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Beneficios para el cliente</label>
+          <textarea id="f4-beneficios_cliente" oninput="setCartelField('beneficios_cliente',this.value)" rows="2" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Beneficios para la empresa</label>
+          <textarea id="f4-beneficios_empresa" oninput="setCartelField('beneficios_empresa',this.value)" rows="2" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none"></textarea>
+        </div>
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Características principales</label>
+        <textarea id="f4-caracteristicas" oninput="setCartelField('caracteristicas',this.value)" rows="2" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none"></textarea>
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Requisitos para lanzar</label>
+        <textarea id="f4-requisitos" oninput="setCartelField('requisitos',this.value)" rows="2" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none"></textarea>
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Modelo de ingreso / retorno</label>
+        <textarea id="f4-modelo_ingreso" oninput="setCartelField('modelo_ingreso',this.value)" rows="2" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none"></textarea>
+      </div>
+    </div>
+
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-5">
+      <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Clasificación Doblin</p>
+      <div id="f4-doblin" class="flex flex-wrap gap-2"></div>
+    </div>
+
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6">
+      <label class="flex items-center gap-3 cursor-pointer mb-3">
+        <input id="f4-exportar-toggle" type="checkbox" onchange="toggleExportarRadar(this.checked)">
+        <span class="text-xs font-bold text-white">Exportar como iniciativa al Plan de TD</span>
+      </label>
+      <div id="f4-exportar-campos" class="hidden space-y-3">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Nombre de la iniciativa</label>
+          <input id="f4-nombre-iniciativa" type="text" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Horizonte sugerido</label>
+          <select id="f4-horizonte" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none">
+            <option value="h1">H1 · Estabilizar</option>
+            <option value="h2">H2 · Automatizar</option>
+            <option value="h3">H3 · Transformar</option>
+          </select>
+        </div>
+        <button onclick="exportarARadar()" class="w-full font-black py-2.5 rounded-xl text-xs" style="background:rgb(52 211 153/0.15);border:1px solid rgb(52 211 153/0.30);color:rgb(52 211 153)">Exportar</button>
+      </div>
+    </div>
+
+    <div class="flex gap-2">
+      <button onclick="guardarCartel()" class="flex-1 font-black py-3.5 rounded-xl text-xs bg-slate-800 border border-slate-700 text-slate-300">Guardar Cartel</button>
+      <button onclick="fase4Avanzar()" class="flex-1 font-black py-3.5 rounded-xl text-xs" style="background:rgb(52 211 153);color:rgb(2 6 23)">Avanzar a Fase 5 <i class="fa-solid fa-arrow-right ml-1"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     S-FASE5 · Mantén
+═══════════════════════════════ -->
+<div id="s-fase5" class="hidden fade">
+  <div class="max-w-4xl mx-auto py-8">
+    <div class="flex items-start justify-between mb-6">
+      <div>
+        <p class="text-[10px] font-black uppercase tracking-widest mb-1" style="color:rgb(244 63 94)">Fase 5</p>
+        <h1 class="text-xl font-black text-white">Mantén</h1>
+      </div>
+      <button onclick="irADashboard()" class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg h-fit">← Dashboard</button>
+    </div>
+
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-5">
+      <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Resumen ejecutivo</p>
+      <div id="f5-resumen"></div>
+    </div>
+
+    <a id="f5-link-radar" href="radar_diagnostico.html" target="_blank" class="hidden mb-5 block text-center text-xs font-bold py-2.5 rounded-xl" style="background:rgb(52 211 153/0.10);border:1px solid rgb(52 211 153/0.25);color:rgb(52 211 153)">
+      Ver en el Plan de TD →
+    </a>
+
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6 space-y-3">
+      <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Estado de implementación</p>
+      <select id="f5-estado" onchange="setSeguimiento('estadoImpl',this.value)" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none">
+        <option value="pendiente">Pendiente</option>
+        <option value="en_progreso">En progreso</option>
+        <option value="completado">Completado</option>
+      </select>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">% de avance</label>
+        <input id="f5-pct" type="number" min="0" max="100" oninput="setSeguimiento('pctAvance',Number(this.value))" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Notas de seguimiento</label>
+        <textarea id="f5-notas" oninput="setSeguimiento('notas',this.value)" rows="3" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none"></textarea>
+      </div>
+    </div>
+
+    <div class="flex gap-2">
+      <button onclick="descargarResumen()" class="flex-1 font-black py-3.5 rounded-xl text-xs bg-slate-800 border border-slate-700 text-slate-300">
+        <i class="fa-solid fa-download mr-1"></i> Descargar resumen
+      </button>
+      <button onclick="finalizarTaller()" class="flex-1 font-black py-3.5 rounded-xl text-xs" style="background:rgb(244 63 94);color:white">
+        Finalizar taller <i class="fa-solid fa-check ml-1"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     S-PARTICIPANTE
+═══════════════════════════════ -->
+<div id="s-participante" class="hidden fade">
+  <div class="max-w-md mx-auto py-10 px-4">
+
+    <div id="p-login">
+      <div class="flex justify-start mb-4">
+        <button onclick="show('s-login')" class="text-xs text-slate-600 hover:text-slate-400 transition flex items-center gap-1.5 border border-slate-800 px-3 py-1.5 rounded-lg">← Volver</button>
+      </div>
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background:rgb(139 92 246/0.10);border:1px solid rgb(139 92 246/0.20)">
+          <i class="fa-solid fa-mobile text-2xl" style="color:rgb(139 92 246)"></i>
+        </div>
+        <h2 class="text-2xl font-black text-white mb-2">Unirse al taller</h2>
+        <p class="text-xs text-slate-400">Ingrese el PIN que le indicó el facilitador</p>
+      </div>
+      <div class="space-y-4">
+        <input id="p-nombre" type="text" placeholder="Su nombre" class="w-full p-4 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm placeholder-slate-600 focus:outline-none focus:border-violet-500">
+        <input id="p-pin" type="number" placeholder="PIN de sala (4 dígitos)" maxlength="4" class="w-full p-4 bg-slate-900 border border-slate-800 rounded-xl text-white text-2xl font-black text-center tracking-widest placeholder-slate-600 focus:outline-none focus:border-violet-500">
+        <button onclick="unirseInnovacion()" class="w-full font-black py-4 rounded-xl text-sm transition" style="background:rgb(139 92 246);color:white">
+          Unirse al taller <i class="fa-solid fa-arrow-right ml-2"></i>
+        </button>
+      </div>
+    </div>
+
+    <div id="p-actividad" class="hidden">
+      <div id="p-espera" class="hidden">
+        <div class="text-center py-10">
+          <div style="width:32px;height:32px;border:3px solid rgb(139 92 246/0.20);border-top-color:rgb(139 92 246);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 14px"></div>
+          <p class="text-sm font-bold text-white mb-1">El facilitador está preparando la siguiente actividad...</p>
+          <p class="text-[10px] text-slate-500">Esta pantalla se actualiza automáticamente.</p>
+        </div>
+      </div>
+
+      <div id="p-fase0" class="hidden">
+        <h3 class="text-lg font-black text-white mb-1">Proponer y votar problemas</h3>
+        <p class="text-xs text-slate-500 mb-4">Escriba un problema u oportunidad, o vote por su favorito.</p>
+        <div class="flex gap-2 mb-5">
+          <input id="p-problema-input" type="text" placeholder="Su idea de problema..." class="flex-1 p-3 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs placeholder-slate-600 focus:outline-none">
+          <button onclick="participanteProponerProblema()" class="px-4 py-2 rounded-xl text-xs font-bold" style="background:rgb(139 92 246);color:white">Enviar</button>
+        </div>
+        <div id="p-problemas-lista"></div>
+      </div>
+
+      <div id="p-fase3" class="hidden">
+        <h3 class="text-lg font-black text-white mb-1">Vote por la mejor idea</h3>
+        <p class="text-xs text-slate-500 mb-4">Un voto por participante.</p>
+        <div id="p-ideas-lista"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</main>
+<footer class="border-t border-slate-800/50 mt-16 py-5 text-center">
+  <p class="text-xs text-slate-700">© 2026 William Andrés Gómez Lizarazo · Taller de Innovación Digital</p>
+</footer>
+
+<script>
+// ════════════════════════════════════════
+// SUPABASE
+// ════════════════════════════════════════
+const SUPABASE_URL  = 'https://djgqohrwjxymmguefljs.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRqZ3FvaHJ3anh5bW1ndWVmbGpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU1OTI3NDcsImV4cCI6MjEwMTE2ODc0N30.EoloyAKUp7eVQGXSjjojSRqjKJZupWv8jrOGEpVMKSM';
+
+async function sbFetch(endpoint, options = {}) {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, {
+      headers: {
+        'apikey': SUPABASE_ANON,
+        'Authorization': `Bearer ${SUPABASE_ANON}`,
+        'Content-Type': 'application/json',
+        'Prefer': options.prefer || 'return=representation',
+        ...options.headers
+      },
+      method: options.method || 'GET',
+      body: options.body || undefined
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || res.statusText);
+    }
+    return res.status === 204 ? null : res.json();
+  } catch (e) {
+    console.warn('Supabase error:', e.message);
+    return null;
+  }
+}
+
+// ════════════════════════════════════════
+// CREDENCIALES
+// ════════════════════════════════════════
+const CREDS = [
+  {u:'admin',    p:'ejecutar2026'},
+  {u:'andrezgmz',p:'radar2026'},
+  {u:'demo',     p:'madurez2026'}
+];
+
+const DOBLIN_TYPES = [
+  {id:'modelo_rentabilidad',  nombre:'Modelo de Rentabilidad'},
+  {id:'red',                  nombre:'Red / Alianzas'},
+  {id:'estructura',           nombre:'Estructura'},
+  {id:'proceso',              nombre:'Proceso'},
+  {id:'desempeno_producto',   nombre:'Desempeño del Producto'},
+  {id:'sistema_producto',     nombre:'Sistema de Producto'},
+  {id:'servicio',             nombre:'Servicio'},
+  {id:'canal',                nombre:'Canal'},
+  {id:'marca',                nombre:'Marca'},
+  {id:'compromiso_cliente',   nombre:'Compromiso del Cliente'}
+];
+
+const FASES_META = [
+  {n:0, nombre:'Priorizar Problemas', sub:'Selecciona el problema a resolver', icon:'fa-list-check',     rgb:'245 158 11'},
+  {n:1, nombre:'Descubre',            sub:'Mapa de Empatía',                  icon:'fa-magnifying-glass', rgb:'34 211 238'},
+  {n:2, nombre:'Describe',            sub:'5 Por Qués',                       icon:'fa-comments',         rgb:'129 140 248'},
+  {n:3, nombre:'Co-Crea',             sub:'Ideas + Votación',                 icon:'fa-people-group',     rgb:'167 139 250'},
+  {n:4, nombre:'Escala',              sub:'Cartel de Concepto',               icon:'fa-rocket',           rgb:'52 211 153'},
+  {n:5, nombre:'Mantén',              sub:'Seguimiento',                      icon:'fa-chart-line',       rgb:'244 63 94'}
+];
+
+const SCREENS = ['s-login','s-empresa','s-dashboard','s-fase0','s-fase1','s-fase2','s-fase3a','s-fase3b','s-fase4','s-fase5','s-participante'];
+
+// ════════════════════════════════════════
+// ESTADO
+// ════════════════════════════════════════
+let userData = {};
+let empresasCache = [];
+let talleresCache = [];
+let empresaActual = null;
+let tallerActual = null;
+let tallerData = null;
+let facilitadorPollInterval = null;
+window._modoConsulta = false;
+
+function uid(){ return (crypto.randomUUID ? crypto.randomUUID() : 'id-'+Date.now()+'-'+Math.random().toString(36).slice(2)); }
+function val(id){ const el = document.getElementById(id); return el ? el.value : ''; }
+function escapeHtml(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function genPin(){ return String(Math.floor(1000 + Math.random()*9000)); }
+
+function nuevoTallerData(){
+  return {
+    fases: {
+      0: { estado:'pendiente', problemas:[], numSeleccion:1, seleccionados:[], _autoInit:false },
+      1: { estado:'pendiente', empatia:{} },
+      2: { estado:'pendiente', porques:{}, dolorElegidoId:null, comoPodriamos:'' },
+      3: { estado:'pendiente', sub:'a', grupos:[], ideas:[], ideaGanadoraId:null },
+      4: { estado:'pendiente', cartel:{nombre:'',propuesta_valor:'',necesidad_cliente:'',beneficios_cliente:'',beneficios_empresa:'',caracteristicas:'',requisitos:'',modelo_ingreso:''}, doblin:[], exportarRadar:false, nombreIniciativa:'', horizonte:'h1', exportado:false, conceptoId:null },
+      5: { estado:'pendiente', estadoImpl:'pendiente', pctAvance:0, notas:'' }
+    }
+  };
+}
+function tallerStorageKey(){ return `inn_taller_${tallerActual.id}`; }
+function saveLocal(){ if(tallerActual) localStorage.setItem(tallerStorageKey(), JSON.stringify(tallerData)); }
+function loadLocal(){ const raw = localStorage.getItem(tallerStorageKey()); return raw ? JSON.parse(raw) : null; }
+
+// ════════════════════════════════════════
+// NAVEGACIÓN / NOTIFICACIONES
+// ════════════════════════════════════════
+function show(id) {
+  const ls = document.getElementById('loading-screen');
+  if (ls) { ls.style.opacity='0'; setTimeout(()=>ls.remove(),300); }
+  SCREENS.forEach(s => {
+    const el = document.getElementById(s);
+    if (!el) return;
+    el.classList.add('hidden');
+    el.classList.remove('fade');
+  });
+  const el = document.getElementById(id);
+  el.classList.remove('hidden');
+  setTimeout(() => el.classList.add('fade'), 10);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function toast(msg, tipo='error') {
+  const t = document.createElement('div');
+  const color = tipo==='ok' ? 'rgb(52 211 153)' : tipo==='warn' ? 'rgb(245 158 11)' : 'rgb(244 63 94)';
+  t.style.cssText = `position:fixed;bottom:20px;right:20px;z-index:9999;
+    padding:12px 18px;border-radius:12px;font-size:12px;font-weight:700;
+    color:white;max-width:300px;line-height:1.4;
+    background:${color};box-shadow:0 4px 20px ${color}40;
+    animation:slideIn 0.3s ease;`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+function pararPolling(){ if (facilitadorPollInterval) { clearInterval(facilitadorPollInterval); facilitadorPollInterval = null; } }
+function irADashboard(){ pararPolling(); show('s-dashboard'); renderDashboard(); }
+
+// ════════════════════════════════════════
+// LOGIN / LOGOUT
+// ════════════════════════════════════════
+function doLogin() {
+  const u = val('lu').trim(), p = val('lp').trim();
+  const err = document.getElementById('login-err');
+  const errTxt = document.getElementById('login-err-txt');
+  if (!u || !p) { errTxt.textContent='Ingrese usuario y contraseña.'; err.classList.remove('hidden'); return; }
+  if (!CREDS.some(c => c.u===u && c.p===p)) { errTxt.textContent='Credenciales incorrectas.'; err.classList.remove('hidden'); return; }
+  err.classList.add('hidden');
+  userData = { user:u };
+  show('s-empresa');
+  cargarEmpresas();
+}
+function doLogout() {
+  pararPolling();
+  userData = {}; empresaActual = null; tallerActual = null; tallerData = null;
+  show('s-login');
+}
+
+// ════════════════════════════════════════
+// EMPRESAS
+// ════════════════════════════════════════
+async function cargarEmpresas(){
+  document.getElementById('empresa-detalle').classList.add('hidden');
+  document.getElementById('empresas-grid').classList.remove('hidden');
+  document.getElementById('empresa-nueva-btn').classList.remove('hidden');
+  const data = await sbFetch('empresas?order=nombre&estado=eq.activa');
+  empresasCache = data || JSON.parse(localStorage.getItem('inn_empresas_cache') || '[]');
+  if (data) localStorage.setItem('inn_empresas_cache', JSON.stringify(data));
+  renderEmpresasGrid();
+}
+function renderEmpresasGrid(){
+  document.getElementById('empresas-grid').innerHTML = empresasCache.map(e => `
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-violet-500/30 transition">
+      <p class="text-sm font-bold text-white">${escapeHtml(e.nombre)}</p>
+      <p class="text-xs text-slate-500 mt-1">${escapeHtml(e.sector||'—')} · ${escapeHtml(e.ciudad||'—')}</p>
+      <button onclick="seleccionarEmpresa('${e.id}')" class="mt-4 w-full font-black py-2.5 rounded-xl text-xs" style="background:rgb(139 92 246);color:white">
+        Abrir taller <i class="fa-solid fa-arrow-right ml-1"></i>
+      </button>
+    </div>`).join('') || `<p class="text-sm text-slate-500 md:col-span-2">No hay empresas registradas. Cree la primera.</p>`;
+}
+function mostrarFormEmpresa(){ document.getElementById('empresa-form').classList.remove('hidden'); }
+function cancelarFormEmpresa(){ document.getElementById('empresa-form').classList.add('hidden'); }
+async function guardarEmpresaInn(){
+  const nombre = val('emp-nombre').trim();
+  if (!nombre) { toast('Ingrese el nombre de la empresa','warn'); return; }
+  const body = {
+    nombre,
+    sector: val('emp-sector').trim(),
+    ciudad: val('emp-ciudad').trim(),
+    contacto_nombre: val('emp-contacto-nombre').trim(),
+    contacto_email: val('emp-contacto-email').trim(),
+    estado: 'activa'
+  };
+  const saved = await sbFetch('empresas', {method:'POST', body:JSON.stringify(body)});
+  const nueva = (saved && saved[0]) || {id:uid(), ...body};
+  empresasCache.push(nueva);
+  localStorage.setItem('inn_empresas_cache', JSON.stringify(empresasCache));
+  cancelarFormEmpresa();
+  ['emp-nombre','emp-sector','emp-ciudad','emp-contacto-nombre','emp-contacto-email'].forEach(id => document.getElementById(id).value='');
+  renderEmpresasGrid();
+  toast('Empresa creada','ok');
+}
+async function seleccionarEmpresa(id){
+  empresaActual = empresasCache.find(e => e.id===id);
+  if (!empresaActual) return;
+  document.getElementById('empresas-grid').classList.add('hidden');
+  document.getElementById('empresa-nueva-btn').classList.add('hidden');
+  document.getElementById('empresa-form').classList.add('hidden');
+  document.getElementById('empresa-detalle').classList.remove('hidden');
+  document.getElementById('empresa-detalle-nombre').textContent = empresaActual.nombre;
+  const talleres = await sbFetch(`talleres_innovacion?empresa_id=eq.${empresaActual.id}&estado=eq.activo&order=created_at.desc`);
+  renderTalleresList(talleres || []);
+}
+function volverAEmpresas(){
+  empresaActual = null;
+  document.getElementById('empresas-grid').classList.remove('hidden');
+  document.getElementById('empresa-nueva-btn').classList.remove('hidden');
+  document.getElementById('empresa-detalle').classList.add('hidden');
+}
+function renderTalleresList(list){
+  talleresCache = list;
+  document.getElementById('talleres-lista').innerHTML = list.map(t => `
+    <div class="flex items-center justify-between bg-slate-800 rounded-xl px-4 py-3 mb-2">
+      <div>
+        <p class="text-xs font-bold text-white">${escapeHtml(t.nombre)}</p>
+        <p class="text-[10px] text-slate-500">PIN ${escapeHtml(t.pin)} · Fase ${t.fase_actual}</p>
+      </div>
+      <button onclick="continuarTaller('${t.id}')" class="text-xs font-bold px-4 py-2 rounded-lg" style="background:rgb(139 92 246/0.15);color:rgb(167 139 250);border:1px solid rgb(139 92 246/0.30)">Continuar</button>
+    </div>`).join('') || `<p class="text-xs text-slate-500 mb-2">No hay talleres activos para esta empresa.</p>`;
+}
+async function crearTallerNuevo(){
+  const nombre = prompt('Nombre del nuevo taller:');
+  if (!nombre) return;
+  const pin = genPin();
+  const body = { empresa_id: empresaActual.id, pin, nombre, estado:'activo', fase_actual:0 };
+  const saved = await sbFetch('talleres_innovacion', {method:'POST', body:JSON.stringify(body)});
+  tallerActual = (saved && saved[0]) || {id:uid(), ...body};
+  tallerData = nuevoTallerData();
+  saveLocal();
+  show('s-dashboard');
+  renderDashboard();
+  toast('Taller creado — PIN '+pin, 'ok');
+}
+function continuarTaller(id){
+  tallerActual = talleresCache.find(t => t.id===id);
+  if (!tallerActual) return;
+  tallerData = loadLocal() || nuevoTallerData();
+  show('s-dashboard');
+  renderDashboard();
+}
+function volverAEmpresaDesdeDashboard(){
+  pararPolling();
+  show('s-empresa');
+  seleccionarEmpresa(empresaActual.id);
+}
+
+// ════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════
+function renderDashboard(){
+  document.getElementById('dash-taller-nombre').textContent = tallerActual.nombre;
+  document.getElementById('dash-empresa-nombre').textContent = empresaActual.nombre;
+  document.getElementById('dash-pin').textContent = tallerActual.pin;
+  const completadas = FASES_META.filter(m => tallerData.fases[m.n].estado==='completado').length;
+  const pct = Math.round(completadas/6*100);
+  document.getElementById('dash-progress-bar').style.width = pct+'%';
+  document.getElementById('dash-progress-txt').textContent = pct+'% completado ('+completadas+'/6 fases)';
+  document.getElementById('dash-fases-grid').innerHTML = FASES_META.map(m => {
+    const fase = tallerData.fases[m.n];
+    const badge = fase.estado==='completado'
+      ? `<span class="text-[9px] font-bold px-2 py-0.5 rounded-full" style="background:rgb(52 211 153/0.15);color:rgb(52 211 153)">Completado</span>`
+      : fase.estado==='en_progreso'
+      ? `<span class="text-[9px] font-bold px-2 py-0.5 rounded-full" style="background:rgb(${m.rgb}/0.15);color:rgb(${m.rgb})">En progreso</span>`
+      : `<span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-500">Pendiente</span>`;
+    return `
+    <div class="rounded-2xl p-5" style="background:rgb(${m.rgb}/0.06);border:1px solid rgb(${m.rgb}/0.20)">
+      <div class="flex items-start justify-between mb-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgb(${m.rgb}/0.15);border:1px solid rgb(${m.rgb}/0.30)">
+            <i class="fa-solid ${m.icon}" style="color:rgb(${m.rgb})"></i>
+          </div>
+          <div>
+            <p class="text-[9px] font-black uppercase tracking-wider" style="color:rgb(${m.rgb})">Fase ${m.n}</p>
+            <h3 class="text-sm font-bold text-white">${m.nombre}</h3>
+          </div>
+        </div>
+        ${badge}
+      </div>
+      <p class="text-xs text-slate-400 mb-4">${m.sub}</p>
+      ${botonesFase(m.n)}
+    </div>`;
+  }).join('');
+}
+function botonesFase(n){
+  const fase = tallerData.fases[n];
+  const meta = FASES_META[n];
+  const prevOk = n===0 || tallerData.fases[n-1].estado==='completado';
+  if (fase.estado==='completado') {
+    return `<div class="grid grid-cols-3 gap-2">
+      <button onclick="abrirFase(${n}, true)" class="text-[10px] font-bold py-2 rounded-lg" style="background:rgb(${meta.rgb}/0.15);border:1px solid rgb(${meta.rgb}/0.30);color:rgb(${meta.rgb})">Consultar</button>
+      <button onclick="abrirFase(${n}, false)" class="text-[10px] font-bold py-2 rounded-lg" style="background:rgb(${meta.rgb}/0.15);border:1px solid rgb(${meta.rgb}/0.30);color:rgb(${meta.rgb})">Editar</button>
+      <button onclick="reiniciarFase(${n})" class="text-[10px] font-bold py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-400">Nuevo</button>
+    </div>`;
+  }
+  if (fase.estado==='en_progreso') {
+    return `<button onclick="abrirFase(${n}, false)" class="w-full font-black py-2.5 rounded-xl text-xs" style="background:rgb(${meta.rgb});color:rgb(2 6 23)">Continuar <i class="fa-solid fa-arrow-right ml-1"></i></button>`;
+  }
+  if (!prevOk) {
+    return `<button disabled class="w-full font-bold py-2.5 rounded-xl text-xs bg-slate-800 text-slate-600 cursor-not-allowed"><i class="fa-solid fa-lock mr-1"></i> Bloqueada</button>`;
+  }
+  return `<button onclick="abrirFase(${n}, false)" class="w-full font-black py-2.5 rounded-xl text-xs" style="background:rgb(${meta.rgb});color:rgb(2 6 23)">Iniciar <i class="fa-solid fa-arrow-right ml-1"></i></button>`;
+}
+function abrirFase(n, soloLectura){
+  window._modoConsulta = !!soloLectura;
+  if (tallerData.fases[n].estado==='pendiente') tallerData.fases[n].estado='en_progreso';
+  saveLocal();
+  pararPolling();
+  if (n===0) { show('s-fase0'); renderFase0(); iniciarPollingFase0(); }
+  else if (n===1) { show('s-fase1'); renderFase1(); }
+  else if (n===2) { show('s-fase2'); renderFase2(); }
+  else if (n===3) { renderFase3(); }
+  else if (n===4) { show('s-fase4'); renderFase4(); }
+  else if (n===5) { show('s-fase5'); renderFase5(); }
+}
+async function reiniciarFase(n){
+  if (!confirm('¿Reiniciar esta fase? Se eliminarán todos los avances de esta fase para comenzar de cero.')) return;
+  if (n===0) { await sbFetch(`inn_problemas?taller_id=eq.${tallerActual.id}`, {method:'DELETE'}); tallerData.fases[0] = {estado:'pendiente', problemas:[], numSeleccion:1, seleccionados:[], _autoInit:false}; }
+  if (n===1) { tallerData.fases[1] = {estado:'pendiente', empatia:{}}; }
+  if (n===2) { tallerData.fases[2] = {estado:'pendiente', porques:{}, dolorElegidoId:null, comoPodriamos:''}; }
+  if (n===3) { await sbFetch(`inn_ideas?taller_id=eq.${tallerActual.id}`, {method:'DELETE'}); tallerData.fases[3] = {estado:'pendiente', sub:'a', grupos:[], ideas:[], ideaGanadoraId:null}; }
+  if (n===4) {
+    if (tallerData.fases[4].conceptoId) await sbFetch(`inn_conceptos?id=eq.${tallerData.fases[4].conceptoId}`, {method:'DELETE'});
+    tallerData.fases[4] = {estado:'pendiente', cartel:{nombre:'',propuesta_valor:'',necesidad_cliente:'',beneficios_cliente:'',beneficios_empresa:'',caracteristicas:'',requisitos:'',modelo_ingreso:''}, doblin:[], exportarRadar:false, nombreIniciativa:'', horizonte:'h1', exportado:false, conceptoId:null};
+  }
+  if (n===5) { tallerData.fases[5] = {estado:'pendiente', estadoImpl:'pendiente', pctAvance:0, notas:''}; }
+  saveLocal();
+  renderDashboard();
+  toast('Fase reiniciada','ok');
+}
+
+// ════════════════════════════════════════
+// FASE 0 · PRIORIZAR PROBLEMAS
+// ════════════════════════════════════════
+async function iniciarPollingFase0(){
+  pararPolling();
+  facilitadorPollInterval = setInterval(async () => {
+    const remote = await sbFetch(`inn_problemas?taller_id=eq.${tallerActual.id}`);
+    if (!remote) return;
+    remote.forEach(r => {
+      let local = tallerData.fases[0].problemas.find(p => p.id===r.id);
+      if (!local) tallerData.fases[0].problemas.push({id:r.id, descripcion:r.descripcion, propuesto_por:r.propuesto_por, votos:r.votos||0, valor:r.valor||0, dificultad:r.dificultad||0, seleccionado:r.seleccionado});
+      else local.votos = r.votos;
+    });
+    saveLocal();
+    renderFase0();
+  }, 3000);
+}
+function renderFase0(){
+  document.getElementById('f0-pin').textContent = tallerActual.pin;
+  document.getElementById('f0-num-selector').value = tallerData.fases[0].numSeleccion;
+  const problemas = tallerData.fases[0].problemas;
+  const ro = window._modoConsulta;
+
+  document.getElementById('f0-lista').innerHTML = problemas.map(p => `
+    <div class="bg-slate-800/60 border border-slate-800 rounded-xl p-4 mb-2">
+      <div class="flex items-start justify-between mb-2">
+        <div class="flex-1">
+          <p class="text-xs text-white font-semibold">${escapeHtml(p.descripcion)}</p>
+          <p class="text-[10px] text-slate-500 mt-0.5">Propuesto por ${escapeHtml(p.propuesto_por||'Facilitador')}</p>
+        </div>
+        <span class="text-[10px] font-black px-2 py-1 rounded-full ml-2 shrink-0" style="background:rgb(245 158 11/0.15);color:rgb(245 158 11)">${p.votos||0} votos</span>
+      </div>
+      <div class="flex gap-2 mt-2">
+        <select ${ro?'disabled':''} onchange="fase0Clasificar('${p.id}','valor',this.value)" class="text-[10px] bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-slate-300">
+          <option value="0" ${!p.valor?'selected':''}>Valor: sin clasificar</option>
+          <option value="2" ${p.valor==2?'selected':''}>Valor: Alto</option>
+          <option value="1" ${p.valor==1?'selected':''}>Valor: Bajo</option>
+        </select>
+        <select ${ro?'disabled':''} onchange="fase0Clasificar('${p.id}','dificultad',this.value)" class="text-[10px] bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-slate-300">
+          <option value="0" ${!p.dificultad?'selected':''}>Dificultad: sin clasificar</option>
+          <option value="1" ${p.dificultad==1?'selected':''}>Dificultad: Baja</option>
+          <option value="2" ${p.dificultad==2?'selected':''}>Dificultad: Alta</option>
+        </select>
+      </div>
+    </div>`).join('') || `<p class="text-sm text-slate-500">Aún no hay problemas propuestos.</p>`;
+
+  const cuad = { tacticos:[], estrategicos:[], lujos:[], descartados:[], sinClasificar:[] };
+  problemas.forEach(p => {
+    if (!p.valor || !p.dificultad) cuad.sinClasificar.push(p);
+    else if (p.valor==2 && p.dificultad==1) cuad.tacticos.push(p);
+    else if (p.valor==2 && p.dificultad==2) cuad.estrategicos.push(p);
+    else if (p.valor==1 && p.dificultad==1) cuad.lujos.push(p);
+    else cuad.descartados.push(p);
+  });
+  const renderCuad = (lista, rgb) => lista.map(p => `<div class="text-[10px] px-2 py-1.5 rounded-lg mb-1" style="background:rgb(${rgb}/0.12);color:rgb(${rgb})">${escapeHtml(p.descripcion)}</div>`).join('') || `<p class="text-[10px] text-slate-700 italic">Vacío</p>`;
+  document.getElementById('f0-matriz').innerHTML = `
+    <div class="grid grid-cols-2 gap-3">
+      <div class="rounded-xl p-3" style="background:rgb(52 211 153/0.06);border:1px solid rgb(52 211 153/0.20)">
+        <p class="text-[9px] font-black uppercase mb-2" style="color:rgb(52 211 153)">Tácticos · hacer ya</p>${renderCuad(cuad.tacticos,'52 211 153')}
+      </div>
+      <div class="rounded-xl p-3" style="background:rgb(34 211 238/0.06);border:1px solid rgb(34 211 238/0.20)">
+        <p class="text-[9px] font-black uppercase mb-2" style="color:rgb(34 211 238)">Estratégicos</p>${renderCuad(cuad.estrategicos,'34 211 238')}
+      </div>
+      <div class="rounded-xl p-3" style="background:rgb(245 158 11/0.06);border:1px solid rgb(245 158 11/0.20)">
+        <p class="text-[9px] font-black uppercase mb-2" style="color:rgb(245 158 11)">Lujos</p>${renderCuad(cuad.lujos,'245 158 11')}
+      </div>
+      <div class="rounded-xl p-3" style="background:rgb(100 116 139/0.06);border:1px solid rgb(100 116 139/0.20)">
+        <p class="text-[9px] font-black uppercase mb-2" style="color:rgb(148 163 184)">Descartados</p>${renderCuad(cuad.descartados,'100 116 139')}
+      </div>
+    </div>
+    ${cuad.sinClasificar.length ? `<p class="text-[10px] text-slate-600 mt-3">${cuad.sinClasificar.length} problema(s) sin clasificar aún.</p>` : ''}`;
+
+  if (!tallerData.fases[0]._autoInit) {
+    const ordenBase = [...problemas].sort((a,b) => (b.votos||0)-(a.votos||0));
+    tallerData.fases[0].seleccionados = ordenBase.slice(0, tallerData.fases[0].numSeleccion).map(p => p.id);
+    tallerData.fases[0]._autoInit = true;
+  }
+  const ordenados = [...problemas].sort((a,b) => (b.votos||0)-(a.votos||0));
+  document.getElementById('f0-seleccion').innerHTML = ordenados.map(p => {
+    const checked = tallerData.fases[0].seleccionados.includes(p.id);
+    return `<label class="flex items-center gap-3 bg-slate-800 rounded-lg px-3 py-2 mb-2 cursor-pointer">
+      <input type="checkbox" ${checked?'checked':''} ${ro?'disabled':''} onchange="fase0ToggleSel('${p.id}')">
+      <span class="flex-1 text-xs text-slate-300">${escapeHtml(p.descripcion)}</span>
+      <span class="text-[10px] text-slate-500">${p.votos||0} votos</span>
+    </label>`;
+  }).join('') || `<p class="text-xs text-slate-500">No hay problemas para seleccionar todavía.</p>`;
+}
+async function fase0AgregarProblema(){
+  const txt = val('f0-input').trim();
+  if (!txt) return;
+  const p = {id:uid(), descripcion:txt, propuesto_por:'Facilitador', votos:0, valor:0, dificultad:0, seleccionado:false};
+  tallerData.fases[0].problemas.push(p);
+  document.getElementById('f0-input').value = '';
+  saveLocal();
+  renderFase0();
+  const saved = await sbFetch('inn_problemas', {method:'POST', body:JSON.stringify({taller_id:tallerActual.id, descripcion:txt, propuesto_por:'Facilitador'})});
+  if (saved && saved[0]) { p.id = saved[0].id; saveLocal(); }
+}
+function fase0Clasificar(id, campo, valor){
+  const p = tallerData.fases[0].problemas.find(x => x.id===id);
+  if (!p) return;
+  p[campo] = Number(valor);
+  saveLocal();
+  renderFase0();
+  sbFetch(`inn_problemas?id=eq.${id}`, {method:'PATCH', body:JSON.stringify({[campo]:Number(valor)})});
+}
+function fase0ToggleSel(id){
+  const sel = tallerData.fases[0].seleccionados;
+  const idx = sel.indexOf(id);
+  if (idx>=0) sel.splice(idx,1); else sel.push(id);
+  saveLocal();
+}
+function fase0CambiarN(v){
+  tallerData.fases[0].numSeleccion = Number(v);
+  tallerData.fases[0]._autoInit = false;
+  saveLocal();
+  renderFase0();
+}
+async function fase0GuardarYAvanzar(){
+  const sel = tallerData.fases[0].seleccionados;
+  if (!sel.length) { toast('Seleccione al menos un problema','warn'); return; }
+  pararPolling();
+  tallerData.fases[0].estado = 'completado';
+  saveLocal();
+  for (const id of sel) {
+    await sbFetch(`inn_problemas?id=eq.${id}`, {method:'PATCH', body:JSON.stringify({seleccionado:true})});
+  }
+  await sbFetch(`talleres_innovacion?id=eq.${tallerActual.id}`, {method:'PATCH', body:JSON.stringify({fase_actual:1})});
+  toast('Selección guardada','ok');
+  window._modoConsulta = false;
+  show('s-fase1'); renderFase1();
+}
+
+// ════════════════════════════════════════
+// FASE 1 · DESCUBRE (MAPA DE EMPATÍA)
+// ════════════════════════════════════════
+function renderFase1(){
+  const sel = (tallerData.fases[0].seleccionados||[]).filter(id => tallerData.fases[0].problemas.some(p => p.id===id));
+  const problemas = tallerData.fases[0].problemas.filter(p => sel.includes(p.id));
+  sel.forEach(id => { if (!tallerData.fases[1].empatia[id]) tallerData.fases[1].empatia[id] = {piensa:'',dice:'',ve:'',escucha:'',dolores:[]}; });
+  const ro = window._modoConsulta;
+  document.getElementById('f1-contenido').innerHTML = problemas.map(p => {
+    const e = tallerData.fases[1].empatia[p.id];
+    return `
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-5">
+      <p class="text-xs font-bold text-white mb-4"><i class="fa-solid fa-bullseye mr-2" style="color:rgb(34 211 238)"></i>${escapeHtml(p.descripcion)}</p>
+      <div class="grid md:grid-cols-2 gap-3 mb-4">
+        ${campoEmpatia(p.id,'piensa','¿Qué PIENSA y SIENTE?',e.piensa,ro)}
+        ${campoEmpatia(p.id,'dice','¿Qué DICE y HACE?',e.dice,ro)}
+        ${campoEmpatia(p.id,'ve','¿Qué VE?',e.ve,ro)}
+        ${campoEmpatia(p.id,'escucha','¿Qué ESCUCHA?',e.escucha,ro)}
+      </div>
+      <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Puntos de Dolor identificados</p>
+      <div class="space-y-2 mb-2">
+        ${e.dolores.map(d => `
+          <div class="flex items-center gap-2 bg-slate-800 rounded-lg px-3 py-2">
+            <span class="flex-1 text-xs text-slate-300">${escapeHtml(d.texto)}</span>
+            ${ro?'':`<button onclick="eliminarDolor('${p.id}','${d.id}')" class="text-slate-600 hover:text-rose-400 text-xs"><i class="fa-solid fa-xmark"></i></button>`}
+          </div>`).join('') || `<p class="text-[11px] text-slate-600 italic">Sin puntos de dolor registrados aún.</p>`}
+      </div>
+      ${ro?'':`
+      <div class="flex gap-2 mt-2">
+        <input id="dolor-input-${p.id}" type="text" placeholder="Nuevo punto de dolor..." class="flex-1 p-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white text-xs placeholder-slate-600 focus:outline-none" onkeydown="if(event.key==='Enter')agregarDolor('${p.id}')">
+        <button onclick="agregarDolor('${p.id}')" class="px-4 py-2 rounded-lg text-xs font-bold" style="background:rgb(34 211 238/0.15);color:rgb(34 211 238);border:1px solid rgb(34 211 238/0.30)">Agregar</button>
+      </div>`}
+    </div>`;
+  }).join('') || `<p class="text-sm text-slate-500">No hay problemas seleccionados en la Fase 0.</p>`;
+}
+function campoEmpatia(pid, campo, label, valor, ro){
+  return `<div>
+    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">${label}</label>
+    <textarea ${ro?'readonly':''} oninput="setEmpatiaField('${pid}','${campo}',this.value)" rows="3" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder-slate-600 focus:outline-none">${escapeHtml(valor)}</textarea>
+  </div>`;
+}
+function setEmpatiaField(pid, campo, valor){ tallerData.fases[1].empatia[pid][campo] = valor; saveLocal(); }
+function agregarDolor(pid){
+  const input = document.getElementById('dolor-input-'+pid);
+  const txt = input.value.trim();
+  if (!txt) return;
+  tallerData.fases[1].empatia[pid].dolores.push({id:uid(), texto:txt});
+  saveLocal();
+  renderFase1();
+}
+function eliminarDolor(pid, did){
+  tallerData.fases[1].empatia[pid].dolores = tallerData.fases[1].empatia[pid].dolores.filter(d => d.id!==did);
+  saveLocal();
+  renderFase1();
+}
+function fase1Guardar(){ saveLocal(); toast('Avance guardado','ok'); }
+function fase1Avanzar(){
+  const total = Object.values(tallerData.fases[1].empatia).reduce((n,e) => n+e.dolores.length, 0);
+  if (total===0) { toast('Registre al menos un punto de dolor antes de avanzar','warn'); return; }
+  tallerData.fases[1].estado = 'completado';
+  saveLocal();
+  window._modoConsulta = false;
+  show('s-fase2'); renderFase2();
+}
+
+// ════════════════════════════════════════
+// FASE 2 · DESCRIBE (5 POR QUÉS)
+// ════════════════════════════════════════
+function renderFase2(){
+  const dolores = [];
+  Object.entries(tallerData.fases[1].empatia).forEach(([pid,e]) => {
+    e.dolores.forEach(d => dolores.push({...d, pid}));
+  });
+  dolores.forEach(d => { if (!tallerData.fases[2].porques[d.id]) tallerData.fases[2].porques[d.id] = ['','','','','']; });
+  const ro = window._modoConsulta;
+  const elegido = tallerData.fases[2].dolorElegidoId;
+  document.getElementById('f2-contenido').innerHTML = dolores.map(d => {
+    const porques = tallerData.fases[2].porques[d.id];
+    const isElegido = elegido===d.id;
+    return `
+    <div class="rounded-2xl p-5 mb-4" style="background:${isElegido?'rgb(129 140 248/0.08)':'rgb(15 23 42)'};border:1px solid ${isElegido?'rgb(129 140 248/0.40)':'rgb(30 41 59)'}">
+      <div class="flex items-center justify-between mb-3 gap-2">
+        <p class="text-xs font-bold text-white flex-1">${escapeHtml(d.texto)}</p>
+        ${ro
+          ? (isElegido ? `<span class="text-[9px] font-bold px-2 py-1 rounded-full shrink-0" style="background:rgb(129 140 248/0.20);color:rgb(129 140 248)">Elegido</span>` : '')
+          : `<button onclick="elegirDolor('${d.id}')" class="text-[9px] font-bold px-3 py-1.5 rounded-full transition shrink-0" style="background:${isElegido?'rgb(129 140 248)':'rgb(129 140 248/0.10)'};color:${isElegido?'rgb(2 6 23)':'rgb(129 140 248)'};border:1px solid rgb(129 140 248/0.30)">${isElegido?'✓ Elegido':'Elegir este'}</button>`}
+      </div>
+      <div class="space-y-2">
+        ${porques.map((v,i) => `
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] font-black text-slate-600 w-16 shrink-0">¿Por qué ${i+1}?</span>
+            <input ${ro?'readonly':''} value="${escapeHtml(v)}" oninput="setPorque('${d.id}',${i},this.value)" placeholder="${i===4?'Causa raíz...':'Respuesta...'}" class="flex-1 p-2 bg-slate-800 border border-slate-700 rounded-lg text-white text-xs placeholder-slate-600 focus:outline-none">
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('') || `<p class="text-sm text-slate-500">No hay puntos de dolor registrados en la Fase 1.</p>`;
+  const comoEl = document.getElementById('f2-como');
+  comoEl.value = tallerData.fases[2].comoPodriamos;
+  comoEl.readOnly = ro;
+}
+function elegirDolor(id){ tallerData.fases[2].dolorElegidoId = id; saveLocal(); renderFase2(); }
+function setPorque(id, idx, valor){ tallerData.fases[2].porques[id][idx] = valor; saveLocal(); }
+function setComoPodriamos(v){ tallerData.fases[2].comoPodriamos = v; saveLocal(); }
+function fase2Guardar(){ saveLocal(); toast('Guardado','ok'); }
+function fase2Avanzar(){
+  if (!tallerData.fases[2].dolorElegidoId) { toast('Seleccione el punto de dolor a trabajar','warn'); return; }
+  if (!tallerData.fases[2].comoPodriamos.trim()) { toast('Complete el campo "¿Cómo podríamos...?"','warn'); return; }
+  tallerData.fases[2].estado = 'completado';
+  saveLocal();
+  window._modoConsulta = false;
+  show('s-fase3a'); renderFase3();
+}
+
+// ════════════════════════════════════════
+// FASE 3 · CO-CREA
+// ════════════════════════════════════════
+function renderFase3(){
+  if (tallerData.fases[3].sub==='b') { show('s-fase3b'); renderFase3b(); iniciarPollingFase3b(); }
+  else { show('s-fase3a'); renderFase3a(); }
+}
+function renderFase3a(){
+  document.getElementById('f3a-como').textContent = tallerData.fases[2].comoPodriamos || '—';
+  const ro = window._modoConsulta;
+  const grupos = tallerData.fases[3].grupos;
+  document.getElementById('f3a-grupos').innerHTML = grupos.map(g => {
+    const yaRegistrada = tallerData.fases[3].ideas.some(i => i.grupoId===g.id);
+    return `
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-4">
+      <p class="text-xs font-bold mb-3" style="color:rgb(167 139 250)"><i class="fa-solid fa-people-group mr-2"></i>${escapeHtml(g.nombre)}</p>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Idea inicial</label>
+          <textarea ${ro?'readonly':''} oninput="setGrupoField('${g.id}','idea',this.value)" rows="2" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white text-xs focus:outline-none">${escapeHtml(g.idea)}</textarea>
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">¿Por qué NO funcionaría?</label>
+          <textarea ${ro?'readonly':''} oninput="setGrupoField('${g.id}','critica',this.value)" rows="2" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white text-xs focus:outline-none">${escapeHtml(g.critica)}</textarea>
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Idea mejorada</label>
+          <textarea ${ro?'readonly':''} oninput="setGrupoField('${g.id}','mejora',this.value)" rows="2" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white text-xs focus:outline-none">${escapeHtml(g.mejora)}</textarea>
+        </div>
+      </div>
+      ${ro?'':`<button onclick="registrarIdeaGanadora('${g.id}')" class="mt-3 text-xs font-bold px-4 py-2 rounded-lg" style="background:rgb(167 139 250/0.15);color:rgb(167 139 250);border:1px solid rgb(167 139 250/0.30)">${yaRegistrada?'Actualizar idea ganadora':'Registrar idea ganadora del grupo'}</button>`}
+    </div>`;
+  }).join('') || `<p class="text-sm text-slate-500 mb-4">Agregue grupos para comenzar el Round Robin.</p>`;
+  document.getElementById('f3a-ideas-lista').innerHTML = tallerData.fases[3].ideas.map(i => `
+    <div class="bg-slate-800 rounded-lg px-4 py-2.5 mb-2">
+      <p class="text-xs font-bold text-white">${escapeHtml(i.grupo)}</p>
+      <p class="text-[11px] text-slate-400">${escapeHtml(i.descripcion)}</p>
+    </div>`).join('') || `<p class="text-[11px] text-slate-600 italic">Aún no hay ideas ganadoras registradas.</p>`;
+}
+function setGrupoField(gid, campo, valor){ const g = tallerData.fases[3].grupos.find(x => x.id===gid); if (g) { g[campo]=valor; saveLocal(); } }
+function agregarGrupo(){
+  const nombre = val('f3a-grupo-input').trim();
+  if (!nombre) return;
+  tallerData.fases[3].grupos.push({id:uid(), nombre, idea:'', critica:'', mejora:''});
+  document.getElementById('f3a-grupo-input').value = '';
+  saveLocal();
+  renderFase3a();
+}
+async function registrarIdeaGanadora(gid){
+  const g = tallerData.fases[3].grupos.find(x => x.id===gid);
+  if (!g.mejora.trim()) { toast('Complete la idea mejorada antes de registrar','warn'); return; }
+  let idea = tallerData.fases[3].ideas.find(i => i.grupoId===gid);
+  if (!idea) {
+    idea = {id:uid(), grupoId:gid, grupo:g.nombre, descripcion:g.mejora, critica:g.critica, mejora:g.mejora, votos:0, ganadora:false};
+    tallerData.fases[3].ideas.push(idea);
+    saveLocal(); renderFase3a();
+    const saved = await sbFetch('inn_ideas', {method:'POST', body:JSON.stringify({taller_id:tallerActual.id, grupo:g.nombre, descripcion:g.mejora, critica:g.critica, mejora:g.mejora})});
+    if (saved && saved[0]) idea.id = saved[0].id;
+  } else {
+    idea.descripcion = g.mejora; idea.critica = g.critica; idea.mejora = g.mejora;
+    saveLocal(); renderFase3a();
+    await sbFetch(`inn_ideas?id=eq.${idea.id}`, {method:'PATCH', body:JSON.stringify({descripcion:g.mejora, critica:g.critica, mejora:g.mejora})});
+  }
+  saveLocal();
+  toast('Idea ganadora registrada','ok');
+}
+function pasarAVotacionPlenaria(){
+  if (!tallerData.fases[3].ideas.length) { toast('Registre al menos una idea ganadora por grupo','warn'); return; }
+  tallerData.fases[3].sub = 'b';
+  saveLocal();
+  window._modoConsulta = false;
+  show('s-fase3b');
+  renderFase3b();
+  iniciarPollingFase3b();
+}
+function renderFase3b(){
+  document.getElementById('f3b-pin').textContent = tallerActual.pin;
+  const ideas = tallerData.fases[3].ideas;
+  const max = Math.max(1, ...ideas.map(i => i.votos||0));
+  document.getElementById('f3b-ideas').innerHTML = ideas.map(i => {
+    const pct = Math.round(((i.votos||0)/max)*100);
+    return `
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-3" style="${i.ganadora?'border-color:rgb(167 139 250)':''}">
+      <div class="flex items-center justify-between mb-1">
+        <p class="text-xs font-bold text-white">${escapeHtml(i.grupo)}</p>
+        <p class="text-sm font-black" style="color:rgb(167 139 250)">${i.votos||0} votos</p>
+      </div>
+      <p class="text-[11px] text-slate-400 mb-3">${escapeHtml(i.descripcion)}</p>
+      <div class="h-2 bg-slate-800 rounded-full overflow-hidden"><div class="h-full bar-fill" style="width:${pct}%;background:rgb(167 139 250)"></div></div>
+    </div>`;
+  }).join('') || `<p class="text-sm text-slate-500">No hay ideas registradas.</p>`;
+}
+function iniciarPollingFase3b(){
+  pararPolling();
+  facilitadorPollInterval = setInterval(async () => {
+    const remote = await sbFetch(`inn_ideas?taller_id=eq.${tallerActual.id}`);
+    if (!remote) return;
+    remote.forEach(r => { const local = tallerData.fases[3].ideas.find(i => i.id===r.id); if (local) local.votos = r.votos; });
+    saveLocal();
+    renderFase3b();
+  }, 2000);
+}
+async function cerrarVotacionYAvanzar(){
+  const ideas = tallerData.fases[3].ideas;
+  if (!ideas.length) { toast('No hay ideas para cerrar la votación','warn'); return; }
+  const ganadora = ideas.reduce((a,b) => (b.votos||0) > (a.votos||0) ? b : a);
+  ideas.forEach(i => { i.ganadora = (i.id===ganadora.id); });
+  tallerData.fases[3].ideaGanadoraId = ganadora.id;
+  tallerData.fases[3].estado = 'completado';
+  pararPolling();
+  saveLocal();
+  await sbFetch(`inn_ideas?id=eq.${ganadora.id}`, {method:'PATCH', body:JSON.stringify({ganadora:true})});
+  await sbFetch(`talleres_innovacion?id=eq.${tallerActual.id}`, {method:'PATCH', body:JSON.stringify({fase_actual:4})});
+  toast('Idea ganadora: '+ganadora.grupo,'ok');
+  window._modoConsulta = false;
+  show('s-fase4'); renderFase4();
+}
+
+// ════════════════════════════════════════
+// FASE 4 · ESCALA (CARTEL DE CONCEPTO)
+// ════════════════════════════════════════
+function renderFase4(){
+  const idea = tallerData.fases[3].ideas.find(i => i.id===tallerData.fases[3].ideaGanadoraId);
+  document.getElementById('f4-idea-ganadora').innerHTML = idea
+    ? `<p class="text-xs font-bold text-white">${escapeHtml(idea.grupo)}</p><p class="text-[11px] text-slate-400 mt-1">${escapeHtml(idea.descripcion)}</p>`
+    : `<p class="text-xs text-slate-500">No hay idea ganadora registrada aún (Fase 3).</p>`;
+  const c = tallerData.fases[4].cartel;
+  const ro = window._modoConsulta;
+  ['nombre','propuesta_valor','necesidad_cliente','beneficios_cliente','beneficios_empresa','caracteristicas','requisitos','modelo_ingreso'].forEach(campo => {
+    const el = document.getElementById('f4-'+campo);
+    if (el) { el.value = c[campo] || ''; el.disabled = ro; el.readOnly = ro; }
+  });
+  document.getElementById('f4-doblin').innerHTML = DOBLIN_TYPES.map(t => {
+    const activo = tallerData.fases[4].doblin.includes(t.id);
+    return `<button ${ro?'disabled':''} onclick="toggleDoblin('${t.id}')" class="text-[10px] font-bold px-3 py-2 rounded-full transition" style="background:${activo?'rgb(52 211 153)':'rgb(52 211 153/0.10)'};color:${activo?'rgb(2 6 23)':'rgb(52 211 153)'};border:1px solid rgb(52 211 153/0.30)">${t.nombre}</button>`;
+  }).join('');
+  document.getElementById('f4-exportar-toggle').checked = tallerData.fases[4].exportarRadar;
+  document.getElementById('f4-exportar-toggle').disabled = ro;
+  document.getElementById('f4-exportar-campos').classList.toggle('hidden', !tallerData.fases[4].exportarRadar);
+  document.getElementById('f4-nombre-iniciativa').value = tallerData.fases[4].nombreIniciativa || c.nombre || '';
+  document.getElementById('f4-horizonte').value = tallerData.fases[4].horizonte || 'h1';
+}
+function setCartelField(campo, valor){ tallerData.fases[4].cartel[campo] = valor; saveLocal(); }
+function toggleDoblin(id){
+  const arr = tallerData.fases[4].doblin;
+  const idx = arr.indexOf(id);
+  if (idx>=0) arr.splice(idx,1); else arr.push(id);
+  saveLocal();
+  renderFase4();
+}
+function toggleExportarRadar(chk){
+  tallerData.fases[4].exportarRadar = chk;
+  document.getElementById('f4-exportar-campos').classList.toggle('hidden', !chk);
+  saveLocal();
+}
+async function guardarCartel(){
+  const c = tallerData.fases[4].cartel;
+  if (!c.nombre.trim()) { toast('Ingrese el nombre de la solución','warn'); return; }
+  const idea = tallerData.fases[3].ideas.find(i => i.id===tallerData.fases[3].ideaGanadoraId);
+  const body = {
+    taller_id: tallerActual.id,
+    idea_id: idea ? idea.id : null,
+    nombre: c.nombre,
+    propuesta_valor: c.propuesta_valor,
+    necesidad_cliente: c.necesidad_cliente,
+    beneficios: `Cliente: ${c.beneficios_cliente}\nEmpresa: ${c.beneficios_empresa}`,
+    caracteristicas: c.caracteristicas,
+    requisitos: c.requisitos,
+    modelo_ingreso: c.modelo_ingreso,
+    tipos_doblin: tallerData.fases[4].doblin
+  };
+  if (tallerData.fases[4].conceptoId) {
+    await sbFetch(`inn_conceptos?id=eq.${tallerData.fases[4].conceptoId}`, {method:'PATCH', body:JSON.stringify(body)});
+  } else {
+    const saved = await sbFetch('inn_conceptos', {method:'POST', body:JSON.stringify(body)});
+    if (saved && saved[0]) tallerData.fases[4].conceptoId = saved[0].id;
+  }
+  if (tallerData.fases[4].estado==='pendiente') tallerData.fases[4].estado = 'en_progreso';
+  saveLocal();
+  toast('Cartel de Concepto guardado','ok');
+}
+async function exportarARadar(){
+  const nombreIniciativa = val('f4-nombre-iniciativa').trim();
+  const horizonte = val('f4-horizonte');
+  if (!nombreIniciativa) { toast('Ingrese el nombre de la iniciativa','warn'); return; }
+  if (!empresaActual) { toast('No hay empresa activa','error'); return; }
+  const proyectos = await sbFetch(`proyectos_td?empresa_id=eq.${empresaActual.id}&order=created_at.desc`);
+  if (!proyectos || !proyectos.length) { toast('Esta empresa no tiene un proyecto de TD en el radar','warn'); return; }
+  const hojas = await sbFetch(`hoja_ruta?proyecto_id=eq.${proyectos[0].id}`);
+  if (!hojas || !hojas.length) { toast('Esta empresa no tiene una Hoja de Ruta activa en el radar','warn'); return; }
+  const hoja = hojas[0];
+  const iniciativas = hoja.iniciativas_json || [];
+  iniciativas.push({
+    id: uid(), nombre: nombreIniciativa, horizonte,
+    descripcion: tallerData.fases[4].cartel.propuesta_valor,
+    origen: 'taller_innovacion', taller_id: tallerActual.id
+  });
+  await sbFetch(`hoja_ruta?id=eq.${hoja.id}`, {method:'PATCH', body:JSON.stringify({iniciativas_json:iniciativas, updated_at:new Date().toISOString()})});
+  tallerData.fases[4].exportado = true;
+  tallerData.fases[4].nombreIniciativa = nombreIniciativa;
+  tallerData.fases[4].horizonte = horizonte;
+  if (tallerData.fases[4].conceptoId) await sbFetch(`inn_conceptos?id=eq.${tallerData.fases[4].conceptoId}`, {method:'PATCH', body:JSON.stringify({exportado_radar:true})});
+  saveLocal();
+  toast('Iniciativa exportada al Plan de TD','ok');
+}
+async function fase4Avanzar(){
+  if (!tallerData.fases[4].cartel.nombre.trim()) { toast('Complete y guarde el Cartel de Concepto','warn'); return; }
+  tallerData.fases[4].estado = 'completado';
+  saveLocal();
+  await sbFetch(`talleres_innovacion?id=eq.${tallerActual.id}`, {method:'PATCH', body:JSON.stringify({fase_actual:5})});
+  window._modoConsulta = false;
+  show('s-fase5'); renderFase5();
+}
+
+// ════════════════════════════════════════
+// FASE 5 · MANTÉN
+// ════════════════════════════════════════
+function renderFase5(){
+  const dolorId = tallerData.fases[2].dolorElegidoId;
+  let dolorTxt = '—', problemaTxt = '—', causaRaiz = '—';
+  if (dolorId) {
+    for (const [pid,e] of Object.entries(tallerData.fases[1].empatia)) {
+      const d = e.dolores.find(x => x.id===dolorId);
+      if (d) {
+        dolorTxt = d.texto;
+        const p = tallerData.fases[0].problemas.find(x => x.id===pid);
+        problemaTxt = p ? p.descripcion : '—';
+        break;
+      }
+    }
+    const porques = tallerData.fases[2].porques[dolorId];
+    if (porques) causaRaiz = porques[4] || [...porques].reverse().find(Boolean) || '—';
+  }
+  const idea = tallerData.fases[3].ideas.find(i => i.id===tallerData.fases[3].ideaGanadoraId);
+  const c = tallerData.fases[4].cartel;
+  document.getElementById('f5-resumen').innerHTML = `
+    <div class="space-y-3 text-xs">
+      <div><p class="text-[10px] font-bold text-slate-500 uppercase">Problema priorizado</p><p class="text-white">${escapeHtml(problemaTxt)}</p></div>
+      <div><p class="text-[10px] font-bold text-slate-500 uppercase">Punto de dolor</p><p class="text-white">${escapeHtml(dolorTxt)}</p></div>
+      <div><p class="text-[10px] font-bold text-slate-500 uppercase">Causa raíz (5 Por Qués)</p><p class="text-white">${escapeHtml(causaRaiz)}</p></div>
+      <div><p class="text-[10px] font-bold text-slate-500 uppercase">¿Cómo podríamos...?</p><p class="text-white">${escapeHtml(tallerData.fases[2].comoPodriamos)}</p></div>
+      <div><p class="text-[10px] font-bold text-slate-500 uppercase">Idea ganadora</p><p class="text-white">${idea ? escapeHtml(idea.grupo+' — '+idea.descripcion) : '—'}</p></div>
+      <div><p class="text-[10px] font-bold text-slate-500 uppercase">Cartel de Concepto</p><p class="text-white font-bold">${escapeHtml(c.nombre)||'—'}</p><p class="text-slate-400 mt-1">${escapeHtml(c.propuesta_valor)}</p></div>
+      <div><p class="text-[10px] font-bold text-slate-500 uppercase mb-1">Tipos Doblin activados</p>
+        <div class="flex flex-wrap gap-1">${tallerData.fases[4].doblin.map(id => {
+          const t = DOBLIN_TYPES.find(x => x.id===id);
+          return t ? `<span class="text-[9px] px-2 py-1 rounded-full" style="background:rgb(52 211 153/0.15);color:rgb(52 211 153)">${t.nombre}</span>` : '';
+        }).join('') || '<span class="text-slate-600 italic">Ninguno</span>'}</div>
+      </div>
+    </div>`;
+  document.getElementById('f5-estado').value = tallerData.fases[5].estadoImpl;
+  document.getElementById('f5-pct').value = tallerData.fases[5].pctAvance;
+  document.getElementById('f5-notas').value = tallerData.fases[5].notas;
+  document.getElementById('f5-link-radar').classList.toggle('hidden', !tallerData.fases[4].exportado);
+}
+function setSeguimiento(campo, valor){ tallerData.fases[5][campo] = valor; saveLocal(); }
+async function finalizarTaller(){
+  tallerData.fases[5].estado = 'completado';
+  saveLocal();
+  await sbFetch(`talleres_innovacion?id=eq.${tallerActual.id}`, {method:'PATCH', body:JSON.stringify({estado:'completado'})});
+  toast('Taller finalizado','ok');
+  show('s-dashboard'); renderDashboard();
+}
+function descargarResumen(){
+  const c = tallerData.fases[4].cartel;
+  const idea = tallerData.fases[3].ideas.find(i => i.id===tallerData.fases[3].ideaGanadoraId);
+  const txt = `TALLER DE INNOVACIÓN DIGITAL
+${tallerActual.nombre} — ${empresaActual.nombre}
+${'='.repeat(50)}
+
+¿CÓMO PODRÍAMOS...?
+${tallerData.fases[2].comoPodriamos}
+
+IDEA GANADORA
+${idea ? idea.grupo+' — '+idea.descripcion : '—'}
+
+CARTEL DE CONCEPTO
+Nombre: ${c.nombre}
+Propuesta de valor: ${c.propuesta_valor}
+Necesidad del cliente: ${c.necesidad_cliente}
+Beneficios cliente: ${c.beneficios_cliente}
+Beneficios empresa: ${c.beneficios_empresa}
+Características: ${c.caracteristicas}
+Requisitos: ${c.requisitos}
+Modelo de ingreso: ${c.modelo_ingreso}
+
+SEGUIMIENTO
+Estado: ${tallerData.fases[5].estadoImpl}
+Avance: ${tallerData.fases[5].pctAvance}%
+Notas: ${tallerData.fases[5].notas}
+`;
+  const blob = new Blob([txt], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `resumen-taller-${tallerActual.pin}.txt`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// ════════════════════════════════════════
+// PARTICIPANTE
+// ════════════════════════════════════════
+let participanteState = { taller:null, nombre:'', pollInterval:null, votedIds:new Set() };
+
+async function unirseInnovacion(){
+  const pin = val('p-pin').trim();
+  const nombre = val('p-nombre').trim() || 'Participante';
+  if (!pin || pin.length!==4) { toast('Ingrese un PIN válido de 4 dígitos','warn'); return; }
+  const res = await sbFetch(`talleres_innovacion?pin=eq.${pin}&estado=eq.activo`);
+  if (!res || !res.length) { toast('PIN no encontrado o taller inactivo','error'); return; }
+  participanteState.taller = res[0];
+  participanteState.nombre = nombre;
+  participanteState.votedIds = new Set(JSON.parse(localStorage.getItem('inn_votado_'+pin+'_'+nombre) || '[]'));
+  document.getElementById('p-login').classList.add('hidden');
+  document.getElementById('p-actividad').classList.remove('hidden');
+  await refrescarParticipante();
+  if (participanteState.pollInterval) clearInterval(participanteState.pollInterval);
+  participanteState.pollInterval = setInterval(refrescarParticipante, 3000);
+}
+async function refrescarParticipante(){
+  const t = await sbFetch(`talleres_innovacion?id=eq.${participanteState.taller.id}`);
+  if (t && t[0]) participanteState.taller = t[0];
+  const fase = participanteState.taller.fase_actual;
+  document.getElementById('p-espera').classList.add('hidden');
+  document.getElementById('p-fase0').classList.add('hidden');
+  document.getElementById('p-fase3').classList.add('hidden');
+  if (fase===0) {
+    document.getElementById('p-fase0').classList.remove('hidden');
+    const problemas = await sbFetch(`inn_problemas?taller_id=eq.${participanteState.taller.id}&order=votos.desc`);
+    renderParticipanteProblemas(problemas || []);
+  } else if (fase===3) {
+    document.getElementById('p-fase3').classList.remove('hidden');
+    const ideas = await sbFetch(`inn_ideas?taller_id=eq.${participanteState.taller.id}`);
+    renderParticipanteIdeas(ideas || []);
+  } else {
+    document.getElementById('p-espera').classList.remove('hidden');
+  }
+}
+function renderParticipanteProblemas(problemas){
+  document.getElementById('p-problemas-lista').innerHTML = problemas.map(p => {
+    const votado = participanteState.votedIds.has(p.id);
+    return `
+    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 mb-2">
+      <div class="flex-1 pr-2">
+        <p class="text-xs text-white">${escapeHtml(p.descripcion)}</p>
+        <p class="text-[10px] text-slate-500">${p.votos||0} votos</p>
+      </div>
+      <button ${votado?'disabled':''} onclick="participanteVotarProblema('${p.id}')" class="text-[10px] font-bold px-3 py-2 rounded-lg shrink-0" style="background:${votado?'rgb(100 116 139/0.15)':'rgb(139 92 246)'};color:${votado?'rgb(148 163 184)':'white'}">${votado?'Votado':'Votar'}</button>
+    </div>`;
+  }).join('') || `<p class="text-xs text-slate-500">Aún no hay problemas propuestos.</p>`;
+}
+function renderParticipanteIdeas(ideas){
+  document.getElementById('p-ideas-lista').innerHTML = ideas.map(i => {
+    const votado = participanteState.votedIds.has(i.id);
+    return `
+    <div class="bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 mb-2">
+      <p class="text-xs font-bold text-white">${escapeHtml(i.grupo)}</p>
+      <p class="text-[11px] text-slate-400 mb-2">${escapeHtml(i.descripcion)}</p>
+      <button ${votado?'disabled':''} onclick="participanteVotarIdea('${i.id}')" class="w-full text-[10px] font-bold px-3 py-2 rounded-lg" style="background:${votado?'rgb(100 116 139/0.15)':'rgb(139 92 246)'};color:${votado?'rgb(148 163 184)':'white'}">${votado?'Voto registrado':'Votar por esta idea'}</button>
+    </div>`;
+  }).join('') || `<p class="text-xs text-slate-500">Aún no hay ideas registradas.</p>`;
+}
+async function participanteProponerProblema(){
+  const txt = val('p-problema-input').trim();
+  if (!txt) return;
+  await sbFetch('inn_problemas', {method:'POST', body:JSON.stringify({taller_id:participanteState.taller.id, descripcion:txt, propuesto_por:participanteState.nombre})});
+  document.getElementById('p-problema-input').value = '';
+  toast('Problema enviado','ok');
+  refrescarParticipante();
+}
+async function participanteVotarProblema(id){
+  if (participanteState.votedIds.has(id)) return;
+  const cur = await sbFetch(`inn_problemas?id=eq.${id}`);
+  if (!cur || !cur[0]) return;
+  await sbFetch(`inn_problemas?id=eq.${id}`, {method:'PATCH', body:JSON.stringify({votos:(cur[0].votos||0)+1})});
+  await sbFetch('inn_votos', {method:'POST', body:JSON.stringify({taller_id:participanteState.taller.id, fase:0, item_id:id, participante:participanteState.nombre})});
+  participanteState.votedIds.add(id);
+  localStorage.setItem('inn_votado_'+participanteState.taller.pin+'_'+participanteState.nombre, JSON.stringify([...participanteState.votedIds]));
+  toast('Voto registrado','ok');
+  refrescarParticipante();
+}
+async function participanteVotarIdea(id){
+  if (participanteState.votedIds.has(id)) return;
+  const cur = await sbFetch(`inn_ideas?id=eq.${id}`);
+  if (!cur || !cur[0]) return;
+  await sbFetch(`inn_ideas?id=eq.${id}`, {method:'PATCH', body:JSON.stringify({votos:(cur[0].votos||0)+1})});
+  await sbFetch('inn_votos', {method:'POST', body:JSON.stringify({taller_id:participanteState.taller.id, fase:3, item_id:id, participante:participanteState.nombre})});
+  participanteState.votedIds.add(id);
+  localStorage.setItem('inn_votado_'+participanteState.taller.pin+'_'+participanteState.nombre, JSON.stringify([...participanteState.votedIds]));
+  toast('Voto registrado','ok');
+  refrescarParticipante();
+}
+
+// ════════════════════════════════════════
+// INICIALIZACIÓN AL CARGAR
+// ════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  const safetyTimeout = setTimeout(function() {
+    const ls = document.getElementById('loading-screen');
+    if (ls) { ls.style.opacity='0'; setTimeout(()=>ls.remove(),300); }
+    const login = document.getElementById('s-login');
+    if (login && login.classList.contains('hidden')) login.classList.remove('hidden');
+  }, 4000);
+
+  const params = new URLSearchParams(window.location.search);
+  const pinUrl = params.get('pin');
+  if (pinUrl) {
+    clearTimeout(safetyTimeout);
+    const pinInput = document.getElementById('p-pin');
+    if (pinInput) pinInput.value = pinUrl;
+    show('s-participante');
+    return;
+  }
+
+  clearTimeout(safetyTimeout);
+  show('s-login');
+});
+</script>
+</body>
+</html>
