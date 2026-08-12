@@ -2008,6 +2008,22 @@ async function guardarEmpresa() {
     empresas.push({ ...datos, id: 'emp-' + Date.now(), proyectos: [] });
   }
   saveEmpresas();
+
+  // Limpiar estado anterior antes de abrir empresa nueva
+  window._proyectoActual      = null;
+  window._diagnosticoActualId = null;
+  window._hojaRutaActualId    = null;
+  window._result              = null;
+  if (typeof iniciativas  !== 'undefined') iniciativas  = [];
+  if (typeof horizonteMap !== 'undefined') horizonteMap = {h1:[],h2:[],h3:[]};
+  if (typeof okrData      !== 'undefined') okrData      = {};
+  if (typeof avancesData  !== 'undefined') avancesData  = {};
+  if (typeof norteHoy     !== 'undefined') norteHoy     = null;
+  if (typeof norteEstrella!== 'undefined') norteEstrella= null;
+  ['ag_diagnostico','ag_norte','ag_palancas','ag_iniciativas',
+   'ag_horizontes','ag_okr','ag_avances'].forEach(k => localStorage.removeItem(k));
+  if (typeof initScores === 'function') initScores();
+
   cancelarFormEmpresa();
   renderEmpresas();
 }
@@ -2270,6 +2286,16 @@ function accessModulo2() {
 function goBack() { currentAx = AXES.length - 1; show('s-axis'); renderAx(); }
 function restart() {
   if (!confirm('¿Iniciar un nuevo diagnóstico? Se perderán los datos actuales.')) return;
+
+  // Limpiar datos del diagnóstico anterior
+  window._result              = null;
+  window._diagnosticoActualId = null;
+  if (typeof iniciativas !== 'undefined') iniciativas = [];
+  if (typeof horizonteMap!== 'undefined') horizonteMap = {h1:[],h2:[],h3:[]};
+  if (typeof okrData     !== 'undefined') okrData = {};
+  ['ag_diagnostico','ag_norte','ag_palancas','ag_iniciativas',
+   'ag_horizontes','ag_okr','ag_avances'].forEach(k => localStorage.removeItem(k));
+
   initScores();
   currentAx = 0;
   updateDashboard();
@@ -3289,7 +3315,6 @@ function goRoadmap() {
         if (Array.isArray(d) && d.length > 0) {
           iniciativas = d;
           if (savedHorizontes) { try { horizonteMap = JSON.parse(savedHorizontes); } catch (e) {} }
-          iniciativasEditando = false;
         }
       } catch (e) {}
     }
@@ -3949,7 +3974,7 @@ function editarPalancasGuardadas() {
 
 // ── INICIATIVAS — patrón expandible igual que palancas ──
 let iniciativaExpandida = null;
-let iniciativasEditando = true; // false = "Guardado", tarjetas bloqueadas hasta presionar Editar
+let iniciativasEditando = true; // solo decorativo (barra de acciones / badge "Guardado"), no bloquea las tarjetas
 
 function renderIniciativas() {
   const grid = document.getElementById('ini-grid');
@@ -3964,25 +3989,18 @@ function renderIniciativas() {
     return;
   }
 
-  if (!iniciativasEditando) {
-    // Bloqueado tras "Guardar cambios" — solo lectura hasta presionar Editar
-    grid.innerHTML = iniciativas.map(ini => renderIniResumen(ini, false)).join('');
-    actualizarEstadoGuardadoIniciativas();
-    return;
-  }
-
   if (iniciativaExpandida) {
     // Una expandida + resto como resumen
     iniciativas.forEach(ini => {
       if (ini.id === iniciativaExpandida) {
         grid.innerHTML += renderIniExpandida(ini);
       } else {
-        grid.innerHTML += renderIniResumen(ini, true);
+        grid.innerHTML += renderIniResumen(ini);
       }
     });
   } else {
     // Todas en resumen
-    grid.innerHTML = iniciativas.map(ini => renderIniResumen(ini, true)).join('');
+    grid.innerHTML = iniciativas.map(ini => renderIniResumen(ini)).join('');
   }
   actualizarEstadoGuardadoIniciativas();
 }
@@ -4030,7 +4048,7 @@ function editarIniciativasGuardadas() {
   renderIniciativas();
 }
 
-function renderIniResumen(ini, clickable) {
+function renderIniResumen(ini) {
   const guardada = ini.desc || ini.horizonte || Object.values(ini.impactos).some(v => v > 0);
   const hColor   = ini.horizonte === 'h1' ? '#f43f5e' : ini.horizonte === 'h2' ? '#f59e0b' : ini.horizonte === 'h3' ? '#10b981' : '#475569';
   const hLabel   = ini.horizonte ? ini.horizonte.toUpperCase() : 'Sin horiz.';
@@ -4045,14 +4063,14 @@ function renderIniResumen(ini, clickable) {
   }, null);
 
   return `
-    <div ${clickable ? `onclick="expandirIniciativa('${ini.id}')"` : ''}
-      class="bg-slate-800 border ${guardada ? 'border-slate-600' : 'border-slate-700'} rounded-xl p-4 transition group relative flex flex-col h-full ${clickable ? 'cursor-pointer hover:border-slate-500 hover:bg-slate-800/70' : 'opacity-90'}"
-      ${clickable ? 'title="Haga clic para trabajar esta iniciativa"' : ''}>
+    <div onclick="expandirIniciativa('${ini.id}')"
+      class="bg-slate-800 border ${guardada ? 'border-slate-600' : 'border-slate-700'} rounded-xl p-4 transition group relative flex flex-col h-full cursor-pointer hover:border-slate-500 hover:bg-slate-800/70"
+      title="Haga clic para trabajar esta iniciativa">
       <!-- Badge guardado / editar -->
       <div class="absolute top-3 right-3">
         ${guardada
           ? `<span class="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"><i class="fa-solid fa-check text-[7px]"></i></span>`
-          : (clickable ? `<i class="fa-solid fa-pen text-[9px] text-slate-600 opacity-0 group-hover:opacity-100 transition"></i>` : '')}
+          : `<i class="fa-solid fa-pen text-[9px] text-slate-600 opacity-0 group-hover:opacity-100 transition"></i>`}
       </div>
       <!-- Encabezado -->
       <div class="pr-7 mb-2">
@@ -5455,7 +5473,8 @@ function iniciarTallerDesdeEspera() {
 function renderTaller() {
   // Si está en modo conferencia, usar las preguntas de conferencia
   if (tallerState.modoConferencia && tallerState.preguntasConferencia) {
-    const confIdx = tallerState.ejActual * (tallerState.preguntasConferencia.length / 8 | 0) + tallerState.pregActual;
+    const porEje = Math.ceil(tallerState.preguntasConferencia.length / 8);
+    const confIdx = tallerState.ejActual * porEje + tallerState.pregActual;
     const confPregunta = tallerState.preguntasConferencia[Math.min(confIdx, tallerState.preguntasConferencia.length - 1)];
     if (confPregunta) {
       document.getElementById('taller-eje-label').textContent =
@@ -5471,10 +5490,13 @@ function renderTaller() {
         sbFetch(`sesiones_taller?id=eq.${tallerState.sesionId}`, {
           method: 'PATCH',
           body: JSON.stringify({
-            pregunta_actual: tallerState.pregActual,
-            eje_actual: tallerState.ejActual,
+            pregunta_actual: confIdx,  // índice lineal — no ejActual/pregActual
+            eje_actual: confPregunta.ejeIdx,
             ronda_actual: tallerState.ronda,
-            estado: 'abierta'
+            eje_nombre: confPregunta.ejeNombre,
+            estado: 'abierta',
+            modo: tallerState.modoConferencia ?
+              `conferencia${tallerState.preguntasConferencia.length}` : 'taller'
           })
         }).catch(() => null);
       }
@@ -5949,40 +5971,50 @@ function iniciarPollingParticipante(sesionInicial) {
       return;
     }
 
-    const pregIdx  = s.pregunta_actual ?? 0;
-    const ejeIdx   = s.eje_actual ?? 0;
-    const ronda    = s.ronda_actual ?? 1;
-    const ejeNombre = s.eje_nombre || '';
+    const modoConf = s.modo && s.modo.startsWith('conferencia');
+    let pregIdx, ejeIdx, textoFinal;
+
+    if (modoConf) {
+      // En conferencia pregunta_actual es el índice lineal
+      const totalPregs = parseInt(s.modo.replace('conferencia','')) || 8;
+      const porEje = Math.ceil(totalPregs / 8);
+      const idxLineal = s.pregunta_actual ?? 0;
+      ejeIdx  = s.eje_actual ?? Math.floor(idxLineal / porEje);
+      pregIdx = idxLineal % porEje;
+
+      // Texto de la pregunta desde AXES con el eje e índice correctos
+      const pregTexto = (AXES[ejeIdx] && AXES[ejeIdx].qs[pregIdx])
+        ? AXES[ejeIdx].qs[pregIdx] : '';
+      let titulo = pregTexto;
+      const col = pregTexto.indexOf(':');
+      if (col !== -1) titulo = pregTexto.substring(0,col).replace(/^Valore del 1 al 5\s*/i,'').trim();
+      textoFinal = titulo || pregTexto;
+    } else {
+      // Taller normal
+      ejeIdx  = s.eje_actual ?? 0;
+      pregIdx = s.pregunta_actual ?? 0;
+      const pregTexto = (AXES[ejeIdx] && AXES[ejeIdx].qs[pregIdx])
+        ? AXES[ejeIdx].qs[pregIdx] : `Pregunta ${pregIdx + 1}`;
+      let titulo = pregTexto;
+      const col = pregTexto.indexOf(':');
+      if (col !== -1) titulo = pregTexto.substring(0,col).replace(/^Valore del 1 al 5\s*/i,'').trim();
+      textoFinal = titulo || pregTexto;
+    }
+
+    // Actualizar ejeActual del participante para el filtro de votos
+    participanteState.ejeActual = ejeIdx;
 
     const espera = document.getElementById('part-espera');
     if (espera && ultimaPregVista === -1) espera.classList.remove('hidden');
 
-    // Si cambió la pregunta o la ronda, mostrar la nueva
-    if (pregIdx !== ultimaPregVista || ronda !== ultimaRondaVista) {
-      ultimaPregVista  = pregIdx;
-      ultimaRondaVista = ronda;
-      participanteState.ejeActual = ejeIdx;
-
-      // Actualizar eje
+    // Detectar cambio
+    const idxParaComparar = modoConf ? (s.pregunta_actual ?? 0) : (ejeIdx * 10 + pregIdx);
+    if (idxParaComparar !== ultimaPregVista || (s.ronda_actual ?? 1) !== ultimaRondaVista) {
+      ultimaPregVista  = idxParaComparar;
+      ultimaRondaVista = s.ronda_actual ?? 1;
       const ejeEl = document.getElementById('part-eje');
-      if (ejeEl) ejeEl.textContent = ejeNombre;
-
-      // Obtener texto de la pregunta desde AXES
-      const pregTexto = (AXES[ejeIdx] && AXES[ejeIdx].qs[pregIdx])
-        ? AXES[ejeIdx].qs[pregIdx]
-        : `Pregunta ${pregIdx + 1}`;
-
-      // Limpiar el texto de la pregunta (formato ¿...?)
-      let titulo = pregTexto;
-      const colonIdx = pregTexto.indexOf(':');
-      if (colonIdx !== -1) {
-        titulo = pregTexto.substring(0, colonIdx)
-          .replace(/^Valore del 1 al 5\s*/i, '').trim();
-        if (!titulo) titulo = pregTexto;
-      }
-
-      // Mostrar pregunta y botones de voto
-      renderBotonesVoto(pregIdx, ejeNombre, titulo);
+      if (ejeEl) ejeEl.textContent = s.eje_nombre || '';
+      renderBotonesVoto(pregIdx, s.eje_nombre || '', textoFinal);
     }
   };
 
